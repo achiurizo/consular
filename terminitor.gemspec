@@ -14,7 +14,13 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "terminitor"
 
-  s.add_development_dependency "bundler", ">= 1.0.0"
+  s.add_dependency "rb-appscript"
+  s.add_dependency "yaml"
+  s.add_dependency "thor", "~>0.14.0"
+  s.add_development_dependency "bundler", "~>1.0.0"
+  s.add_development_dependency "riot", "~>0.14.0"
+  s.add_development_dependency "rr"
+  s.add_development_dependency "fakefs"
 
   s.files        = `git ls-files`.split("\n")
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
