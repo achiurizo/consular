@@ -25,7 +25,7 @@ module Terminitor
     end
 
     def project_not_found(project)
-      puts "\nError:  Project #{project} not found.\n"
+      # puts "\nError:  Project #{project} not found.\n"
       usage
     end
 

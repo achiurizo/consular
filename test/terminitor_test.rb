@@ -39,5 +39,13 @@ context "Terminitor" do
     asserts("runs project") { @test_runner.do_project("foo") }
   end
 
+  context "open wrong project" do
+    setup do
+      @test_item = TestItem.new
+      @test_runner = TestRunner.new
+      stub(@test_runner).app('Terminal') { TestObject.new(@test_item) }
+    end
 
+    asserts("doesn't run project") {  capture(:stdout) { @test_runner.do_project("wrong_project_name") } }.raises(SystemExit)
+  end
 end
