@@ -24,20 +24,28 @@ module Terminitor
       end
     end
 
-    def project_not_found(project)
-      # puts "\nError:  Project #{project} not found.\n"
-      usage
-    end
+    # def project_not_found(project)
+    #   # puts "\nError:  Project #{project} not found.\n"
+    #   usage
+    # end
+    # 
+    # def usage
+    #   puts "
+    #   Usage:
+    #   terminitor start project_name
+    #   where project_name is the name of a terminitor project yaml file
+    # 
+    #   See the README for more information.
+    #   "
+    #   exit 0
+    # end
 
-    def usage
-      puts "
-      Usage:
-      terminitor start project_name
-      where project_name is the name of a terminitor project yaml file
-
-      See the README for more information.
-      "
-      exit 0
+    def resolve_path(project)
+      unless project.empty?
+        File.join(ENV['HOME'],'.terminitor', "#{project.sub(/\.yml$/, '')}.yml")
+      else
+        File.join(options[:root],"Termfile")
+      end
     end
 
     def load_config(path)

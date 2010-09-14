@@ -11,13 +11,17 @@ module Terminitor
     include Appscript
 
     desc "start PROJECT_NAME", "runs the terminitor project"
-    def start(project)
-      file = "#{project.sub(/\.yml$/, '')}.yml"
-      path = File.join(ENV['HOME'],'.terminitor', file)
+    method_option :root, :type => :string, :default => '.', :aliases => '-r'
+    def start(project="")
+      path = resolve_path(project)
       if File.exists?(path)
         do_project(path)
       else
-        say "#{file} doesn't exist! Please run terminitor open #{project}"
+        if project
+          say "'#{File.basename(path)}' doesn't exist! Please run 'terminitor open #{project}'"
+        else
+          say "Termfile doesn't exist! Please run 'terminitor open' in project directory"
+        end
       end
     end
 
@@ -27,8 +31,9 @@ module Terminitor
     end
 
     desc "open PROJECT_NAME", "open project yaml"
-    def open(project)
-      path = "#{ENV['HOME']}/.terminitor/#{project}.yml"
+    method_option :root, :type => :string, :default => '.', :aliases => '-r'
+    def open(project="")
+      path = project.empty? ? File.join(options[:root],"Termfile") : "#{ENV['HOME']}/.terminitor/#{project}.yml"
       create_file path, :skip => true
       open_in_editor(path)
     end
