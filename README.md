@@ -7,7 +7,7 @@ Installation
 ------------
 
 
-    $ sudo gem install terminitor
+    $ gem install terminitor
     $ terminit setup
 
 Usage
