@@ -26,6 +26,5 @@ module Terminitor
       create_file path
       open_in_editor(path)
     end
-
   end
 end

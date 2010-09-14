@@ -5,11 +5,11 @@ Gem::Specification.new do |s|
   s.name        = "terminitor"
   s.version     = Terminitor::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = []
-  s.email       = []
+  s.authors     = ['Arthur Chiu', 'Nathan Esquenazi']
+  s.email       = ['mr.arthur.chiu@gmail.com','nesquena@gmail.com']
   s.homepage    = "http://rubygems.org/gems/terminitor"
-  s.summary     = "TODO: Write a gem summary"
-  s.description = "TODO: Write a gem description"
+  s.summary     = "Outsource your workflow to Skynet"
+  s.description = "Automate your development workflow"
 
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "terminitor"
