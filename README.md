@@ -36,7 +36,7 @@ This will open your default editor (set by the $EDITOR variable in BASH) and you
       - autotest
 
 Simply define the tabs and declare each command. Note that the session of each tab is maintained, so you just declare actions here as
-you would manually type in the terminal.
+you would manually type in the terminal. Note that the title for each tab(namely tab1, tab2) are arbitrary, and can be named whatever you want. They are simply placeholders
 
 Once the project file has been declared to your satisfaction, simply execute any project defined in the @.terminit@ directory with:
 
