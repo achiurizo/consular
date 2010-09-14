@@ -27,6 +27,13 @@ module Terminitor
       end
     end
 
+    desc "list", "lists all terminitor scripts"
+    def list
+      Dir.glob("#{ENV['HOME']}/.terminitor/*").each do |file|
+        say "#{File.basename(file)} - #{File.read(file).first.gsub("#",'')}"
+      end
+    end
+
     desc "setup", "create initial root terminitor folder"
     def setup
       empty_directory "#{ENV['HOME']}/.terminitor"

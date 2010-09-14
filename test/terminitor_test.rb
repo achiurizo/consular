@@ -13,6 +13,15 @@ context "Terminitor" do
     asserts_topic.matches   %r{open PROJECT_NAME}
   end
 
+  context "list" do
+    setup { @path = "#{ENV['HOME']}/.terminitor/" }
+    setup { File.open(File.join(@path,'foo.yml'),"w") { |f| f.puts @template } }
+    setup { File.open(File.join(@path,'bar.yml'),"w") { |f| f.puts @template } }
+    setup { capture(:stdout) { Terminitor::Cli.start(['list']) } }
+    asserts_topic.matches %r{foo.yml -  COMMENT OF SCRIPT HERE}
+    asserts_topic.matches %r{bar.yml -  COMMENT OF SCRIPT HERE}
+  end
+
   context "setup" do
     setup { capture(:stdout) { Terminitor::Cli.start(['setup']) } }
     asserts("creates .terminitor") { File.exists?("#{ENV['HOME']}/.terminitor") }
@@ -21,6 +30,7 @@ context "Terminitor" do
   context "open" do
     setup     { FakeFS.deactivate! }
     setup     { `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.yml`}
+
     teardown  { `rm -rf /tmp/sample_project` }
     
     context "for project yaml" do
