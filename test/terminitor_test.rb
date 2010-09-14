@@ -41,11 +41,20 @@ context "Terminitor" do
     end
 
     context "for Termfile" do
-      setup { mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile") { true }.once }
-      setup { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project']) } }
-      asserts_topic.matches %r{create}
-      asserts_topic.matches %r{Termfile}
+      context "with open" do
+        setup { mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile") { true }.once }
+        setup { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project']) } }
+        asserts_topic.matches %r{create}
+        asserts_topic.matches %r{Termfile}
+      end
+
+      context "with create" do
+        setup { mock.instance_of(Terminitor::Cli).invoke(:open, [], :root => '/tmp/sample_project') { true }.once }
+        asserts('calls open') { capture(:stdout) { Terminitor::Cli.start(['create','-r=/tmp/sample_project']) } }
+      end
     end
+    
+    
 
   end
 

@@ -46,6 +46,12 @@ module Terminitor
       template "templates/example.yml.tt", path, :skip => true
       open_in_editor(path)
     end
+    
+    desc "generate", "create a Termfile in directory"
+    method_option :root, :type => :string, :default => '.', :aliases => '-r'
+    def create
+      invoke :open, [], :root => options[:root]
+    end
         
   end
 end
