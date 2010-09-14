@@ -41,7 +41,7 @@ Simply define each tab and declare the commands. Note that the session for each 
 you would manually type in the terminal. Note that the title for each tab(namely tab1, tab2) are arbitrary, and can be named whatever you want.
 They are simply placeholders for the time being for upcoming features.
 
-Once the project file has been declared to your satisfaction, simply execute any project defined in the `.terminit` directory with:
+Once the project file has been declared to your satisfaction, simply execute any project defined in the `~/.terminitor` directory with:
 
     $ terminitor start foo
 
