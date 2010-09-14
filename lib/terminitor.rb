@@ -23,7 +23,7 @@ module Terminitor
     desc "open PROJECT_NAME", "open project yaml"
     def open(project)
       path = "#{ENV['HOME']}/.terminitor/#{project}.yml"
-      create_file path
+      create_file path, :skip => true
       open_in_editor(path)
     end
   end
