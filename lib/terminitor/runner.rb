@@ -9,6 +9,9 @@ module Terminitor
     def do_project(project)
       terminal = app('Terminal')
       tabs = load_config(project)
+
+      project_not_found(project) unless tabs
+
       tabs.each do |hash|
         tabname = hash.keys.first
         cmds = hash.values.first
@@ -21,16 +24,21 @@ module Terminitor
       end
     end
 
-    # def usage
-    #   puts "
-    #   Usage:
-    #   #{File.basename(@file)} project_name
-    #   where project_name is the name of a terminit project yaml file
-    # 
-    #   See the README for more information.
-    #   "
-    #   exit 0
-    # end
+    def project_not_found(project)
+      puts "\nError:  Project #{project} not found.\n"
+      usage
+    end
+
+    def usage
+      puts "
+      Usage:
+      terminitor start project_name
+      where project_name is the name of a terminitor project yaml file
+
+      See the README for more information.
+      "
+      exit 0
+    end
 
     def load_config(project)
       path = File.join(ENV['HOME'],'.terminitor', "#{project.sub(/\.yml$/, '')}.yml")
@@ -55,11 +63,11 @@ module Terminitor
       local_tabs = local_window.tabs if local_window
       local_tabs.last.get if local_tabs
     end
-    
+
     # checks to see if the user has Visor installed
     def has_visor?
       File.exists?("#{ENV['HOME']}/Library/Application\ Support/SIMBL/Plugins/Visor.bundle/")
     end
-    
+
   end
 end
