@@ -20,7 +20,15 @@ Gem::Specification.new do |s|
   s.add_development_dependency "riot", "~>0.14.0"
   s.add_development_dependency "rr"
   s.add_development_dependency "fakefs"
+  s.post_install_message = %q{********************************************************************************
 
+    Terminitor is installed! 
+    Please run 'terminitor setup'. 
+    This will create a directory at ~/.terminitor which will hold all your global scripts.
+    Thanks!
+
+********************************************************************************
+  }
   s.files        = `git ls-files`.split("\n")
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
   s.require_path = 'lib'
