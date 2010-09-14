@@ -7,14 +7,14 @@ Installation
 ------------
 
     $ gem install terminitor
-    $ terminit setup
+    $ terminitor setup
 
 Usage
 -------
 
 Using terminitor is quite easy. To define or edit a project file, simply invoke the command:
 
-    $ terminit open foo
+    $ terminitor open foo
 
 This will open your default editor (set by the $EDITOR variable in BASH) and you can proceed to define the commands for that project:
 
@@ -40,7 +40,7 @@ you would manually type in the terminal.
 
 Once the project file has been declared to your satisfaction, simply execute any project defined in the @.terminit@ directory with:
 
-    $ terminit start foo
+    $ terminitor start foo
 
 This will execute the steps and create the tabs defined and run the various options as expected. That's it. Create as many project files with as many tabs
 as you would like and automate your workflow.
