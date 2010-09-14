@@ -2,6 +2,7 @@ require File.expand_path('../teststrap',__FILE__)
 
 context "Terminitor" do
   setup     { @yaml = File.read(File.expand_path('../fixtures/foo.yml', __FILE__)) }
+  setup     { @template = File.read(File.expand_path('../../lib/templates/example.yml.tt', __FILE__)) }
   setup     { FakeFS.activate! }
   teardown  { FakeFS.deactivate! }
 
@@ -18,12 +19,15 @@ context "Terminitor" do
   end
 
   context "open" do
+    setup     { FakeFS.deactivate! }
+    setup     { `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.yml`}
+    teardown  { `rm -rf /tmp/sample_project` }
     
     context "for project yaml" do
-      setup { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/foo.yml") { true }.once }
-      setup { capture(:stdout) { Terminitor::Cli.start(['open','foo']) } }
+      setup { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.yml") { true }.once }
+      setup { capture(:stdout) { Terminitor::Cli.start(['open','test_foo_bar2']) } }
       asserts_topic.matches %r{create}
-      asserts_topic.matches %r{foo.yml}
+      asserts_topic.matches %r{test_foo_bar2.yml}
     end
 
     context "for Termfile" do

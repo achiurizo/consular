@@ -10,6 +10,8 @@ module Terminitor
     include Terminitor::Runner
     include Appscript
 
+    def self.source_root; File.dirname(__FILE__); end
+
     desc "start PROJECT_NAME", "runs the terminitor project"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def start(project="")
@@ -34,8 +36,9 @@ module Terminitor
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def open(project="")
       path = project.empty? ? File.join(options[:root],"Termfile") : "#{ENV['HOME']}/.terminitor/#{project}.yml"
-      create_file path, :skip => true
+      template "templates/example.yml.tt", path, :skip => true
       open_in_editor(path)
     end
+        
   end
 end
