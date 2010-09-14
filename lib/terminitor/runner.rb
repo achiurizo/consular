@@ -47,12 +47,11 @@ module Terminitor
     # One more hack:  if we're getting the first tab, we return
     # the term window's only current tab, else we send a CMD+T
     def open_tab(terminal)
-      window =  has_visor? ? 2 : 1
       if @got_first_tab_already
         app("System Events").application_processes["Terminal.app"].keystroke("t", :using => :command_down)
       end
       @got_first_tab_already = true
-      local_window = terminal.windows[window]
+      local_window = terminal.windows[terminal.windows.count - 1]
       local_tabs = local_window.tabs if local_window
       local_tabs.last.get if local_tabs
     end
