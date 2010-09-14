@@ -12,7 +12,13 @@ module Terminitor
 
     desc "start PROJECT_NAME", "runs the terminitor project"
     def start(project)
-      do_project(project)
+      file = "#{project.sub(/\.yml$/, '')}.yml"
+      path = File.join(ENV['HOME'],'.terminitor', file)
+      if File.exists?(path)
+        do_project(path)
+      else
+        say "#{file} doesn't exist! Please run terminitor open #{project}"
+      end
     end
 
     desc "setup", "create initial root terminitor folder"

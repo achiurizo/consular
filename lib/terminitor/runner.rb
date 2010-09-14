@@ -6,11 +6,11 @@ module Terminitor
       `#{ENV['EDITOR']} #{path}`
     end
 
-    def do_project(project)
+    def do_project(path)
       terminal = app('Terminal')
-      tabs = load_config(project)
+      tabs = load_config(path)
 
-      project_not_found(project) unless tabs
+      # project_not_found(path) unless tabs
 
       tabs.each do |hash|
         tabname = hash.keys.first
@@ -40,9 +40,7 @@ module Terminitor
       exit 0
     end
 
-    def load_config(project)
-      path = File.join(ENV['HOME'],'.terminitor', "#{project.sub(/\.yml$/, '')}.yml")
-      return false unless File.exists?(path)
+    def load_config(path)
       YAML.load(File.read(path))
     end
 

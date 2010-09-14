@@ -35,17 +35,13 @@ context "Terminitor" do
       stub(@test_runner).app('Terminal') { TestObject.new(@test_item) }
     end
     setup { capture(:stdout) { Terminitor::Cli.start(['setup']) } }
-    setup { File.open("#{ENV['HOME']}/.terminitor/foo.yml","w") { |f| f.puts @yaml } }
-    asserts("runs project") { @test_runner.do_project("foo") }
+    setup { @path = "#{ENV['HOME']}/.terminitor/foo.yml" }
+    setup { File.open(@path,"w") { |f| f.puts @yaml } }
+    asserts("runs project") { @test_runner.do_project(@path) }
   end
 
-  context "open wrong project" do
-    setup do
-      @test_item = TestItem.new
-      @test_runner = TestRunner.new
-      stub(@test_runner).app('Terminal') { TestObject.new(@test_item) }
-    end
-
-    asserts("doesn't run project") {  capture(:stdout) { @test_runner.do_project("wrong_project_name") } }.raises(SystemExit)
+  context "start with invalid project" do
+    setup { capture(:stdout) { Terminitor::Cli.start(['start','nonono']) } }
+    asserts_topic.matches %r{nonono.yml doesn't exist! Please run terminitor open nonono}
   end
 end
