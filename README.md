@@ -51,6 +51,11 @@ Limitations
 This only works on OS X because of the dependency on applescript. It would presumably not be impossible to port this to Linux or Windows, and
 of course patches and suggestions are welcome.
 
+Authors
+-------
+
+The core code was adapted before by Nathan Esquenazi and Thomas Shafer. In September 2010, Arthur Chiu and Nathan Esquenazi gemified and released this to gemcutter.
+
 Acknowledgements
 -----------------
 
