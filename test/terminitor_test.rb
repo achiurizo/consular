@@ -18,8 +18,8 @@ context "Terminitor" do
     setup { File.open(File.join(@path,'foo.yml'),"w") { |f| f.puts @template } }
     setup { File.open(File.join(@path,'bar.yml'),"w") { |f| f.puts @template } }
     setup { capture(:stdout) { Terminitor::Cli.start(['list']) } }
-    asserts_topic.matches %r{foo.yml - COMMENT OF SCRIPT HERE}
-    asserts_topic.matches %r{bar.yml - COMMENT OF SCRIPT HERE}
+    asserts_topic.matches %r{foo - COMMENT OF SCRIPT HERE}
+    asserts_topic.matches %r{bar - COMMENT OF SCRIPT HERE}
   end
 
   context "setup" do
