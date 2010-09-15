@@ -48,6 +48,10 @@ Once the project file has been declared to your satisfaction, simply execute any
 This will execute the steps and create the tabs defined and run the various options as expected. That's it. Create as many project files with as many tabs
 as you would like and automate your workflow.
 
+If you no longer need a particular project, you can easily remove the yml file for the project:
+
+    $ terminitor delete foo
+
 You can also see a full list of available projects with:
 
     $ terminitor list
@@ -67,7 +71,8 @@ which contains the ideal development setup for OSX. To generate this file, invok
     $ terminitor create
 
 This will generate a 'Termfile' in the current project directory and open the file to be edited in the default text editor. The format
-of the file is still YAML as described above in the previous section.
+of the file is still YAML as described above in the previous section. You should *note* that the project directory is automatically
+the working directory for each tab so you can just say `mate .` and the project directory containing the `Termfile` will open.
 
 Now, when you or another developer clones a project, you could simply:
 
@@ -79,6 +84,12 @@ Now, when you or another developer clones a project, you could simply:
 This would clone the project repo, and then install all dependencies and then launch the ideal development environment for the project. Clearly
 this makes assumptions about the user's system setup right now, but we have some ideas on how to make this work more effectively on
 different configurations in the future.
+
+In addition, you are in the project folder and you wish to remove the Termfile, you can invoke the command:
+
+    $ terminitor delete
+
+This will clear the `Termfile` for the particular project.
 
 Limitations
 -----------
