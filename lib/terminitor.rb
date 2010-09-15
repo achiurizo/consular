@@ -42,7 +42,7 @@ module Terminitor
     desc "open PROJECT_NAME", "open project yaml"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def open(project="")
-      path = project.empty? ? File.join(options[:root],"Termfile") : "#{ENV['HOME']}/.terminitor/#{project}.yml"
+      path =  resolve_path(project)
       template "templates/example.yml.tt", path, :skip => true
       open_in_editor(path)
     end
