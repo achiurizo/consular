@@ -54,6 +54,13 @@ module Terminitor
       invoke :open, [], :root => options[:root]
     end
     
+    desc "delete PROJECT", "delete project script"
+    method_option :root, :type => :string, :default => '.', :aliases => '-r'
+    def delete(project="")
+      path = resolve_path(project)
+      remove_file path
+    end
+    
     no_tasks do
       
       def grab_comment_for_file(file)

@@ -54,6 +54,21 @@ context "Terminitor" do
       end
     end
     
+    context "delete" do
+      
+      context "directory Termfile" do
+        setup { FileUtils.mkdir_p('/tmp/sample_project')}
+        setup { FileUtils.touch("/tmp/sample_project/Termfile") }
+        setup { capture(:stdout) { Terminitor::Cli.start(['delete',"-r=/tmp/sample_project"]) } }
+        asserts("Termfile") { File.exists?("/tmp/sample_project/Termfile") }.not!        
+      end
+      
+      context "global script" do
+        setup { FileUtils.touch("#{ENV['HOME']}/.terminitor/delete_this.yml") }
+        setup { capture(:stdout) { Terminitor::Cli.start(['delete','delete_this']) } }
+        asserts(" script") { File.exists?("#{ENV['HOME']}/.terminitor/delete_this.yml") }.not!       
+      end
+    end
     
 
   end
