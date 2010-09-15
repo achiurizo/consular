@@ -29,8 +29,9 @@ module Terminitor
 
     desc "list", "lists all terminitor scripts"
     def list
+      say "Global scripts: \n"
       Dir.glob("#{ENV['HOME']}/.terminitor/*").each do |file|
-        say "#{File.basename(file)} - #{File.read(file).first.gsub("#",'')}"
+        say "  * #{File.basename(file)} #{grab_comment_for_file(file)}"
       end
     end
 
@@ -51,6 +52,14 @@ module Terminitor
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def create
       invoke :open, [], :root => options[:root]
+    end
+    
+    no_tasks do
+      
+      def grab_comment_for_file(file)
+        first_line = File.read(file).first
+        first_line =~ /^\s*?#/ ? ("-" + first_line.gsub("#","")) : "\n"
+      end
     end
         
   end
