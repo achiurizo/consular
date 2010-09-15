@@ -16,6 +16,7 @@ module Terminitor
 
         tab = self.open_tab(terminal)
         cmds = [cmds].flatten
+        cmds.insert(0, "cd \"#{@working_dir}\" ; clear") unless @working_dir.to_s.empty?
         cmds.each do |cmd|
           terminal.windows.last.do_script(cmd, :in => tab)
         end
@@ -48,6 +49,7 @@ module Terminitor
       end
       @got_first_tab_already = true
       local_window = active_window(terminal)
+      @working_dir = Dir.pwd
       local_tabs = local_window.tabs if local_window
       local_tabs.last.get if local_tabs
     end
