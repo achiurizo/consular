@@ -34,7 +34,7 @@ context "Terminitor" do
     teardown  { `rm -rf /tmp/sample_project` }
     
     context "for project yaml" do
-      setup { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.yml") { true }.once }
+      setup { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.yml",nil) { true }.once }
       setup { capture(:stdout) { Terminitor::Cli.start(['open','test_foo_bar2']) } }
       asserts_topic.matches %r{create}
       asserts_topic.matches %r{test_foo_bar2.yml}
@@ -42,7 +42,7 @@ context "Terminitor" do
 
     context "for Termfile" do
       context "with open" do
-        setup { mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile") { true }.once }
+        setup { mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile",nil) { true }.once }
         setup { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project']) } }
         asserts_topic.matches %r{create}
         asserts_topic.matches %r{Termfile}
@@ -50,8 +50,51 @@ context "Terminitor" do
 
       context "with create" do
         setup { mock.instance_of(Terminitor::Cli).invoke(:open, [], :root => '/tmp/sample_project') { true }.once }
-        asserts('calls open') { capture(:stdout) { Terminitor::Cli.start(['create','-r=/tmp/sample_project']) } }
+        asserts('calls open') { capture(:stdout) { Terminitor::Cli.start(['create','-r=/tmp/sample_project']) }   }
       end
+      
+      context "with editors" do
+        setup { @test_runner = TestRunner.new }
+        context "using $EDITOR" do
+          setup { ENV['EDITOR'] = 'mate' }
+          setup { mock(@test_runner).system("mate /tmp/sample_project/foo.yml").returns {true}.once       }
+          asserts("calls") { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml") } }
+        end
+        
+        context "using $TERM_EDITOR" do
+          setup { ENV['TERM_EDITOR'] = 'vim'  }
+          setup { ENV['EDITOR'] = 'jack'      }
+          setup { mock(@test_runner).system("vim /tmp/sample_project/foo.yml").returns {true}.once       }
+          asserts("calls") { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml")}  }
+        end
+        
+        context "without any editor" do
+          setup { ENV['TERM_EDITOR'] = nil  }
+          setup { ENV['EDITOR'] = nil       }
+          setup { mock(@test_runner).system("open /tmp/sample_project/foo.yml").returns {true}.once       }
+          setup { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml")}  }
+          asserts_topic.matches %r{please set}
+        end
+        
+        context "with editor flag" do
+          context "open_in_editor takes flag" do
+            setup { ENV['TERM_EDITOR'] = 'vim'  }
+            setup { ENV['EDITOR'] = 'jack'      }
+            setup { mock(@test_runner).system("nano /tmp/sample_project/foo.yml").returns {true}.once          }
+            asserts("calls") { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml","nano")} }            
+          end
+          
+          context "thor accepts open -c(editor) flag" do
+            setup { FileUtils.mkdir_p('/tmp/sample_project')  }
+            setup { @path = '/tmp/sample_project/Termfile'    }
+            setup { File.open(@path,"w") { |f| f.puts @yaml } }
+            setup { mock.instance_of(Terminitor::Cli).open_in_editor(@path,'nano') { true }.once }
+            asserts("runs nano") { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project','-c=nano']) } }
+          end
+        end
+        
+      end
+      
     end
     
     context "delete" do

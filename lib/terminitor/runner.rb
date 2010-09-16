@@ -2,8 +2,10 @@ module Terminitor
   module Runner
 
     # opens doc in system designated editor
-    def open_in_editor(path)
-      `#{ENV['EDITOR']} #{path}`
+    def open_in_editor(path, editor=nil)
+      editor = editor || ENV['TERM_EDITOR'] || ENV['EDITOR']
+      say "please set $EDITOR or $TERM_EDITOR in your .bash_profile." unless editor
+      system("#{editor || 'open'} #{path}")
     end
 
     def do_project(path)

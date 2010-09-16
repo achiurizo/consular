@@ -41,11 +41,12 @@ module Terminitor
     end
 
     desc "open PROJECT_NAME", "open project yaml"
-    method_option :root, :type => :string, :default => '.', :aliases => '-r'
+    method_option :root,    :type => :string, :default => '.', :aliases => '-r'
+    method_option :editor,  :type => :string, :default => nil, :aliases => '-c'
     def open(project="")
       path =  resolve_path(project)
       template "templates/example.yml.tt", path, :skip => true
-      open_in_editor(path)
+      open_in_editor(path,options[:editor])
     end
     
     desc "generate", "create a Termfile in directory"

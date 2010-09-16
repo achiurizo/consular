@@ -27,6 +27,10 @@ end
 
 class TestRunner
   include Terminitor::Runner
+  
+  def say(caption)
+    puts caption
+  end
 end
 
 
