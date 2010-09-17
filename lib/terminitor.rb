@@ -2,6 +2,7 @@ require 'rubygems'
 require 'thor'
 require 'appscript'
 require 'yaml'
+require File.expand_path('../terminitor/termfile',__FILE__)
 require File.expand_path('../terminitor/runner',__FILE__)
 
 module Terminitor

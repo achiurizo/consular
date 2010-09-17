@@ -1,0 +1,14 @@
+# you can make as many tabs as you wish...
+# tab names are actually arbitrary at this point too.
+
+setup 'echo "setup"'
+
+window do
+  tab "echo 'first tab'", "gitx"
+  
+  tab "named tab" do
+    run "echo 'named tab'"
+  end
+end
+
+tab "ls", "mate ."

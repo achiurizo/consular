@@ -25,6 +25,33 @@ module Terminitor
       end
     end
 
+    def run_termfile(path)
+      terminal = app('Terminal')
+      termfile = load_termfile(path)
+      setups = termfile[:setup]
+      windows = termfile[:windows]
+      puts windows.inspect
+      unless windows['default'].empty?
+        default = windows.delete('default')
+        run_in_window(default, terminal)
+      end
+      windows.each_pair { |window_name, tabs| run_in_window(tabs, terminal) }
+
+    end
+
+    # this command will run commands in the designated window
+    def run_in_window(tabs, terminal)
+      self.open_window(terminal)
+      tabs.each_pair do |tab_name,commands|
+        tab = self.open_tab(terminal)
+        commands.insert(0,  "cd \"#{@working_dir}\" ; clear") unless @working_dir.to_s.empty?
+        commands.each do |cmd|
+          terminal.windows.last.do_script(cmd, :in => tab)
+        end
+      end
+
+    end
+
     def resolve_path(project)
       unless project.empty?
         File.join(ENV['HOME'],'.terminitor', "#{project.sub(/\.yml$/, '')}.yml")
@@ -35,6 +62,10 @@ module Terminitor
 
     def load_config(path)
       YAML.load(File.read(path))
+    end
+
+    def load_termfile(path)
+      Terminitor::Termfile.new(path).to_hash
     end
 
     # somewhat hacky in that it requires Terminal to exist,
@@ -56,12 +87,21 @@ module Terminitor
       local_tabs.last.get if local_tabs
     end
 
+    def open_window(terminal)
+      app("System Events").application_processes["Terminal.app"].keystroke("n", :using => :command_down)
+      local_window = active_window(terminal)
+      local_window.activate
+      local_tabs = local_window.tabs if local_window
+      local_tabs.last.get if local_tabs
+    end
+
+
     # makes sure to set active window as frontmost.
     def active_window(terminal)
-      (1..terminal.windows.count).each do |i|
+      (1..terminal.windows.count).select do |i|
         window = terminal.windows[i]
-        return window if window.properties_.get[:frontmost]
-      end
+        window && window.properties_.get[:frontmost]
+      end.first
     end
   end
 end
