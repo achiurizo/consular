@@ -117,10 +117,12 @@ Thanks to the following people for their contributions so far:
 Acknowledgements
 -----------------
 
-This code came originally years ago from: [ELCTech](http://blog.elctech.com/2008/01/16/script-terminal-with-terminit/).
-This was a great start and made terminal automation easy. However, the repository is dead, but we had continued using the code for a while.
-Finally, we decided the time had come to release this code back to the world as a gem. Thanks to ELC for creating the original
-source for this project.
+
+
+The core terminal scripting code was initially developed by [Jeff Emminger](http://workingwithrails.com/person/2412-jeff-emminger) years ago. The original introduction was made on the [ELCTech Blog](http://blog.elctech.com/2008/01/16/script-terminal-with-terminit/) and a lot of that code was adapted from [Scripting the Terminal in Leopard](http://onrails.org/articles/2007/11/28/scripting-the-leopard-terminal).
+
+This was a great start and made terminal automation easy. However, the repository died long ago, and we had continued using the code for a while.
+Finally, we decided the time had come to release this code back to the world as a gem. Thanks to ELC for creating the original source for this project.
 
 Also, we didn't take any code from [Project](http://github.com/joshnesbitt/project) by Josh but that project did inspire us to setup terminit
 as a gem. Basically, project is a great gem but there were a couple issues with the fact that the terminal doesn't save the session state in some cases.
