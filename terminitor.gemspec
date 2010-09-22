@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rb-appscript"
   s.add_dependency "thor", "~>0.14.0"
   s.add_development_dependency "bundler", "~>1.0.0"
-  s.add_development_dependency "riot", "~>0.14.0"
+  s.add_development_dependency "riot", "~>0.11.0"
   s.add_development_dependency "rr"
   s.add_development_dependency "fakefs"
   s.post_install_message = %q{********************************************************************************
