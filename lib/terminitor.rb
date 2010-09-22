@@ -65,7 +65,7 @@ module Terminitor
     no_tasks do
       
       def grab_comment_for_file(file)
-        first_line = File.read(file).first
+        first_line = File.new(file).readline.gsub(/\n$/,'')
         first_line =~ /^\s*?#/ ? ("-" + first_line.gsub("#","")) : "\n"
       end
     end
