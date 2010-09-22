@@ -30,7 +30,6 @@ module Terminitor
       termfile = load_termfile(path)
       setups = termfile[:setup]
       windows = termfile[:windows]
-      puts windows.inspect
       unless windows['default'].empty?
         default = windows.delete('default')
         run_in_window(default, terminal)

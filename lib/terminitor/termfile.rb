@@ -6,7 +6,6 @@ module Terminitor
       @setup = []
       @windows = { 'default' => {}}
       @_context = @windows['default'] 
-      puts file
       instance_eval(file)
     end
 
