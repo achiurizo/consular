@@ -30,21 +30,24 @@ module Terminitor
       termfile = load_termfile(path)
       setups = termfile[:setup]
       windows = termfile[:windows]
+      puts termfile.inspect
       unless windows['default'].empty?
         default = windows.delete('default')
-        run_in_window(default, terminal)
+        run_in_window default, terminal, :default => true
       end
-      windows.each_pair { |window_name, tabs| run_in_window(tabs, terminal) }
+      windows.each_pair { |window_name, tabs| puts "w: #{window_name}" ; run_in_window(tabs, terminal) }
 
     end
 
     # this command will run commands in the designated window
-    def run_in_window(tabs, terminal)
-      self.open_window(terminal)
+    def run_in_window(tabs, terminal, options = {})
+      self.open_window(terminal) unless options[:default]
       tabs.each_pair do |tab_name,commands|
+        puts tab_name
         tab = self.open_tab(terminal)
-        commands.insert(0,  "cd \"#{@working_dir}\" ; clear") unless @working_dir.to_s.empty?
+        commands.insert(0,  "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
         commands.each do |cmd|
+          puts "  - #{cmd}"
           terminal.windows.last.do_script(cmd, :in => tab)
         end
       end
@@ -88,6 +91,7 @@ module Terminitor
 
     def open_window(terminal)
       app("System Events").application_processes["Terminal.app"].keystroke("n", :using => :command_down)
+      sleep 2
       local_window = active_window(terminal)
       local_window.activate
       local_tabs = local_window.tabs if local_window
@@ -97,10 +101,10 @@ module Terminitor
 
     # makes sure to set active window as frontmost.
     def active_window(terminal)
-      (1..terminal.windows.count).select do |i|
+      (1..terminal.windows.count).each do |i|
         window = terminal.windows[i]
-        window && window.properties_.get[:frontmost]
-      end.first
+        return window if window && window.properties_.get[:frontmost]
+      end
     end
   end
 end

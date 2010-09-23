@@ -10,13 +10,14 @@ context "Dsl" do
     setup do
       @test_item = TestItem.new
       @test_runner = TestRunner.new
-      stub(@test_runner).open_window(anything) { true }.twice
-      stub(@test_runner).open_tab(anything) { true }.times 3
-      mock(@test_item).do_script("echo 'named tab'", anything)  { true }.once
-      mock(@test_item).do_script("echo 'first tab'" , anything) { true }.once
-      mock(@test_item).do_script('gitx', anything)    { true }.once
-      mock(@test_item).do_script('ls', anything)      { true }.once
-      mock(@test_item).do_script('mate .', anything)  { true }.once
+      stub(@test_runner).open_window(anything)                    { true }.once
+      stub(@test_runner).open_tab(anything)                       { true }.times 3
+      mock(@test_item).do_script("echo 'default'", anything)      { true }.once
+      mock(@test_item).do_script("echo 'default tab'", anything)  { true }.once
+      mock(@test_item).do_script("echo 'named tab'", anything)    { true }.once
+      mock(@test_item).do_script("echo 'first tab'" , anything)   { true }.once
+      mock(@test_item).do_script("echo 'of window'", anything)    { true }.once
+      mock(@test_item).do_script('ls', anything)                  { true }.once
       stub(@test_runner).app('Terminal') { TestObject.new(@test_item) }
     end
     setup { capture(:stdout) { Terminitor::Cli.start(['setup']) } }
@@ -26,8 +27,5 @@ context "Dsl" do
     
   end
   
-  context "description" do
-    
-  end
   
 end

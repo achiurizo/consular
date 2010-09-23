@@ -3,12 +3,14 @@
 
 setup 'echo "setup"'
 
+tab "echo 'default'", "echo 'default tab'"
+
 window do
-  tab "echo 'first tab'", "gitx"
+  tab "echo 'first tab'", "echo 'of window'"
   
   tab "named tab" do
     run "echo 'named tab'"
+    run "ls"
   end
 end
 
-tab "ls", "mate ."
