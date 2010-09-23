@@ -101,9 +101,9 @@ module Terminitor
 
     # makes sure to set active window as frontmost.
     def active_window(terminal)
-      (1..terminal.windows.count).each do |i|
+      (1..terminal.windows.count).detect do |i|
         window = terminal.windows[i]
-        return window if window && window.properties_.get[:frontmost]
+        window && window.properties_.get[:frontmost]
       end
     end
   end
