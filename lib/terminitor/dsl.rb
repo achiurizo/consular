@@ -1,5 +1,5 @@
 module Terminitor
-  class Termfile
+  class Dsl
 
     def initialize(path)
       file = File.read(path)

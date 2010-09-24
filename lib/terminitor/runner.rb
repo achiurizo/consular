@@ -64,7 +64,7 @@ module Terminitor
     end
 
     def load_termfile(path)
-      Terminitor::Termfile.new(path).to_hash
+      Terminitor::Dsl.new(path).to_hash
     end
 
     # somewhat hacky in that it requires Terminal to exist,

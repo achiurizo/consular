@@ -32,7 +32,7 @@ module Terminitor
 
     # Loads commands via the termfile and returns them as a hash
     def load_termfile(path)
-      Terminitor::Termfile.new(path).to_hash
+      Terminitor::Dsl.new(path).to_hash
     end
 
 
