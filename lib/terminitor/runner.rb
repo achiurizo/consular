@@ -33,7 +33,7 @@ module Terminitor
     def config_path(file, type = :yaml)
       return File.join(options[:root],"Termfile") if file.empty?
       dir = File.join(ENV['HOME'],'.terminitor')
-      if :yaml
+      if type == :yaml
         File.join(dir, "#{file.sub(/\.yml$/, '')}.yml")
       else
         File.join(dir, "#{file.sub(/\.term$/, '')}.term")

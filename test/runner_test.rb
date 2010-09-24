@@ -56,9 +56,23 @@ context "Runner" do
 
   end
 
-  context "resolve_path" do
+  context "config_path" do
+    context "for yaml" do
+      setup { @test_runner.config_path('test',:yaml) }
+      asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.yml')
+    end
+    
+    context "for term" do
+      setup { @test_runner.config_path('test', :term) }
+      asserts_topic.equals File.join(ENV['HOME'],'.terminitor', 'test.term')
+    end
+    
+    context "for Termfile" do
+      setup { mock(@test_runner).options { {:root => '/tmp'} } }
+      setup { @test_runner.config_path("") }
+      asserts_topic.equals "/tmp/Termfile"
+    end
     
   end
-
 
 end
