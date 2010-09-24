@@ -56,23 +56,71 @@ context "Runner" do
 
   end
 
+  context "resolve_path" do
+    context "with yaml" do
+      setup { FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.yml'))  }
+      setup { @test_runner.resolve_path('test') }
+      asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.yml')
+    end
+
+    context "with term" do
+      setup { FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.term')) }
+      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))     }
+      setup { @test_runner.resolve_path('test') }
+      asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.term')
+    end
+
+    context "with Termfile" do
+      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))   }
+      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.term'))  }
+      setup { FileUtils.touch("Termfile") }
+      setup { mock(@test_runner).options { {:root => '.'} }  }
+      setup { @test_runner.resolve_path("") }
+      asserts_topic.equals "./Termfile"
+    end
+    
+    context "with nothing" do
+      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))   }
+      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.term'))  }
+      setup { FileUtils.rm("Termfile") }
+      
+      context "with a project" do
+        setup { @test_runner.resolve_path('hey') }
+        asserts_topic.nil
+      end
+
+      context "without a project" do
+        setup { mock(@test_runner).options { {:root => '.'} }  }
+        setup { @test_runner.resolve_path("") }
+        asserts_topic.nil
+      end
+    end
+    
+  end
+
   context "config_path" do
     context "for yaml" do
       setup { @test_runner.config_path('test',:yaml) }
       asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.yml')
     end
-    
+
     context "for term" do
       setup { @test_runner.config_path('test', :term) }
       asserts_topic.equals File.join(ENV['HOME'],'.terminitor', 'test.term')
     end
-    
+
     context "for Termfile" do
       setup { mock(@test_runner).options { {:root => '/tmp'} } }
       setup { @test_runner.config_path("") }
       asserts_topic.equals "/tmp/Termfile"
     end
-    
+
+  end
+
+  context "grab_comment_for_file" do
+    setup { File.open('foo.yml','w') { |f| f.puts @yaml } }
+    setup { @test_runner.grab_comment_for_file('foo.yml') }
+    asserts_topic.matches %r{- Foo.yml}
   end
 
 end
