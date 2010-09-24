@@ -24,39 +24,3 @@ class Object
     result
   end
 end
-
-class TestRunner
-  include Terminitor::Runner
-  
-  def say(caption)
-    puts caption
-  end
-end
-
-
-class TestObject
-  attr_accessor :test_item
-  
-  def initialize(test_item)
-    @test_item = test_item
-  end
-  
-  def windows
-    [@test_item]
-  end
-end
-
-class TestItem
-  def do_script(prompt,hash)
-    true
-  end
-  
-  def get
-    true
-  end
-  
-  def keystroke(prompt,hash)
-    true
-  end
-  
-end

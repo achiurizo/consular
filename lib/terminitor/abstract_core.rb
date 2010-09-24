@@ -12,7 +12,7 @@ module Terminitor
     def process!
       term_setups = @termfile[:setup]
       term_windows = @termfile[:windows]
-      run_in_window(term_windows['default'], :default => true) unless term_windows['default'].empty?
+      run_in_window(term_windows['default'], :default => true) unless term_windows['default'].to_s.empty?
       term_windows.delete('default')
       term_windows.each_pair { |window_name, tabs| run_in_window(tabs) }
     end
@@ -31,12 +31,13 @@ module Terminitor
     end
 
     # Loads commands via the termfile and returns them as a hash
+    # if it matches legacy yaml, parse as yaml, else use new dsl
     def load_termfile(path)
-      Terminitor::Dsl.new(path).to_hash
+      File.extname(path) == '.yml' ? Terminitor::Yaml.new(path).to_hash : Terminitor::Dsl.new(path).to_hash
     end
 
 
-    ## This methods are core specific methods that need to be defined.
+    ## These methods are core specific methods that need to be defined.
     # yay.
 
     # Executes the Command

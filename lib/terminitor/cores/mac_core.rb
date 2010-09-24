@@ -1,5 +1,4 @@
 require 'appscript'
-require File.expand_path('../../abstract_core',__FILE__)
 
 module Terminitor
   # Mac OS X Core for Terminitor

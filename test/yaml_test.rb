@@ -1,5 +1,4 @@
-require File.expand_path('../teststrap',__FILE__)
-require File.expand_path('../../lib/terminitor/yaml', __FILE__)
+require File.expand_path('../teststrap', __FILE__)
 
 context "Yaml" do
   setup { @path = File.expand_path('../fixtures/foo.yml', __FILE__)}

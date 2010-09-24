@@ -1,6 +1,4 @@
 require File.expand_path('../../teststrap',__FILE__)
-require File.expand_path('../../../lib/terminitor/cores/mac_core', __FILE__)
-
 
 context "MacCore" do
   # Stub out the initialization

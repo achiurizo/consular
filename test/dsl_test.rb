@@ -1,5 +1,4 @@
-require File.expand_path('../teststrap',__FILE__)
-require File.expand_path('../../lib/terminitor/dsl', __FILE__)
+require File.expand_path('../teststrap', __FILE__)
 
 context "Dsl" do
   setup { @path = File.expand_path('../fixtures/bar.term', __FILE__)}
