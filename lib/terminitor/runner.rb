@@ -30,12 +30,11 @@ module Terminitor
       termfile = load_termfile(path)
       setups = termfile[:setup]
       windows = termfile[:windows]
-      puts termfile.inspect
       unless windows['default'].empty?
         default = windows.delete('default')
         run_in_window default, terminal, :default => true
       end
-      windows.each_pair { |window_name, tabs| puts "w: #{window_name}" ; run_in_window(tabs, terminal) }
+      windows.each_pair { |window_name, tabs| run_in_window(tabs, terminal) }
 
     end
 
@@ -43,11 +42,9 @@ module Terminitor
     def run_in_window(tabs, terminal, options = {})
       self.open_window(terminal) unless options[:default]
       tabs.each_pair do |tab_name,commands|
-        puts tab_name
         tab = self.open_tab(terminal)
         commands.insert(0,  "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
         commands.each do |cmd|
-          puts "  - #{cmd}"
           terminal.windows.last.do_script(cmd, :in => tab)
         end
       end
