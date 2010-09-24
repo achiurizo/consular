@@ -18,7 +18,7 @@ module Terminitor
     end
 
     # this command will run commands in the designated window
-    # run_in_window {:tab1 =>}
+    # run_in_window {:tab1 => ['ls','ok']}
     def run_in_window(tabs, options = {})
       open_window unless options[:default]
       tabs.each_pair do |tab_name,commands|

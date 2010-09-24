@@ -1,5 +1,4 @@
 require 'thor'
-require File.expand_path('../../terminitor',  __FILE__)
 
 module Terminitor
   class Cli < Thor
