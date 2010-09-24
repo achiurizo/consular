@@ -8,7 +8,7 @@ context "Yaml" do
   
   context "to_hash" do
     setup { @yaml.to_hash }
-    asserts_topic.equivalent_to({ :setup => nil, :windows => {'tab1' => ['cd /foo/bar','gitx'], 'tab2' => ['ls','mate .']}})
+    asserts_topic.equivalent_to({ :setup => nil, :windows => {'default' => {'tab1' => ['cd /foo/bar','gitx'], 'tab2' => ['ls','mate .']}}})
   end
   
 end
