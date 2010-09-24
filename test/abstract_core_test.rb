@@ -1,4 +1,5 @@
 require File.expand_path('../teststrap',__FILE__)
+require File.expand_path('../../lib/terminitor/abstract_core', __FILE__)
 
 context "AbstractCore" do
 
