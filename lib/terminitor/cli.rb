@@ -1,5 +1,6 @@
 require 'thor'
 require File.expand_path('../../terminitor',  __FILE__)
+
 module Terminitor
   class Cli < Thor
     include Thor::Actions
@@ -10,12 +11,11 @@ module Terminitor
     desc "start PROJECT_NAME", "runs the terminitor project"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def start(project="")
-      path = resolve_path(project)
-      if File.exists?(path)
+      if path = resolve_path(project)
         Terminitor::MacCore.new(path).process!
       else
         if project
-          say "'#{File.basename(path)}' doesn't exist! Please run 'terminitor open #{project}'"
+          say "'#{project}' doesn't exist! Please run 'terminitor open #{project.gsub(/\..*/,'')}'"
         else
           say "Termfile doesn't exist! Please run 'terminitor open' in project directory"
         end
@@ -39,7 +39,7 @@ module Terminitor
     method_option :root,    :type => :string, :default => '.', :aliases => '-r'
     method_option :editor,  :type => :string, :default => nil, :aliases => '-c'
     def open(project="")
-      path =  resolve_path(project)
+      path =  config_path(project, :yaml)
       template "templates/example.yml.tt", path, :skip => true
       open_in_editor(path,options[:editor])
     end
@@ -53,16 +53,8 @@ module Terminitor
     desc "delete PROJECT", "delete project script"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def delete(project="")
-      path = resolve_path(project)
+      path = config_path(project, :yaml)
       remove_file path
-    end
-    
-    no_tasks do
-      
-      def grab_comment_for_file(file)
-        first_line = File.readlines(file).first
-        first_line =~ /^\s*?#/ ? ("-" + first_line.gsub("#","")) : "\n"
-      end
     end
         
   end

@@ -8,100 +8,38 @@ module Terminitor
       system("#{editor || 'open'} #{path}")
     end
 
-    def do_project(path)
-      terminal = app('Terminal')
-      tabs = load_config(path)
-
-      tabs.each do |hash|
-        tabname = hash.keys.first
-        cmds = hash.values.first
-
-        tab = self.open_tab(terminal)
-        cmds = [cmds].flatten
-        cmds.insert(0, "cd \"#{@working_dir}\" ; clear") unless @working_dir.to_s.empty?
-        cmds.each do |cmd|
-          terminal.windows.last.do_script(cmd, :in => tab)
-        end
-      end
-    end
-
-    def run_termfile(path)
-      terminal = app('Terminal')
-      termfile = load_termfile(path)
-      setups = termfile[:setup]
-      windows = termfile[:windows]
-      unless windows['default'].empty?
-        default = windows.delete('default')
-        run_in_window default, terminal, :default => true
-      end
-      windows.each_pair { |window_name, tabs| run_in_window(tabs, terminal) }
-
-    end
-
-    # this command will run commands in the designated window
-    def run_in_window(tabs, terminal, options = {})
-      self.open_window(terminal) unless options[:default]
-      tabs.each_pair do |tab_name,commands|
-        tab = self.open_tab(terminal)
-        commands.insert(0,  "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
-        commands.each do |cmd|
-          terminal.windows.last.do_script(cmd, :in => tab)
-        end
-      end
-
-    end
-
+    # returns path to file
     def resolve_path(project)
       unless project.empty?
-        File.join(ENV['HOME'],'.terminitor', "#{project.sub(/\.yml$/, '')}.yml")
+        path = config_path(project, :yaml) # Give old yml path
+        return path if File.exists?(path)
+        path = config_path(project, :term) # Give new term path.
+        return path if File.exists?(path)
+        nil
       else
-        File.join(options[:root],"Termfile")
+        path = File.join(options[:root],"Termfile")
+        return path if File.exists?(path)
+        nil
       end
     end
 
-    def load_config(path)
-      YAML.load(File.read(path))
+    # returns first line of file
+    def grab_comment_for_file(file)
+      first_line = File.readlines(file).first
+      first_line =~ /^\s*?#/ ? ("-" + first_line.gsub("#","")) : "\n"
     end
 
-    def load_termfile(path)
-      Terminitor::Dsl.new(path).to_hash
-    end
-
-    # somewhat hacky in that it requires Terminal to exist,
-    # which it would if we run this script from a Terminal,
-    # but it won't work if called e.g. from cron.
-    # The latter case would just require us to open a Terminal
-    # using do_script() first with no :in target.
-    #
-    # One more hack:  if we're getting the first tab, we return
-    # the term window's only current tab, else we send a CMD+T
-    def open_tab(terminal)
-      if @got_first_tab_already
-        app("System Events").application_processes["Terminal.app"].keystroke("t", :using => :command_down)
-      end
-      @got_first_tab_already = true
-      local_window = active_window(terminal)
-      @working_dir = Dir.pwd
-      local_tabs = local_window.tabs if local_window
-      local_tabs.last.get if local_tabs
-    end
-
-    def open_window(terminal)
-      app("System Events").application_processes["Terminal.app"].keystroke("n", :using => :command_down)
-      sleep 2
-      local_window = active_window(terminal)
-      local_window.activate
-      local_tabs = local_window.tabs if local_window
-      local_tabs.last.get if local_tabs
-    end
-
-
-    # makes sure to set active window as frontmost.
-    def active_window(terminal)
-      windows = terminal.windows.get
-      windows.detect do |window|
-        window.properties_.get[:frontmost] rescue false
+    # Return file in config_path
+    def config_path(file, type = :yaml)
+      return File.join(options[:root],"Termfile") if file.empty?
+      dir = File.join(ENV['HOME'],'.terminitor')
+      if :yaml
+        File.join(dir, "#{file.sub(/\.yml$/, '')}.yml")
+      else
+        File.join(dir, "#{file.sub(/\.term$/, '')}.term")
       end
     end
+
+
   end
 end

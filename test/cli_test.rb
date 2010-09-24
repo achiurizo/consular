@@ -85,8 +85,8 @@ context "Terminitor" do
 
   context "start" do
 
+    # TODO no longer support yaml syntax
     context "for Termfile" do
-      asserts "will no longer support yaml syntax"
       # setup { FileUtils.mkdir_p('/tmp/sample_project') }
       # setup { @path = '/tmp/sample_project/Termfile' }
       # setup { File.open(@path,"w") { |f| f.puts @yaml } }
@@ -96,7 +96,7 @@ context "Terminitor" do
 
     context "with invalid project" do
       setup { capture(:stdout) { Terminitor::Cli.start(['start','nonono']) } }
-      asserts_topic.matches %r{'nonono.yml' doesn't exist! Please run 'terminitor open nonono'}
+      asserts_topic.matches %r{'nonono' doesn't exist! Please run 'terminitor open nonono'}
     end
 
   end

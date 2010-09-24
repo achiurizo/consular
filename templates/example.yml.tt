@@ -1,0 +1,16 @@
+# COMMENT OF SCRIPT HERE
+# you can make as many tabs as you wish...
+# tab names are actually arbitrary at this point too.
+---
+- tab1:
+  - cd ~/foo/bar
+  - gitx
+- tab2:
+  - mysql -u root
+  - use test;
+  - show tables;
+- tab3: echo "hello world"
+- tab4: cd ~/baz/ && git pull
+- tab5:
+  - cd ~/foo/project
+  - autotest
