@@ -17,7 +17,6 @@ class TestItem
   def keystroke(prompt,hash); true; end
 end
 
-
 context "Runner" do
   setup     { @yaml = File.read(File.expand_path('../fixtures/foo.yml', __FILE__)) }
   setup     { @template = File.read(File.expand_path('../../lib/templates/example.yml.tt', __FILE__)) }
@@ -57,6 +56,8 @@ context "Runner" do
   end
 
   context "resolve_path" do
+    setup { FileUtils.mkdir_p(File.join(ENV['HOME'],'.terminitor')) }
+    
     context "with yaml" do
       setup { FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.yml'))  }
       setup { @test_runner.resolve_path('test') }
