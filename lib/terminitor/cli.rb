@@ -40,19 +40,27 @@ module Terminitor
       empty_directory "#{ENV['HOME']}/.terminitor"
     end
 
-    desc "open PROJECT_NAME", "open project yaml"
+    desc "edit PROJECT_NAME", "open project yaml"
     method_option :root,    :type => :string, :default => '.', :aliases => '-r'
     method_option :editor,  :type => :string, :default => nil, :aliases => '-c'
-    def open(project="")
+    def edit(project="")
       path =  config_path(project, :yaml)
       template "templates/example.yml.tt", path, :skip => true
       open_in_editor(path,options[:editor])
     end
     
+    desc "open PROJECT_NAME", "this is deprecated. please use 'edit' instead"
+    method_option :root,    :type => :string, :default => '.', :aliases => '-r'
+    def open(project="")
+      say "'open' is now deprecated. Please use 'edit' instead"
+      invoke :edit, [project],:root => options[:root]
+    end
+    
+    
     desc "generate", "create a Termfile in directory"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def create
-      invoke :open, [], :root => options[:root]
+      invoke :edit, [], :root => options[:root]
     end
     
     desc "delete PROJECT", "delete project script"

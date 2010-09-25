@@ -10,7 +10,7 @@ context "Terminitor" do
     setup { capture(:stdout) { Terminitor::Cli.start(['-h']) } }
     asserts_topic.matches   %r{start PROJECT_NAME}
     asserts_topic.matches   %r{setup}
-    asserts_topic.matches   %r{open PROJECT_NAME}
+    asserts_topic.matches   %r{edit PROJECT_NAME}
   end
 
   context "list" do
@@ -27,7 +27,7 @@ context "Terminitor" do
     asserts("creates .terminitor") { File.exists?("#{ENV['HOME']}/.terminitor") }
   end
 
-  context "open" do
+  context "edit" do
     setup     { FakeFS.deactivate! }
     setup     { `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.yml`}
 
@@ -35,21 +35,21 @@ context "Terminitor" do
 
     context "for project yaml" do
       setup { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.yml",nil) { true }.once }
-      setup { capture(:stdout) { Terminitor::Cli.start(['open','test_foo_bar2']) } }
+      setup { capture(:stdout) { Terminitor::Cli.start(['edit','test_foo_bar2']) } }
       asserts_topic.matches %r{create}
       asserts_topic.matches %r{test_foo_bar2.yml}
     end
 
     context "for Termfile" do
-      context "with open" do
+      context "with edit" do
         setup { mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile",nil) { true }.once }
-        setup { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project']) } }
+        setup { capture(:stdout) { Terminitor::Cli.start(['edit','-r=/tmp/sample_project']) } }
         asserts_topic.matches %r{create}
         asserts_topic.matches %r{Termfile}
       end
 
       context "with create" do
-        setup { mock.instance_of(Terminitor::Cli).invoke(:open, [], :root => '/tmp/sample_project') { true }.once }
+        setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [], :root => '/tmp/sample_project') { true }.once }
         asserts('calls open') { capture(:stdout) { Terminitor::Cli.start(['create','-r=/tmp/sample_project']) }   }
       end
 
@@ -59,9 +59,15 @@ context "Terminitor" do
         setup { @path = '/tmp/sample_project/Termfile'    }
         setup { File.open(@path,"w") { |f| f.puts @yaml } }
         setup { mock.instance_of(Terminitor::Cli).open_in_editor(@path,'nano') { true }.once }
-        asserts("runs nano") { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project','-c=nano']) } }
+        asserts("runs nano") { capture(:stdout) { Terminitor::Cli.start(['edit','-r=/tmp/sample_project','-c=nano']) } }
       end
 
+    end
+
+    context "open" do
+      setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [""], :root => '/tmp/sample_project') { true }.once }
+      setup { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project']) } }
+      asserts_topic.matches %r{'open' is now deprecated. Please use 'edit' instead}
     end
 
     context "delete" do
