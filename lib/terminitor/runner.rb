@@ -11,7 +11,7 @@ module Terminitor
     # returns path to file
     def resolve_path(project)
       unless project.empty?
-        path = config_path(project, :yaml) # Give old yml path
+        path = config_path(project, :yml) # Give old yml path
         return path if File.exists?(path)
         path = config_path(project, :term) # Give new term path.
         return path if File.exists?(path)
@@ -30,10 +30,10 @@ module Terminitor
     end
 
     # Return file in config_path
-    def config_path(file, type = :yaml)
+    def config_path(file, type = :yml)
       return File.join(options[:root],"Termfile") if file.empty?
       dir = File.join(ENV['HOME'],'.terminitor')
-      if type == :yaml
+      if type == :yml
         File.join(dir, "#{file.sub(/\.yml$/, '')}.yml")
       else
         File.join(dir, "#{file.sub(/\.term$/, '')}.term")

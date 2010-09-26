@@ -101,7 +101,7 @@ context "Runner" do
 
   context "config_path" do
     context "for yaml" do
-      setup { @test_runner.config_path('test',:yaml) }
+      setup { @test_runner.config_path('test',:yml) }
       asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.yml')
     end
 
