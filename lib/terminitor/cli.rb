@@ -41,11 +41,13 @@ module Terminitor
     end
 
     desc "edit PROJECT_NAME", "open project yaml"
-    method_option :root,    :type => :string, :default => '.', :aliases => '-r'
-    method_option :editor,  :type => :string, :default => nil, :aliases => '-c'
+    method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
+    method_option :editor,  :type => :string, :default => nil,    :aliases => '-c'
+    method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
     def edit(project="")
-      path =  config_path(project, :yaml)
-      template "templates/example.yml.tt", path, :skip => true
+      syntax = project.empty? ? 'term' : options[:syntax] # force Termfile to use term syntax
+      path =  config_path(project, syntax.to_sym)
+      template "templates/example.#{syntax}.tt", path, :skip => true
       open_in_editor(path,options[:editor])
     end
     
@@ -64,9 +66,10 @@ module Terminitor
     end
     
     desc "delete PROJECT", "delete project script"
-    method_option :root, :type => :string, :default => '.', :aliases => '-r'
+    method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
+    method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
     def delete(project="")
-      path = config_path(project, :yaml)
+      path = config_path(project, options[:syntax].to_sym)
       remove_file path
     end
         

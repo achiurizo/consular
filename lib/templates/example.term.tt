@@ -1,0 +1,17 @@
+# COMMENT OF SCRIPT HERE
+# you can make as many tabs as you wish...
+# tab names are actually arbitrary at this point too.
+
+setup 'echo "setup"'
+
+tab "echo 'default'", "echo 'default tab'"
+
+window do
+  tab "echo 'first tab'", "echo 'of window'"
+  
+  tab "named tab" do
+    run "echo 'named tab'"
+    run "ls"
+  end
+end
+
