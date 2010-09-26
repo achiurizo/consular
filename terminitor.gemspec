@@ -14,7 +14,9 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "terminitor"
 
-  s.add_dependency "rb-appscript"
+  if RUBY_PLATFORM.include? "darwin"
+    s.add_dependency "rb-appscript"
+  end
   s.add_dependency "thor", "~>0.14.0"
   s.add_development_dependency "bundler", "~>1.0.0"
   s.add_development_dependency "riot", "~>0.11.0"
