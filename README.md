@@ -113,6 +113,7 @@ Contributors
 Thanks to the following people for their contributions so far:
 
  * Pat George ([pcg79](http://github.com/pcg79)) for contributing a patch for when a project is not found.
+ * Flavio Castelli ([flavio](http://github.com/flavio)) for contributing Konsole(KDE) core.
 
 Acknowledgements
 -----------------
