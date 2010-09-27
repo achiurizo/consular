@@ -2,6 +2,7 @@ module Terminitor
   module Runner
 
     # Executes the appropriate platform core, else say you don't got it.
+    # execute_core RUBY_PLATFORM
     def execute_core(platform)
       core = case platform.downcase
       when %r{darwin} then Terminitor::MacCore
@@ -11,6 +12,7 @@ module Terminitor
     end
 
     # opens doc in system designated editor
+    # open_in_editor '/path/to', 'nano'
     def open_in_editor(path, editor=nil)
       editor = editor || ENV['TERM_EDITOR'] || ENV['EDITOR']
       say "please set $EDITOR or $TERM_EDITOR in your .bash_profile." unless editor
@@ -18,6 +20,7 @@ module Terminitor
     end
 
     # returns path to file
+    # resolve_path 'my_project'
     def resolve_path(project)
       unless project.empty?
         path = config_path(project, :yml) # Give old yml path
@@ -33,12 +36,14 @@ module Terminitor
     end
 
     # returns first line of file
+    # grab_comment_for_file '/path/to'
     def grab_comment_for_file(file)
       first_line = File.readlines(file).first
       first_line =~ /^\s*?#/ ? ("-" + first_line.gsub("#","")) : "\n"
     end
 
     # Return file in config_path
+    # config_path '/path/to', :term
     def config_path(file, type = :yml)
       return File.join(options[:root],"Termfile") if file.empty?
       dir = File.join(ENV['HOME'],'.terminitor')
