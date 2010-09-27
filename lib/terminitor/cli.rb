@@ -11,13 +11,8 @@ module Terminitor
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def start(project="")
       if path = resolve_path(project)
-        if RUBY_PLATFORM.downcase.include?("darwin")
-          Terminitor::MacCore.new(path).process!
-        elsif RUBY_PLATFORM.downcase.include?("linux")
-          Terminitor::KonsoleCore.new(path).process!
-        else
-          say "No suitable terminal for your OS"
-        end
+        core = execute_core(RUBY_PLATFORM)
+        core ? core.new(path).process! : say("No suitable core found!")
       else
         if project
           say "'#{project}' doesn't exist! Please run 'terminitor open #{project.gsub(/\..*/,'')}'"

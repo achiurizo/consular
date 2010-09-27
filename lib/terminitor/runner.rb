@@ -1,6 +1,15 @@
 module Terminitor
   module Runner
 
+    # Executes the appropriate platform core, else say you don't got it.
+    def execute_core(platform)
+      core = case platform.downcase
+      when %r{darwin} then Terminitor::MacCore
+      when %r{linux}  then Terminitor::KonsoleCore # TODO check for gnome and others
+      else nil
+      end
+    end
+
     # opens doc in system designated editor
     def open_in_editor(path, editor=nil)
       editor = editor || ENV['TERM_EDITOR'] || ENV['EDITOR']

@@ -1,5 +1,3 @@
-require 'dbus'
-
 module Terminitor
   # KDE Konsole Core for Terminitor
   # This Core manages all the interaction with Konsole's dbus interface 

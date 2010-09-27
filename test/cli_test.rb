@@ -105,6 +105,13 @@ context "Terminitor" do
 
   context "start" do
 
+    context "with no core returned" do
+      setup { mock.instance_of(Terminitor::Cli).execute_core(anything) { nil } }
+      setup { FileUtils.touch("#{ENV['HOME']}/.terminitor/delete_this.term") }
+      setup { capture(:stdout) { Terminitor::Cli.start(['start', 'delete_this']) } }
+      asserts_topic.matches %r{No suitable core found!}
+    end
+
     context "with invalid project" do
       setup { capture(:stdout) { Terminitor::Cli.start(['start','nonono']) } }
       asserts_topic.matches %r{'nonono' doesn't exist! Please run 'terminitor open nonono'}

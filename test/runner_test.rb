@@ -24,6 +24,21 @@ context "Runner" do
   setup     { FakeFS.activate! }
   teardown  { FakeFS.deactivate! }
 
+
+  context "execute_core" do
+    context "for Darwin" do
+      setup { @test_runner.execute_core('darwin') }
+      asserts_topic.equals Terminitor::MacCore
+    end
+
+    if platform?('linux') # TODO Gotta be a better way.
+      context "for KDE" do
+        setup { @test_runner.execute_core('linux') }
+        asserts_topic.equals Terminitor::KonsoleCore
+      end
+    end
+  end
+
   context "open_in_editor" do
     context "using $EDITOR" do
       setup { ENV['EDITOR'] = 'mate' }
@@ -57,7 +72,7 @@ context "Runner" do
 
   context "resolve_path" do
     setup { FileUtils.mkdir_p(File.join(ENV['HOME'],'.terminitor')) }
-    
+
     context "with yaml" do
       setup { FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.yml'))  }
       setup { @test_runner.resolve_path('test') }
@@ -79,12 +94,12 @@ context "Runner" do
       setup { @test_runner.resolve_path("") }
       asserts_topic.equals "./Termfile"
     end
-    
+
     context "with nothing" do
       setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))   }
       setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.term'))  }
       setup { FileUtils.rm("Termfile") }
-      
+
       context "with a project" do
         setup { @test_runner.resolve_path('hey') }
         asserts_topic.nil
@@ -96,7 +111,7 @@ context "Runner" do
         asserts_topic.nil
       end
     end
-    
+
   end
 
   context "config_path" do

@@ -1,5 +1,3 @@
-require 'appscript'
-
 module Terminitor
   # Mac OS X Core for Terminitor
   # This Core manages all the interaction with Appscript and the Terminal
