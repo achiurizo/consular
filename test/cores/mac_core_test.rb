@@ -1,6 +1,6 @@
 require File.expand_path('../../teststrap',__FILE__)
 
-if RUBY_PLATFORM.downcase.include?("darwin")
+if platform?("darwin") # Only run test if it's darwin
   context "MacCore" do
     # Stub out the initialization
     setup do

@@ -11,6 +11,11 @@ end
 class Riot::Context
 end
 
+# Checks to see if Ruby Platform matches designated platform
+def platform?(platform)
+  RUBY_PLATFORM.downcase.include?(platform)
+end
+
 class Object
   def capture(stream)
     begin
