@@ -10,7 +10,7 @@ context "Terminitor" do
   context "help" do
     setup { capture(:stdout) { Terminitor::Cli.start(['-h']) } }
     asserts_topic.matches   %r{start PROJECT_NAME}
-    asserts_topic.matches   %r{setup}
+    asserts_topic.matches   %r{init}
     asserts_topic.matches   %r{edit PROJECT_NAME}
   end
 
@@ -23,8 +23,8 @@ context "Terminitor" do
     asserts_topic.matches %r{bar - COMMENT OF SCRIPT HERE}
   end
 
-  context "setup" do
-    setup { capture(:stdout) { Terminitor::Cli.start(['setup']) } }
+  context "init" do
+    setup { capture(:stdout) { Terminitor::Cli.start(['init']) } }
     asserts("creates .terminitor") { File.exists?("#{ENV['HOME']}/.terminitor") }
   end
 

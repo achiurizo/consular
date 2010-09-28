@@ -30,8 +30,8 @@ module Terminitor
       end
     end
 
-    desc "setup", "create initial root terminitor folder"
-    def setup
+    desc "init", "create initial root terminitor folder"
+    def init
       empty_directory "#{ENV['HOME']}/.terminitor"
     end
 
