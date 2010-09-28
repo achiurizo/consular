@@ -8,9 +8,13 @@ module Terminitor
       @termfile = load_termfile(path)
     end
 
+    # Run the setup block in Termfile
+    def setup!
+      @termfile[:setup].each { |cmd| execute_command(cmd) }
+    end
+
     # Executes the Termfile
     def process!
-      term_setups = @termfile[:setup]
       term_windows = @termfile[:windows]
       run_in_window(term_windows['default'], :default => true) unless term_windows['default'].to_s.empty?
       term_windows.delete('default')
