@@ -18,22 +18,34 @@ module Terminitor
     # Executes the Termfile
     def process!
       term_windows = @termfile[:windows]
-      run_in_window(term_windows['default'], :default => true) unless term_windows['default'].to_s.empty?
+      run_in_window('default', term_windows['default'], :default => true) unless term_windows['default'].to_s.empty?
       term_windows.delete('default')
-      term_windows.each_pair { |window_name, tabs| run_in_window(tabs) }
+      term_windows.each_pair { |window_name, window_content| run_in_window(window_name, window_content) }
     end
 
     # this command will run commands in the designated window
-    # run_in_window {:tab1 => ['ls','ok']}
-    def run_in_window(tabs, options = {})
-      open_window unless options[:default]
-      tabs.each_pair do |tab_name,commands|
-        tab = open_tab
-        commands.insert(0,  "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
-        commands.each do |cmd|
+    # run_in_window 'window1', {:tab1 => ['ls','ok']}
+    def run_in_window(window_name, window_content, options = {})
+      window_options = window_content[:options]      
+      first_tab = true
+      window_content[:tabs].each_pair do |tab_name, tab_content|
+        # Open window on first 'tab' statement
+        # first tab is already opened in the new window, so first tab should be
+        # opened as a new tab in default window only
+        tab_options = tab_content[:options]
+        if first_tab && !options[:default]
+          first_tab = false 
+          window_options = Hash[window_options.to_a + tab_options.to_a] # safe merge
+          tab = window_options.empty? ? open_window(nil) : open_window(window_options)
+        else
+          tab = open_tab(tab_options)
+        end
+        tab_content[:commands].insert(0,  "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
+        tab_content[:commands].each do |cmd|
           execute_command(cmd, :in => tab)
         end
       end
+      set_delayed_options
     end
 
     # Loads commands via the termfile and returns them as a hash
@@ -52,7 +64,7 @@ module Terminitor
     end
 
     # Opens a new tab and returns itself.
-    def open_tab
+    def open_tab(options = nil)
       @working_dir = Dir.pwd # pass in current directory.
     end
 
@@ -61,7 +73,13 @@ module Terminitor
     end
 
     # Opens a new window and returns the tab object.
-    def open_window
+    def open_window(options = nil)
+      @working_dir = Dir.pwd # pass in current directory.      
+    end
+    
+    # For options which should be set after all tabs have been opened
+    def set_delayed_options
+      @working_dir = Dir.pwd # not nil
     end
 
   end

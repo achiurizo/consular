@@ -38,6 +38,13 @@ context "Runner" do
       end
     end
   end
+  
+  context "capture_core" do 
+    context "for Darwin" do
+      setup { @test_runner.capture_core('darwin') }
+      asserts_topic.equals Terminitor::MacCapture
+    end
+  end
 
   context "open_in_editor" do
     context "using $EDITOR" do

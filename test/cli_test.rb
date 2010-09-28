@@ -67,6 +67,32 @@ context "Terminitor" do
       setup { mock.instance_of(Terminitor::Cli).open_in_editor('/tmp/sample_project/Termfile','nano') { true }.once }
       asserts("runs nano") { capture(:stdout) { Terminitor::Cli.start(['edit','-r=/tmp/sample_project','-c=nano']) } }
     end
+    
+    context "for capture flag" do 
+      context "for yaml" do 
+        setup { capture(:stdout) { Terminitor::Cli.start(['edit','foobar', '-s=yml', '--capture']) } }
+        asserts_topic.matches %r{Terminal settings can be captured only to DSL format.}
+      end
+      
+      context "for term" do 
+        context "with no core returned" do
+          setup { mock.instance_of(Terminitor::Cli).capture_core(anything) { nil } }
+          setup { FileUtils.touch("#{ENV['HOME']}/.terminitor/delete_this.term") }
+          setup { capture(:stdout) { Terminitor::Cli.start(['edit', 'test_foo_bar2', '--capture']) } }
+          asserts_topic.matches %r{No suitable core found!}
+        end
+
+        context "for known core" do
+          setup do 
+            core = Object.new
+            mock.instance_of(Terminitor::Cli).capture_core(anything) { core }  
+            stub(core).new.stub!.capture_settings { "settings"}
+            mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.term",nil) { true }            
+          end
+          asserts("ok") { Terminitor::Cli.start(['edit','test_foo_bar2', '--capture']) } 
+        end
+      end
+    end
 
   end
 
