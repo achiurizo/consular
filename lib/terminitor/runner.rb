@@ -77,5 +77,15 @@ module Terminitor
       end
     end
 
+    # This will clone a repo in the current directory.
+    # It will first try to clone via ssh(read/write),
+    # if not fall back to git-read only, else, fail.
+    def clone_repo(username, project)
+      github = `which github`
+      return false if github.empty?
+      command = "github #{username} #{project}"
+      system(command + " --ssh") || system(command)
+    end
+
   end
 end

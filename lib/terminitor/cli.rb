@@ -56,7 +56,7 @@ module Terminitor
       invoke :edit, [], options
     end
     
-    desc "delete PROJECT", "delete project script"
+    desc "delete PROJECT_NAME", "delete project script"
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
     def delete(project="")
