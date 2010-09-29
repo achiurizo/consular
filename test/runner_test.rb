@@ -25,15 +25,15 @@ context "Runner" do
   teardown  { FakeFS.deactivate! }
 
 
-  context "execute_core" do
+  context "find_core" do
     context "for Darwin" do
-      setup { @test_runner.execute_core('darwin') }
+      setup { @test_runner.find_core('darwin') }
       asserts_topic.equals Terminitor::MacCore
     end
 
     if platform?('linux') # TODO Gotta be a better way.
       context "for KDE" do
-        setup { @test_runner.execute_core('linux') }
+        setup { @test_runner.find_core('linux') }
         asserts_topic.equals Terminitor::KonsoleCore
       end
     end
@@ -138,5 +138,59 @@ context "Runner" do
     setup { @test_runner.grab_comment_for_file('foo.yml') }
     asserts_topic.matches %r{- Foo.yml}
   end
+
+  context "return_error_message" do
+    context "with project" do
+      setup { mock(@test_runner).say(%r{'hi' doesn't exist}) { true } }
+      asserts("that it says") { @test_runner.return_error_message('hi') }
+    end
+    context "without project" do
+      setup { mock(@test_runner).say(%r{Termfile}) { true } }
+      asserts("that is says") { @test_runner.return_error_message('') }
+    end
+  end
+
+  context "execute_core" do
+
+    context "with no found path" do
+      setup { mock(@test_runner).resolve_path('project') { nil } }
+      setup { mock(@test_runner).return_error_message('project') { true } }
+      asserts("shows error message") { @test_runner.execute_core(:process!,'project') }
+    end
+
+    context "with no found core" do
+      setup { mock(@test_runner).resolve_path('project') { true }  }
+      setup { mock(@test_runner).find_core(anything)     { nil  }  }
+      setup { mock(@test_runner).say(/No suitable/)      { true }  }
+      asserts("shows message") { @test_runner.execute_core(:process!,'project') }
+    end
+
+    context "with found core" do
+      context "#process!" do
+        setup { mock(@test_runner).resolve_path('project') { '/path/to' } }
+        setup do
+          any_instance_of(Terminitor::AbstractCore) do |core|
+            stub(core).load_termfile('/path/to')  { true }
+            stub(core).process! { true }
+          end
+          mock(@test_runner).find_core(anything) { Terminitor::AbstractCore }
+        end
+        asserts("calls process!") { @test_runner.execute_core(:process!, 'project') }
+      end
+
+      context "#setup!" do
+        setup { mock(@test_runner).resolve_path('project') { '/path/to' } }
+        setup do
+          any_instance_of(Terminitor::AbstractCore) do |core|
+            stub(core).load_termfile('/path/to')  { true }
+            stub(core).setup! { true }
+          end
+          mock(@test_runner).find_core(anything) { Terminitor::AbstractCore }
+        end
+        asserts("calls process!") { @test_runner.execute_core(:setup!, 'project') }
+      end
+    end
+  end
+
 
 end

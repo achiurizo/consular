@@ -8,18 +8,13 @@ module Terminitor
     def self.source_root; File.expand_path('../../',__FILE__); end
 
     desc "start PROJECT_NAME", "runs the terminitor project"
-    method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def start(project="")
-      if path = resolve_path(project)
-        core = execute_core(RUBY_PLATFORM)
-        core ? core.new(path).process! : say("No suitable core found!")
-      else
-        if project
-          say "'#{project}' doesn't exist! Please run 'terminitor open #{project.gsub(/\..*/,'')}'"
-        else
-          say "Termfile doesn't exist! Please run 'terminitor open' in project directory"
-        end
-      end
+      execute_core :process!, project
+    end
+
+    desc "setup PROJECT_NAME", "execute setup in the terminitor project"
+    def setup(project="")
+      execute_core :setup!, project
     end
 
     desc "list", "lists all terminitor scripts"
@@ -48,16 +43,17 @@ module Terminitor
     
     desc "open PROJECT_NAME", "this is deprecated. please use 'edit' instead"
     method_option :root,    :type => :string, :default => '.', :aliases => '-r'
+    method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
     def open(project="")
       say "'open' is now deprecated. Please use 'edit' instead"
-      invoke :edit, [project],:root => options[:root]
+      invoke :edit, [project], options
     end
     
     
     desc "generate", "create a Termfile in directory"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def create
-      invoke :edit, [], :root => options[:root]
+      invoke :edit, [], options
     end
     
     desc "delete PROJECT", "delete project script"

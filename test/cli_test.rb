@@ -71,13 +71,13 @@ context "Terminitor" do
   end
 
   context "create" do
-    setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [], :root => '/tmp/sample_project') { true }.once }
+    setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [], 'root' => '/tmp/sample_project') { true }.once }
     asserts('calls open') { capture(:stdout) { Terminitor::Cli.start(['create','-r=/tmp/sample_project']) }   }
   end
 
 
   context "open" do
-    setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [""], :root => '/tmp/sample_project') { true }.once }
+    setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [""], {'syntax' => 'term', 'root' => '/tmp/sample_project'}) { true }.once }
     setup { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project']) } }
     asserts_topic.matches %r{'open' is now deprecated. Please use 'edit' instead}
   end
@@ -99,23 +99,18 @@ context "Terminitor" do
     context "for term" do
       setup { FileUtils.touch("#{ENV['HOME']}/.terminitor/delete_this.term") }
       setup { capture(:stdout) { Terminitor::Cli.start(['delete','delete_this']) } }
-      asserts(" script") { File.exists?("#{ENV['HOME']}/.terminitor/delete_this.term") }.not!
+      asserts("script") { File.exists?("#{ENV['HOME']}/.terminitor/delete_this.term") }.not!
     end
   end
 
+  context "setup" do
+    setup { mock.instance_of(Terminitor::Cli).execute_core(:setup!,'project') {true } }
+    asserts("calls execute_core") { Terminitor::Cli.start(['setup','project']) }
+  end
+
+
   context "start" do
-
-    context "with no core returned" do
-      setup { mock.instance_of(Terminitor::Cli).execute_core(anything) { nil } }
-      setup { FileUtils.touch("#{ENV['HOME']}/.terminitor/delete_this.term") }
-      setup { capture(:stdout) { Terminitor::Cli.start(['start', 'delete_this']) } }
-      asserts_topic.matches %r{No suitable core found!}
-    end
-
-    context "with invalid project" do
-      setup { capture(:stdout) { Terminitor::Cli.start(['start','nonono']) } }
-      asserts_topic.matches %r{'nonono' doesn't exist! Please run 'terminitor open nonono'}
-    end
-
+    setup { mock.instance_of(Terminitor::Cli).execute_core(:process!,'project') {true } }
+    asserts("calls execute_core") { Terminitor::Cli.start(['start','project']) }
   end
 end

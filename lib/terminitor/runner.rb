@@ -1,9 +1,10 @@
 module Terminitor
+  # This module contains all the helper methods for the Cli component.
   module Runner
 
-    # Executes the appropriate platform core, else say you don't got it.
-    # execute_core RUBY_PLATFORM
-    def execute_core(platform)
+    # Finds the appropriate platform core, else say you don't got it.
+    # find_core RUBY_PLATFORM
+    def find_core(platform)
       core = case platform.downcase
       when %r{darwin} then Terminitor::MacCore
       when %r{linux}  then Terminitor::KonsoleCore # TODO check for gnome and others
@@ -11,6 +12,18 @@ module Terminitor
       end
     end
 
+    # Execute the core with the given method.
+    # execute_core :process!, 'project'
+    # execute_core :setup!, 'my_project'
+    def execute_core(method, project)
+      if path = resolve_path(project)
+        core = find_core(RUBY_PLATFORM)
+        core ? core.new(path).send(method) : say("No suitable core found!")
+      else
+        return_error_message(project)
+      end
+    end
+    
     # opens doc in system designated editor
     # open_in_editor '/path/to', 'nano'
     def open_in_editor(path, editor=nil)
@@ -54,6 +67,15 @@ module Terminitor
       end
     end
 
+    # Returns error message depending if project is specified
+    # return_error_message 'hi
+    def return_error_message(project)
+      unless project.empty?
+        say "'#{project}' doesn't exist! Please run 'terminitor open #{project.gsub(/\..*/,'')}'"
+      else
+        say "Termfile doesn't exist! Please run 'terminitor open' in project directory"
+      end
+    end
 
   end
 end
