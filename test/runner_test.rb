@@ -196,13 +196,13 @@ context "Runner" do
     context "with github" do
       setup { stub(@test_runner).__double_definition_create__.call(:`,'which github') { "github" } }
       context "with read/write priv" do
-        setup { mock(@test_runner).system("github achiu terminitor --ssh") { true } }
+        setup { mock(@test_runner).system("github clone achiu terminitor --ssh") { true } }
         asserts("invokes ssh") { @test_runner.clone_repo('achiu','terminitor') }
       end
 
       context "with read only" do
-        setup { mock(@test_runner).system("github achiu terminitor --ssh") { false } }
-        setup { mock(@test_runner).system("github achiu terminitor") { true } }
+        setup { mock(@test_runner).system("github clone achiu terminitor --ssh") { false } }
+        setup { mock(@test_runner).system("github clone achiu terminitor") { true } }
         asserts("invokes git://") { @test_runner.clone_repo('achiu', 'terminitor') }
       end
     end

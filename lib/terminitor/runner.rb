@@ -83,7 +83,7 @@ module Terminitor
     def clone_repo(username, project)
       github = `which github`
       return false if github.empty?
-      command = "github #{username} #{project}"
+      command = "github clone #{username} #{project}"
       system(command + " --ssh") || system(command)
     end
 
