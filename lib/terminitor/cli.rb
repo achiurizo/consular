@@ -8,13 +8,22 @@ module Terminitor
     def self.source_root; File.expand_path('../../',__FILE__); end
 
     desc "start PROJECT_NAME", "runs the terminitor project"
+    method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     def start(project="")
       execute_core :process!, project
     end
 
     desc "setup PROJECT_NAME", "execute setup in the terminitor project"
+    method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     def setup(project="")
       execute_core :setup!, project
+    end
+
+    desc "fetch USERNAME PROJECT_NAME", "clone the designated repo and run setup"
+    method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
+    method_option :setup, :type => :boolean, :default => true
+    def fetch(username, project)
+      fetch_repo username, project, options
     end
 
     desc "list", "lists all terminitor scripts"
@@ -40,7 +49,7 @@ module Terminitor
       template "templates/example.#{syntax}.tt", path, :skip => true
       open_in_editor(path,options[:editor])
     end
-    
+
     desc "open PROJECT_NAME", "this is deprecated. please use 'edit' instead"
     method_option :root,    :type => :string, :default => '.', :aliases => '-r'
     method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
@@ -48,14 +57,14 @@ module Terminitor
       say "'open' is now deprecated. Please use 'edit' instead"
       invoke :edit, [project], options
     end
-    
-    
+
+
     desc "generate", "create a Termfile in directory"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def create
       invoke :edit, [], options
     end
-    
+
     desc "delete PROJECT_NAME", "delete project script"
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
@@ -63,6 +72,6 @@ module Terminitor
       path = config_path(project, options[:syntax].to_sym)
       remove_file path
     end
-        
+
   end
 end

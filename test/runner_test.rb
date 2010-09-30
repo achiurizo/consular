@@ -206,8 +206,29 @@ context "Runner" do
         asserts("invokes git://") { @test_runner.clone_repo('achiu', 'terminitor') }
       end
     end
+  end
 
+  context "fetch_repo" do
+    context "with setup" do
+      setup { mock(@test_runner).clone_repo('achiu','terminitor') { true } }
+      setup { mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true } }
+      setup { mock(@test_runner).invoke(:setup, []) { true } }
+      asserts("invokes setup") { @test_runner.fetch_repo('achiu','terminitor', :setup => true) }
+    end
+
+    context "without setup" do
+      setup { mock(@test_runner).clone_repo('achiu','terminitor') { true } }
+      setup { mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true } }
+      asserts("invokes setup") { @test_runner.fetch_repo('achiu','terminitor') }.nil
+    end
+
+    context "failed on repo" do
+      setup { mock(@test_runner).clone_repo('achiu','terminitor') { false } }
+      setup { mock(@test_runner).say("could not fetch repo!") { true } }
+      asserts("invokes say") { @test_runner.fetch_repo('achiu', 'terminitor') }
+    end
 
   end
+
 
 end

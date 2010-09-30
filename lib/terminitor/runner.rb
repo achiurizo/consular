@@ -23,7 +23,7 @@ module Terminitor
         return_error_message(project)
       end
     end
-    
+
     # opens doc in system designated editor
     # open_in_editor '/path/to', 'nano'
     def open_in_editor(path, editor=nil)
@@ -85,6 +85,18 @@ module Terminitor
       return false if github.empty?
       command = "github clone #{username} #{project}"
       system(command + " --ssh") || system(command)
+    end
+
+    # Fetch the git repo and run the setup block
+    # fetch_repo 'achiu', 'terminitor', :setup => true
+    def fetch_repo(username, project, options ={})
+      if clone_repo(username, project)
+        path = File.join(Dir.pwd, project)
+        FileUtils.cd(path)
+        invoke(:setup, []) if options[:setup]
+      else
+        say("could not fetch repo!")
+      end
     end
 
   end

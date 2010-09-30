@@ -113,4 +113,9 @@ context "Terminitor" do
     setup { mock.instance_of(Terminitor::Cli).execute_core(:process!,'project') {true } }
     asserts("calls execute_core") { Terminitor::Cli.start(['start','project']) }
   end
+  
+  context "fetch" do
+    setup { mock.instance_of(Terminitor::Cli).fetch_repo('achiu','terminitor', 'root' => '.', 'setup' => true) { true } }
+    asserts("run setup in project dir") { capture(:stdout) { Terminitor::Cli.start(['fetch','achiu','terminitor'])} }
+  end
 end
