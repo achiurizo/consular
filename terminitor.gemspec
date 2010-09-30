@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.post_install_message = %q{********************************************************************************
 
     Terminitor is installed! 
-    Please run 'terminitor setup'. 
+    Please run 'terminitor init'. 
     This will create a directory at ~/.terminitor which will hold all your global scripts.
     Thanks!
 

@@ -7,13 +7,13 @@ module Terminitor
 
     def self.source_root; File.expand_path('../../',__FILE__); end
 
-    desc "start PROJECT_NAME", "runs the terminitor project"
+    desc "start PROJECT_NAME", "runs the terminitor script"
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     def start(project="")
       execute_core :process!, project
     end
 
-    desc "setup PROJECT_NAME", "execute setup in the terminitor project"
+    desc "setup PROJECT_NAME", "execute setup in the terminitor script"
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     def setup(project="")
       execute_core :setup!, project
@@ -39,7 +39,7 @@ module Terminitor
       empty_directory "#{ENV['HOME']}/.terminitor"
     end
 
-    desc "edit PROJECT_NAME", "open project yaml"
+    desc "edit PROJECT_NAME", "open termitor script"
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     method_option :editor,  :type => :string, :default => nil,    :aliases => '-c'
     method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
@@ -59,13 +59,13 @@ module Terminitor
     end
 
 
-    desc "generate", "create a Termfile in directory"
+    desc "create", "create a Termfile in directory"
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def create
       invoke :edit, [], options
     end
 
-    desc "delete PROJECT_NAME", "delete project script"
+    desc "delete PROJECT_NAME", "delete terminitor script"
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
     def delete(project="")
