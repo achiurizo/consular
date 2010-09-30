@@ -7,7 +7,7 @@ Installation
 ------------
 
     $ gem install terminitor
-    $ terminitor setup
+    $ terminitor init
 
 Usage
 -------
@@ -16,10 +16,12 @@ Usage
 
 Using terminitor is quite easy. To define or edit a project file, simply invoke the command:
 
-    $ terminitor open foo
+    $ terminitor edit foo
 
-This will open your default editor (set through the $EDITOR variable in BASH) and you can proceed to define the commands for that project:
+This will open your default editor (set through the $TERM_EDITOR or $EDITOR variable in BASH) and you can proceed to define the commands for that project with the following syntaxes:
 
+#### YAML Syntax ( Legacy ) ####
+    
     # ~/.terminitor/foo.yml
     # you can make as many tabs as you wish...
     # tab names are actually arbitrary at this point too.
@@ -41,6 +43,71 @@ Simply define each tab and declare the commands. Note that the session for each 
 you would manually type in the terminal. Note that the title for each tab(namely tab1, tab2) are arbitrary, and can be named whatever you want.
 They are simply placeholders for the time being for upcoming features.
 
+To use the legacy syntax, you can invoke it with terminitor like so:
+
+    $ terminitor edit foo --syntax yml
+
+
+#### Ruby DSL Syntax ####
+
+    setup 'echo "setup"'
+
+    tab "echo 'default'", "echo 'default tab'"
+
+    window do
+      tab "echo 'first tab'", "echo 'of window'"
+  
+      tab "named tab" do
+        run "echo 'named tab'"
+        run "ls"
+      end
+    end
+
+The newer Ruby DSL syntax allows for more complicated behavior such as window creation as well as setup blocks that can be executed prior loading a project.
+
+##### Tabs #####
+
+to create tabs, we can simply invoke the tab command with either the command arguments like:
+
+    tab "echo 'hi'", "gitx"
+    
+or even pass it a block:
+
+    tab do
+      run "echo 'hi'"
+      run "mate ."
+    end
+
+##### Windows #####
+
+to create windows, we can simply invoke the window command with a block containing additional commands like:
+
+    window do
+      tab "echo 'hi'"
+      tab "mate ."
+      tab do
+        run "open http://www.google.com"
+      end
+    end
+
+##### Setup #####
+
+The setup block allows you to store commands that can be ran specifically before a project and can be defined with:
+
+the command arguments:
+
+    setup "bundle install", "gitx"
+    
+or with a block:
+
+    setup do
+      run "echo 'hi'"
+      run "bundle install"
+    end
+
+
+### Running Terminitor Projects ###
+
 Once the project file has been declared to your satisfaction, simply execute any project defined in the `~/.terminitor` directory with:
 
     $ terminitor start foo
@@ -48,15 +115,24 @@ Once the project file has been declared to your satisfaction, simply execute any
 This will execute the steps and create the tabs defined and run the various options as expected. That's it. Create as many project files with as many tabs
 as you would like and automate your workflow.
 
-If you no longer need a particular project, you can easily remove the yml file for the project:
+### Removing Terminitor Projects ###
+
+If you no longer need a particular project, you can easily remove the terminitor file for the project:
 
     $ terminitor delete foo
+    
+to remove a legacy yml syntax file you can run:
+
+    $ terminitor delete foo -s=yml
+
+
+### Listing Terminitor Projects ###
 
 You can also see a full list of available projects with:
 
     $ terminitor list
 
-This will print out the available project files that you can execute.
+This will print out the available project files that you can execute. The list also returns whatever text you have in the first comment of each terminitor script.
 
 ### Creating Termfile for Repo ###
 
@@ -71,7 +147,7 @@ which contains the ideal development setup for OSX. To generate this file, invok
     $ terminitor create
 
 This will generate a 'Termfile' in the current project directory and open the file to be edited in the default text editor. The format
-of the file is still YAML as described above in the previous section. You should *note* that the project directory is automatically
+of the file is using the new Ruby DSL as described above in the previous section. You should *note* that the project directory is automatically
 the working directory for each tab so you can just say `mate .` and the project directory containing the `Termfile` will open.
 
 Now, when you or another developer clones a project, you could simply:
@@ -91,15 +167,43 @@ In addition, you are in the project folder and you wish to remove the Termfile, 
 
 This will clear the `Termfile` for the particular project.
 
+
+### Fetching Github Projects with Terminitor ###
+
+Terminitor can also fetch code repositories off Skynet, I mean Github. This will have terminitor clone the repo into the current directory:
+
+    $ terminitor fetch achiu terminitor
+    
+After the repo has been fetched, terminitor will go ahead and run the setup block from the Termfile included in the repository. In the event you wouldn't want the setup block to be executed, simply set setup to false:
+
+    $ terminitor fetch achiu terminitor --setup=false
+
+Some notes. Terminitor's fetch command is dependent on the ([github-gem](http://github.com/defunkt/github-gem)) at the current moment. It will try to fetch the repository with read/write access first if you have rights, if not, it will default to git read only. Happy fetching!
+
+
+Cores
+-----
+
+Cores allow Terminitor to operate on a variety of platforms. They abstract the general behavior that terminitor needs to run the commands. Each core would inherit from an ([AbstractCore](http://github.com/achiu/terminitor/blob/master/lib/terminitor/abstract_core.rb)) and define the needed methods. At the moment the following Cores are supported:
+
+ * MacCore        - Mac OS X Terminal
+ * KonsoleCore    - KDE Konsole
+
+Feel free to contribute more cores so that Terminitor can support your terminal of choice :)
+
+
 Limitations
 -----------
 
-This only works on OS X because of the dependency on applescript. It would presumably not be impossible to port this to Linux or Windows, and
-of course patches and suggestions are welcome.
+#### MacCore ####
 
-Another issue is that right now tabs are created by invoking keystrokes which means there are limitations with the terminal being in
+Right now the Mac OS X Terminal tabs are created by invoking keystrokes which means there are limitations with the terminal being in
 focus during execution of these commands. Obviously the long term goal is to solve this issue as well but in all honesty,
 this solution works well enough most of the time.
+
+#### Fetching ####
+
+The fetch task only pulls off Github repositories at the moment(which is cool). Later on, this functionality will be extended to non github repository(probably later this week.)
 
 Authors
 -------
