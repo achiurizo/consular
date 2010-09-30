@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     terminitor (0.0.5)
+      github
       rb-appscript
       thor (~> 0.14.0)
 
@@ -9,12 +10,21 @@ GEM
   remote: http://rubygems.org/
   specs:
     fakefs (0.2.1)
+    github (0.4.3)
+      highline (~> 1.5.1)
+      json (>= 1.2.0)
+      text-format (>= 1.0.0)
+    highline (1.5.2)
+    json (1.4.6)
     rb-appscript (0.5.3)
     riot (0.11.4)
       rr
       term-ansicolor
     rr (1.0.0)
     term-ansicolor (1.0.5)
+    text-format (1.0.0)
+      text-hyphen (~> 1.0.0)
+    text-hyphen (1.0.0)
     thor (0.14.1)
 
 PLATFORMS
@@ -23,6 +33,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0.0)
   fakefs
+  github
   rb-appscript
   riot (~> 0.11.0)
   rr
