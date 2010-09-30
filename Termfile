@@ -1,7 +1,7 @@
 # Terminitor Termfile
 
 setup do
-
+  run 'bundle install'
 end
 
 window do
