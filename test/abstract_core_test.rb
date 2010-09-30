@@ -6,11 +6,13 @@ context "AbstractCore" do
     setup do
       any_instance_of(Terminitor::AbstractCore) do |core|
         stub(core).load_termfile('/path/to')  { { :setup => ['ls','ok'] } }
+        mock(core).active_window  { true }.times 3
       end
     end
     setup { @core = Terminitor::AbstractCore.new('/path/to') }
-    setup { mock(@core).execute_command('ls') }
-    setup { mock(@core).execute_command('ok') }
+    setup { mock(@core).execute_command("cd #{Dir.pwd}", :in => true)}
+    setup { mock(@core).execute_command('ls', :in => true) }
+    setup { mock(@core).execute_command('ok', :in => true) }
     asserts("ok") { @core.setup! }
   end
 

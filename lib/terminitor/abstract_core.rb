@@ -10,7 +10,9 @@ module Terminitor
 
     # Run the setup block in Termfile
     def setup!
-      @termfile[:setup].each { |cmd| execute_command(cmd) }
+      @working_dir = Dir.pwd
+      commands = @termfile[:setup].insert(0, "cd #{working_dir}")
+      commands.each { |cmd| execute_command(cmd, :in => active_window) }
     end
 
     # Executes the Termfile
@@ -52,6 +54,10 @@ module Terminitor
     # Opens a new tab and returns itself.
     def open_tab
       @working_dir = Dir.pwd # pass in current directory.
+    end
+
+    # Returns the current window
+    def active_window
     end
 
     # Opens a new window and returns the tab object.

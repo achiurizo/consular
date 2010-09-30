@@ -20,8 +20,8 @@ module Terminitor
 
     # Opens a new tab and returns itself.
     def open_tab
+      super
       terminal_process.keystroke("t", :using => :command_down)
-      @working_dir = Dir.pwd
       return_last_tab
     end
 
