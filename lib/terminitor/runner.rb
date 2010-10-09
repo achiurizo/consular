@@ -80,7 +80,7 @@ module Terminitor
     # This will clone a repo in the current directory.
     # It will first try to clone via ssh(read/write),
     # if not fall back to git-read only, else, fail.
-    def clone_repo(username, project)
+    def github_clone(username, project)
       github = `which github`
       return false if github.empty?
       command = "github clone #{username} #{project}"
@@ -89,8 +89,8 @@ module Terminitor
 
     # Fetch the git repo and run the setup block
     # fetch_repo 'achiu', 'terminitor', :setup => true
-    def fetch_repo(username, project, options ={})
-      if clone_repo(username, project)
+    def github_repo(username, project, options ={})
+      if github_clone(username, project)
         path = File.join(Dir.pwd, project)
         FileUtils.cd(path)
         invoke(:setup, []) if options[:setup]

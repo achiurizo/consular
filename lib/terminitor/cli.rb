@@ -23,7 +23,7 @@ module Terminitor
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     method_option :setup, :type => :boolean, :default => true
     def fetch(username, project)
-      fetch_repo username, project, options
+      github_repo username, project, options
     end
 
     desc "list", "lists all terminitor scripts"

@@ -192,40 +192,40 @@ context "Runner" do
     end
   end
 
-  context "clone_repo" do
+  context "github_clone" do
     context "with github" do
       setup { stub(@test_runner).__double_definition_create__.call(:`,'which github') { "github" } }
       context "with read/write priv" do
         setup { mock(@test_runner).system("github clone achiu terminitor --ssh") { true } }
-        asserts("invokes ssh") { @test_runner.clone_repo('achiu','terminitor') }
+        asserts("invokes ssh") { @test_runner.github_clone('achiu','terminitor') }
       end
 
       context "with read only" do
         setup { mock(@test_runner).system("github clone achiu terminitor --ssh") { false } }
         setup { mock(@test_runner).system("github clone achiu terminitor") { true } }
-        asserts("invokes git://") { @test_runner.clone_repo('achiu', 'terminitor') }
+        asserts("invokes git://") { @test_runner.github_clone('achiu', 'terminitor') }
       end
     end
   end
 
-  context "fetch_repo" do
+  context "github_repo" do
     context "with setup" do
-      setup { mock(@test_runner).clone_repo('achiu','terminitor') { true } }
+      setup { mock(@test_runner).github_clone('achiu','terminitor') { true } }
       setup { mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true } }
       setup { mock(@test_runner).invoke(:setup, []) { true } }
-      asserts("invokes setup") { @test_runner.fetch_repo('achiu','terminitor', :setup => true) }
+      asserts("invokes setup") { @test_runner.github_repo('achiu','terminitor', :setup => true) }
     end
 
     context "without setup" do
-      setup { mock(@test_runner).clone_repo('achiu','terminitor') { true } }
+      setup { mock(@test_runner).github_clone('achiu','terminitor') { true } }
       setup { mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true } }
-      asserts("invokes setup") { @test_runner.fetch_repo('achiu','terminitor') }.nil
+      asserts("invokes setup") { @test_runner.github_repo('achiu','terminitor') }.nil
     end
 
     context "failed on repo" do
-      setup { mock(@test_runner).clone_repo('achiu','terminitor') { false } }
+      setup { mock(@test_runner).github_clone('achiu','terminitor') { false } }
       setup { mock(@test_runner).say("could not fetch repo!") { true } }
-      asserts("invokes say") { @test_runner.fetch_repo('achiu', 'terminitor') }
+      asserts("invokes say") { @test_runner.github_repo('achiu', 'terminitor') }
     end
 
   end
