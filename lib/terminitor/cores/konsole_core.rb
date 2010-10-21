@@ -18,7 +18,7 @@ module Terminitor
     end
 
     # Opens a new tab and returns itself.
-    def open_tab
+    def open_tab(options = nil)
       session_number = @konsole.newSession
       session_object = @konsole_service.object("/Sessions/#{session_number}")
       session_object.introspect
@@ -26,7 +26,7 @@ module Terminitor
     end
 
     # Opens a new window and returns the tab object.
-    def open_window
+    def open_window(options = nil)
       session_number = @konsole.currentSession
       session_object = @konsole_service.object("/Sessions/#{session_number}")
       session_object.introspect

@@ -43,10 +43,28 @@ module Terminitor
     method_option :root,    :type => :string, :default => '.',    :aliases => '-r'
     method_option :editor,  :type => :string, :default => nil,    :aliases => '-c'
     method_option :syntax,  :type => :string, :default => 'term', :aliases => '-s'
+    method_option :capture, :type => :boolean,   :default => false,  :aliases => '-g'
     def edit(project="")
       syntax = project.empty? ? 'term' : options[:syntax] # force Termfile to use term syntax
       path =  config_path(project, syntax.to_sym)
-      template "templates/example.#{syntax}.tt", path, :skip => true
+      if options[:capture] && !File.exists?(path)
+        # capture settings of currently opened windows and tabs
+        if syntax == 'term'
+          if core = capture_core(RUBY_PLATFORM)
+            term = core.new().capture_settings
+            (f = File.new(path, "w") << term).close
+          else
+            say("No suitable core found!")
+            return
+          end
+        else
+          say "Terminal settings can be captured only to DSL format."
+          return
+        end
+      else 
+        # use standard template
+        template "templates/example.#{syntax}.tt", path, :skip => true
+      end
       open_in_editor(path,options[:editor])
     end
 

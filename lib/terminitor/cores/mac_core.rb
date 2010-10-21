@@ -4,12 +4,18 @@ module Terminitor
   class MacCore < AbstractCore
     include Appscript
     
+    ALLOWED_OPTIONS = {
+      :window => [:bounds, :visible, :miniaturized],
+      :tab => [:settings, :selected, :miniaturized, :visible]
+    }
+    
     # Initialize @terminal with Terminal.app, Load the Windows, store the Termfile
     # Terminitor::MacCore.new('/path')
     def initialize(path)
       super
       @terminal = app('Terminal')
       @windows  = @terminal.windows
+      @delayed_options = []
     end
             
     # executes the given command via appscript
@@ -19,15 +25,21 @@ module Terminitor
     end
 
     # Opens a new tab and returns itself.
-    def open_tab
-      super
+    def open_tab(options = nil)
       terminal_process.keystroke("t", :using => :command_down)
+      set_options(return_last_tab, options) if options
       return_last_tab
     end
-
-    # Opens A New Window and returns the tab object.
-    def open_window
+    
+    # Opens A New Window, applies settings to the first tab and returns the tab object.
+    def open_window(options = nil)
       terminal_process.keystroke("n", :using => :command_down)
+      # Options of the first tab must be set before window options, 
+      # because change of the first tab options causes change of window size
+      if options    
+        set_options(return_last_tab, allowed_options(:tab, options))
+        set_options(active_window, allowed_options(:window, options))
+      end
       return_last_tab
     end
 
@@ -50,6 +62,42 @@ module Terminitor
       windows = @terminal.windows.get
       windows.detect do |window|
         window.properties_.get[:frontmost] rescue false
+      end
+    end
+    
+    # Sets options of the given object
+    def set_options(object, options = {})
+      options.each_pair do |option, value| 
+        case option
+        when :settings   # works for windows and tabs, for example :settings => "Grass"
+          begin
+            object.current_settings.set(@terminal.settings_sets[value])
+          rescue Appscript::CommandError => e
+            puts "Error: invalid settings set '#{value}'"
+          end
+        when :bounds # works only for windows, for example :bounds => [10,20,300,200]
+          # the only working sequence to restore window size and position! 
+          object.bounds.set(value)
+          object.frame.set(value)
+          object.position.set(value)
+        when :selected # works for tabs, for example tab :active => true
+          delayed_option(option, value, object)
+        else # trying to apply any other option
+          begin
+            object.instance_eval(option.to_s).set(value)
+          rescue Appscript::CommandError => e
+            puts "Error setting '#{option} = #{value}' on #{object.inspect}"
+            puts e.message
+          end
+        end
+      end
+    end
+    
+    # Apply delayed options and remove them from the queue
+    def set_delayed_options
+      @delayed_options.length.times do 
+        option = @delayed_options.shift
+        option[:object].instance_eval(option[:option]).set(option[:value])
       end
     end
 
@@ -75,5 +123,18 @@ module Terminitor
       window.custom_title.set(title)
     end
     
+    # selects options allowed for window or tab
+    def allowed_options(object_type, options)
+      Hash[ options.select {|option, value| ALLOWED_OPTIONS[object_type].include?(option) }]
+    end
+    
+    # Add option to the list of delayed options
+    def delayed_option(option, value, object)
+      @delayed_options << {
+        :option => option.to_s, 
+        :value => value, 
+        :object => object
+      }
+    end
   end
 end

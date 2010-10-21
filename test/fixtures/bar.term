@@ -5,12 +5,13 @@ setup 'echo "setup"'
 
 tab "echo 'default'", "echo 'default tab'"
 
-window do
+window :size => [70,30] do
   tab "echo 'first tab'", "echo 'of window'"
   
-  tab "named tab" do
+  tab "named tab", :settings => "Grass" do
     run "echo 'named tab'"
     run "ls"
   end
 end
+
 
