@@ -106,6 +106,38 @@ or with a block:
     end
 
 
+##### Settings #####
+_currently only available on edge_
+
+You can also set settings on each of your tabs and windows. for example, this is possible:
+
+Open a tab with terminal settings "Grass"
+
+    tab "named tab", :settings => "Grass" do
+      run "echo 'named tab'"
+      run "ls"
+    end
+
+How about a window with a specific size:
+
+    window :size => [70,30] do
+
+    end
+
+Currently, the following options are available:
+
+__tabs__
+
+* :settings - [String]  Set the tab to terminal settings
+* :selected - [Boolean] Sets whether the tab is active
+
+
+__windows__
+
+* :bounds   - [Array]  Sets the bounds
+* :size     - [Array]  Sets the size of the window
+* :position - [Array]  Sets the position of the window
+
 ### Running Terminitor Projects ###
 
 Once the project file has been declared to your satisfaction, simply execute any project defined in the `~/.terminitor` directory with:
@@ -167,6 +199,15 @@ In addition, you are in the project folder and you wish to remove the Termfile, 
 
 This will clear the `Termfile` for the particular project.
 
+### Capturing Terminal Settings with Terminitor ###
+_only available on edge_
+
+Terminitor has the ability to also capture your terminal setup and settings simply with:
+
+    $ terminitor edit my_project --capture
+    
+this will open up a new terminitor project with the captured settings for you to continuing modifying as you see fit.
+
 
 ### Fetching Github Projects with Terminitor ###
 
@@ -198,12 +239,17 @@ Limitations
 #### MacCore ####
 
 Right now the Mac OS X Terminal tabs are created by invoking keystrokes which means there are limitations with the terminal being in
-focus during execution of these commands. Obviously the long term goal is to solve this issue as well but in all honesty,
-this solution works well enough most of the time.
+focus during execution of these commands. Obviously the long term goal is to solve this issue as well but in all honesty, this solution works well enough most of the time.
 
 #### Fetching ####
 
 The fetch task only pulls off Github repositories at the moment(which is cool). Later on, this functionality will be extended to non github repository(probably later this week.)
+
+
+#### Settings and Captures ####
+
+This feature is currently only available in Mac OS X at the moment.
+
 
 Authors
 -------
@@ -218,6 +264,7 @@ Thanks to the following people for their contributions so far:
 
  * Pat George ([pcg79](http://github.com/pcg79)) for contributing a patch for when a project is not found.
  * Flavio Castelli ([flavio](http://github.com/flavio)) for contributing Konsole(KDE) core.
+ * Alexey Kuleshov ([kulesa](http://github.com/kulesa)) for contributing the terminal settings and terminal settings capture functionality
 
 Acknowledgements
 -----------------
