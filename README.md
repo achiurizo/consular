@@ -120,7 +120,7 @@ Open a tab with terminal settings "Grass"
 
 How about a window with a specific size:
 
-    window :bound => [10,20,300,200] do
+    window :bounds => [10,20,300,200] do
 
     end
 
