@@ -120,7 +120,7 @@ Open a tab with terminal settings "Grass"
 
 How about a window with a specific size:
 
-    window :size => [70,30] do
+    window :bound => [10,20,300,200] do
 
     end
 
@@ -128,15 +128,17 @@ Currently, the following options are available:
 
 __tabs__
 
-* :settings - [String]  Set the tab to terminal settings
-* :selected - [Boolean] Sets whether the tab is active
+* :settings     - [String]  Set the tab to terminal settings
+* :selected     - [Boolean] Sets whether the tab is active
+* :miniaturized - [Boolean] Sets whether its miniaturized
+* :visible      - [Boolean] Sets whether its visible
 
 
 __windows__
 
-* :bounds   - [Array]  Sets the bounds
-* :size     - [Array]  Sets the size of the window
-* :position - [Array]  Sets the position of the window
+* :bounds       - [Array]  Sets the bounds
+* :miniaturized - [Boolean] Sets whether its miniaturized
+* :visible      - [Boolean] Sets whether its visible
 
 ### Running Terminitor Projects ###
 
