@@ -3,10 +3,10 @@
 
 setup 'echo "setup"'
 
-tab "echo 'default'", "echo 'default tab'"
+tab "echo 'default'", "echo 'default tab'", "ok", "for real"
 
 window :size => [70,30] do
-  tab "echo 'first tab'", "echo 'of window'"
+  tab "echo 'first tab'", "echo 'of window'", "echo 'than now'"
   
   tab "named tab", :settings => "Grass" do
     run "echo 'named tab'"

@@ -20,7 +20,9 @@ context "AbstractCore" do
     context "without default" do
       setup do
         any_instance_of(Terminitor::AbstractCore) do |core|
-          stub(core).load_termfile('/path/to')  { {:windows => {'window1' => {:tabs => {'tab1' => ['ls', 'ok']}}, 'default' => [] }} }
+          stub(core).load_termfile('/path/to') do 
+            {:windows => {'window1' => {:tabs => {'tab1' => ['ls', 'ok']}}, 'default' => [] }}
+          end
         end
       end
       setup { @core = Terminitor::AbstractCore.new('/path/to') }
@@ -31,7 +33,12 @@ context "AbstractCore" do
     context "with default" do
       setup do
         any_instance_of(Terminitor::AbstractCore) do |core|
-          stub(core).load_termfile('/path/to')  { {:windows => {'window1' => {:tabs => {'tab1' => ['ls', 'ok']}}, 'default' => {:tabs => {'tab0' => ['echo']} } }} }
+          stub(core).load_termfile('/path/to') do
+            {:windows => {'window1' => {:tabs => {'tab1' => ['ls', 'ok']} }, 
+                          'default' => {:tabs => {'tab0' => ['echo']} }
+                         }
+            }
+          end
         end
       end
       setup { @core = Terminitor::AbstractCore.new('/path/to') }
@@ -78,7 +85,13 @@ context "AbstractCore" do
     context "with options" do 
       setup do
         any_instance_of(Terminitor::AbstractCore) do |core|
-          stub(core).load_termfile('/path/to') { {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok'], :options => {:settings => 'cool', :name => 'first tab'}}, 'tab2' => {:commands => ['ps'], :options => {:settings => 'grass', :name => 'second tab'}},  }, :options => {:bounds => [10,10]}}}} }
+          stub(core).load_termfile('/path/to') do 
+            {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok'], :options => {:settings => 'cool', :name => 'first tab'}}, 
+                                                  'tab2' => {:commands => ['ps'], :options => {:settings => 'grass', :name => 'second tab'}},  
+                                                 }, 
+                                        :options => {:bounds => [10,10]}}}
+            }
+          end
         end
         @core = Terminitor::AbstractCore.new('/path/to')
       end
