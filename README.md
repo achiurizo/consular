@@ -107,7 +107,6 @@ or with a block:
 
 
 ##### Settings #####
-_currently only available on edge_
 
 You can also set settings on each of your tabs and windows. for example, this is possible:
 
@@ -202,7 +201,6 @@ In addition, you are in the project folder and you wish to remove the Termfile, 
 This will clear the `Termfile` for the particular project.
 
 ### Capturing Terminal Settings with Terminitor ###
-_only available on edge_
 
 Terminitor has the ability to also capture your terminal setup and settings simply with:
 
@@ -245,7 +243,7 @@ focus during execution of these commands. Obviously the long term goal is to sol
 
 #### Fetching ####
 
-The fetch task only pulls off Github repositories at the moment(which is cool). Later on, this functionality will be extended to non github repository(probably later this week.)
+The fetch task only pulls off Github repositories at the moment. Later on, this functionality will be extended to non github repository.
 
 
 #### Settings and Captures ####
