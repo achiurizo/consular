@@ -5,8 +5,8 @@ module Terminitor
     def initialize(path)
       file = File.read(path)
       @setup = []
-      @windows = { 'default' => {}}
-      @_context = @windows['default'] 
+      @windows = { 'default' => {:tabs => {}}}
+      @_context = @windows['default'][:tabs]
       instance_eval(file)
     end
 
