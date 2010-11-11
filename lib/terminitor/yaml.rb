@@ -12,8 +12,12 @@ module Terminitor
     
     # Returns yaml file as Terminitor formmatted hash
     def to_hash
-      combined = @file.inject({}) {|base, item| base.merge!(item) ; base } # merge the array of hashes.
-      { :setup => nil, :windows => { 'default' => combined } }
+      combined = @file.inject({}) do |base, item| 
+        item = {item.keys.first => {:commands => item.values.first, :options => {}}}
+        base.merge!(item)
+        base
+      end # merge the array of hashes.
+       { :setup => nil, :windows => { 'default' => {:tabs => combined} } }
     end
 
   end
