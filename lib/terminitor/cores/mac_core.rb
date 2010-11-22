@@ -87,9 +87,8 @@ module Terminitor
         else # trying to apply any other option
           begin
             object.instance_eval(option.to_s).set(value)
-          rescue Appscript::CommandError => e
-            puts "Error setting '#{option} = #{value}' on #{object.inspect}"
-            puts e.message
+          rescue
+            puts "Error setting #{option} = #{value} on #{object.inspect}"
           end
         end
       end
