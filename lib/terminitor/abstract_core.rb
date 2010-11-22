@@ -18,7 +18,7 @@ module Terminitor
     # Executes the Termfile
     def process!
       term_windows = @termfile[:windows]
-      run_in_window('default', term_windows['default'], :default => true) unless term_windows['default'].to_s.empty?
+      run_in_window('default', term_windows['default'], :default => true) unless term_windows['default'][:tabs].empty?
       term_windows.delete('default')
       term_windows.each_pair { |window_name, window_content| run_in_window(window_name, window_content) }
     end

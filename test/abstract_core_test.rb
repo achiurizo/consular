@@ -21,7 +21,10 @@ context "AbstractCore" do
       setup do
         any_instance_of(Terminitor::AbstractCore) do |core|
           stub(core).load_termfile('/path/to') do 
-            {:windows => {'window1' => {:tabs => {'tab1' => ['ls', 'ok']}}, 'default' => [] }}
+            {:windows => {'window1' => {:tabs => {'tab1' => ['ls', 'ok']}}, 
+                          'default' => {:tabs => {}}
+                         }
+            }
           end
         end
       end
@@ -53,7 +56,12 @@ context "AbstractCore" do
     context "without options" do 
       setup do
         any_instance_of(Terminitor::AbstractCore) do |core|
-          stub(core).load_termfile('/path/to')  { {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok']}, 'tab2' => {:commands => ['ps']}}}}} }
+          stub(core).load_termfile('/path/to')  { 
+            {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok']}, 'tab2' => {:commands => ['ps']}}},
+                          'default' => {:tabs => {}}
+                         }
+            } 
+          }
         end
         @core = Terminitor::AbstractCore.new('/path/to')
       end
@@ -89,7 +97,9 @@ context "AbstractCore" do
             {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok'], :options => {:settings => 'cool', :name => 'first tab'}}, 
                                                   'tab2' => {:commands => ['ps'], :options => {:settings => 'grass', :name => 'second tab'}},  
                                                  }, 
-                                        :options => {:bounds => [10,10]}}}
+                                        :options => {:bounds => [10,10]}},
+                          'default' => {:tabs => {}}
+                         }
             }
           end
         end
