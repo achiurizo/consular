@@ -16,7 +16,7 @@ def platform?(platform)
   RUBY_PLATFORM.downcase.include?(platform)
 end
 
-class Object
+module Kernel
   def capture(stream)
     begin
       stream = stream.to_s
@@ -27,5 +27,23 @@ class Object
       eval("$#{stream} = #{stream.upcase}")
     end
     result
+  end
+end
+
+# This is to silence the 'task' warning for the mocks.
+class Thor
+  class << self
+        def create_task(meth) #:nodoc:
+        if @usage && @desc
+          base_class = @hide ? Thor::HiddenTask : Thor::Task
+          tasks[meth] = base_class.new(meth, @desc, @long_desc, @usage, method_options)
+          @usage, @desc, @long_desc, @method_options, @hide = nil
+          true
+        elsif self.all_tasks[meth] || meth == "method_missing"
+          true
+        else
+          false
+        end
+      end
   end
 end
