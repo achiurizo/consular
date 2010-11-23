@@ -6,7 +6,7 @@ module Terminitor
     
     ALLOWED_OPTIONS = {
       :window => [:bounds, :visible, :miniaturized],
-      :tab => [:settings, :selected, :miniaturized, :visible]
+      :tab => [:settings, :selected]
     }
     
     # Initialize @terminal with Terminal.app, Load the Windows, store the Termfile
@@ -81,6 +81,8 @@ module Terminitor
           object.frame.set(value)
           object.position.set(value)
         when :selected # works for tabs, for example tab :active => true
+          delayed_option(option, value, object)
+        when :miniaturized # works for windows only
           delayed_option(option, value, object)
         else # trying to apply any other option
           begin
