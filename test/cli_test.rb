@@ -37,7 +37,7 @@ context "Terminitor" do
     teardown  { `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.term`}
     context "for project" do
       context "for yaml" do
-        setup { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.yml",nil) { true }.once }
+        setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.yml",nil) { true }.once } }
         setup { capture(:stdout) { Terminitor::Cli.start(['edit','test_foo_bar2', '-s=yml']) } }
         asserts_topic.matches %r{create}
         asserts_topic.matches %r{test_foo_bar2.yml}
@@ -45,7 +45,7 @@ context "Terminitor" do
       end
 
       context "for term" do
-        setup { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.term",nil) { true }.once }
+        setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.term",nil) { true }.once } }
         setup { capture(:stdout) { Terminitor::Cli.start(['edit','test_foo_bar2', '-s=term']) } }
         asserts_topic.matches %r{create}
         asserts_topic.matches %r{test_foo_bar2.term}
@@ -55,7 +55,7 @@ context "Terminitor" do
     end
 
     context "for Termfile" do
-      setup { mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile",nil) { true }.once }
+      setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile",nil) { true }.once } }
       setup { capture(:stdout) { Terminitor::Cli.start(['edit','-s=yml','-r=/tmp/sample_project']) } }
       asserts_topic.matches %r{create}
       asserts_topic.matches %r{Termfile}
@@ -64,7 +64,7 @@ context "Terminitor" do
 
     context "for editor flag" do
       setup { FileUtils.mkdir_p('/tmp/sample_project')  }
-      setup { mock.instance_of(Terminitor::Cli).open_in_editor('/tmp/sample_project/Termfile','nano') { true }.once }
+      setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).open_in_editor('/tmp/sample_project/Termfile','nano') { true }.once } }
       asserts("runs nano") { capture(:stdout) { Terminitor::Cli.start(['edit','-r=/tmp/sample_project','-c=nano']) } }
     end
     
@@ -76,7 +76,7 @@ context "Terminitor" do
       
       context "for term" do 
         context "with no core returned" do
-          setup { mock.instance_of(Terminitor::Cli).capture_core(anything) { nil } }
+          setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).capture_core(anything) { nil } } }
           setup { FileUtils.touch("#{ENV['HOME']}/.terminitor/delete_this.term") }
           setup { capture(:stdout) { Terminitor::Cli.start(['edit', 'test_foo_bar2', '--capture']) } }
           asserts_topic.matches %r{No suitable core found!}
@@ -85,9 +85,11 @@ context "Terminitor" do
         context "for known core" do
           setup do 
             core = Object.new
-            mock.instance_of(Terminitor::Cli).capture_core(anything) { core }  
-            stub(core).new.stub!.capture_settings { "settings"}
-            mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.term",nil) { true }            
+            capture(:stdout) {
+              mock.instance_of(Terminitor::Cli).capture_core(anything) { core }  
+              stub(core).new.stub!.capture_settings { "settings"}
+              mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.term",nil) { true }
+            }
           end
           asserts("ok") { Terminitor::Cli.start(['edit','test_foo_bar2', '--capture']) } 
         end
@@ -97,13 +99,13 @@ context "Terminitor" do
   end
 
   context "create" do
-    setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [], 'root' => '/tmp/sample_project') { true }.once }
+    setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).invoke(:edit, [], 'root' => '/tmp/sample_project') { true }.once } }
     asserts('calls open') { capture(:stdout) { Terminitor::Cli.start(['create','-r=/tmp/sample_project']) }   }
   end
 
 
   context "open" do
-    setup { mock.instance_of(Terminitor::Cli).invoke(:edit, [""], {'syntax' => 'term', 'root' => '/tmp/sample_project'}) { true }.once }
+    setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).invoke(:edit, [""], {'syntax' => 'term', 'root' => '/tmp/sample_project'}) { true }.once } }
     setup { capture(:stdout) { Terminitor::Cli.start(['open','-r=/tmp/sample_project']) } }
     asserts_topic.matches %r{'open' is now deprecated. Please use 'edit' instead}
   end
@@ -130,18 +132,18 @@ context "Terminitor" do
   end
 
   context "setup" do
-    setup { mock.instance_of(Terminitor::Cli).execute_core(:setup!,'project') {true } }
+    setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).execute_core(:setup!,'project') {true } } }
     asserts("calls execute_core") { Terminitor::Cli.start(['setup','project']) }
   end
 
 
   context "start" do
-    setup { mock.instance_of(Terminitor::Cli).execute_core(:process!,'project') {true } }
+    setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).execute_core(:process!,'project') {true } } }
     asserts("calls execute_core") { Terminitor::Cli.start(['start','project']) }
   end
   
   context "fetch" do
-    setup { mock.instance_of(Terminitor::Cli).github_repo('achiu','terminitor', 'root' => '.', 'setup' => true) { true } }
+    setup { capture(:stdout) { mock.instance_of(Terminitor::Cli).github_repo('achiu','terminitor', 'root' => '.', 'setup' => true) { true } } }
     asserts("run setup in project dir") { capture(:stdout) { Terminitor::Cli.start(['fetch','achiu','terminitor'])} }
   end
 end
