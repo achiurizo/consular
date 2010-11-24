@@ -18,221 +18,209 @@ class TestItem
 end
 
 context "Runner" do
-  setup     { @yaml = File.read(File.expand_path('../fixtures/foo.yml', __FILE__)) }
-  setup     { @template = File.read(File.expand_path('../../lib/templates/example.yml.tt', __FILE__)) }
-  setup     { @test_runner = TestRunner.new }
-  setup     { FakeFS.activate! }
+  setup do 
+    @yaml = File.read(File.expand_path('../fixtures/foo.yml', __FILE__))
+    @template = File.read(File.expand_path('../../lib/templates/example.yml.tt', __FILE__))
+    @test_runner = TestRunner.new
+    FakeFS.activate!
+  end
   teardown  { FakeFS.deactivate! }
 
 
-  context "find_core" do
-    context "for Darwin" do
-      setup { @test_runner.find_core('darwin') }
-      asserts_topic.equals Terminitor::MacCore
-    end
+  context "#find_core" do
+    should("have Darwin") { @test_runner.find_core('darwin') }.equals Terminitor::MacCore
 
     if platform?('linux') # TODO Gotta be a better way.
-      context "for KDE" do
-        setup { @test_runner.find_core('linux') }
-        asserts_topic.equals Terminitor::KonsoleCore
-      end
+      should("have KDE") { @test_runner.find_core('linux') }.equals Terminitor::KonsoleCore
     end
   end
   
-  context "capture_core" do 
-    context "for Darwin" do
-      setup { @test_runner.capture_core('darwin') }
-      asserts_topic.equals Terminitor::MacCapture
-    end
+  context "#capture_core" do 
+    should("have Darwin") { @test_runner.capture_core('darwin') }.equals Terminitor::MacCapture
   end
 
-  context "open_in_editor" do
-    context "using $EDITOR" do
-      setup { ENV['EDITOR'] = 'mate' }
-      setup { mock(@test_runner).system("mate /tmp/sample_project/foo.yml").returns {true}.once       }
-      asserts("calls") { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml") } }
+  context "#open_in_editor" do
+
+    should "use $EDITOR" do
+      ENV['EDITOR'] = 'mate'
+      mock(@test_runner).system("mate /tmp/sample_project/foo.yml").returns {true}.once
+      capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml") }
     end
 
-    context "using $TERM_EDITOR" do
-      setup { ENV['TERM_EDITOR'] = 'vim'  }
-      setup { ENV['EDITOR'] = 'jack'      }
-      setup { mock(@test_runner).system("vim /tmp/sample_project/foo.yml").returns {true}.once       }
-      asserts("calls") { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml")}  }
+    should "use $TERM_EDITOR" do
+      ENV['TERM_EDITOR'] = 'vim'
+      ENV['EDITOR']      = 'jack'
+      mock(@test_runner).system("vim /tmp/sample_project/foo.yml").returns {true}.once
+      capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml") }
     end
 
-    context "without any editor" do
-      setup { ENV['TERM_EDITOR'] = nil  }
-      setup { ENV['EDITOR'] = nil       }
-      setup { mock(@test_runner).system("open /tmp/sample_project/foo.yml").returns {true}.once       }
-      setup { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml")}  }
-      asserts_topic.matches %r{please set}
-    end
+    should "return a message without any editor that" do
+      ENV['TERM_EDITOR'] = nil
+      ENV['EDITOR']      = nil
+      mock(@test_runner).system("open /tmp/sample_project/foo.yml").returns {true}.once
+      capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml")}
+    end.matches %r{please set}
 
-    context "accepts an editor" do
-      setup { ENV['TERM_EDITOR'] = 'vim'  }
-      setup { ENV['EDITOR'] = 'jack'      }
-      setup { mock(@test_runner).system("nano /tmp/sample_project/foo.yml").returns {true}.once          }
-      asserts("calls") { capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml","nano")} }
+    should "accept an editor" do
+      ENV['TERM_EDITOR'] = 'vim'
+      ENV['EDITOR']      = 'jack'
+      mock(@test_runner).system("nano /tmp/sample_project/foo.yml").returns {true}.once 
+      capture(:stdout) { @test_runner.open_in_editor("/tmp/sample_project/foo.yml","nano") }
     end
 
   end
 
-  context "resolve_path" do
+  context "#resolve_path" do
     setup { FileUtils.mkdir_p(File.join(ENV['HOME'],'.terminitor')) }
 
-    context "with yaml" do
-      setup { FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.yml'))  }
-      setup { @test_runner.resolve_path('test') }
-      asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.yml')
-    end
+    should "return yaml" do
+      FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.yml'))
+      @test_runner.resolve_path('test')
+    end.equals File.join(ENV['HOME'],'.terminitor','test.yml')
 
-    context "with term" do
-      setup { FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.term')) }
-      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))     }
-      setup { @test_runner.resolve_path('test') }
-      asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.term')
-    end
+    should "return term" do
+      FileUtils.touch(File.join(ENV['HOME'],'.terminitor','test.term'))
+      FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))
+      @test_runner.resolve_path('test')
+    end.equals File.join(ENV['HOME'],'.terminitor','test.term')
 
-    context "with Termfile" do
-      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))   }
-      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.term'))  }
-      setup { FileUtils.touch("Termfile") }
-      setup { mock(@test_runner).options { {:root => '.'} }  }
-      setup { @test_runner.resolve_path("") }
-      asserts_topic.equals "./Termfile"
-    end
+
+    should "return Termfile" do
+      FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))
+      FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.term'))
+      FileUtils.touch("Termfile")
+      mock(@test_runner).options { {:root => '.'} }
+      @test_runner.resolve_path("")
+    end.equals "./Termfile"
+
 
     context "with nothing" do
-      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))   }
-      setup { FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.term'))  }
-      setup { FileUtils.rm("Termfile") }
-
-      context "with a project" do
-        setup { @test_runner.resolve_path('hey') }
-        asserts_topic.nil
+      setup do
+        FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.yml'))
+        FileUtils.rm(File.join(ENV['HOME'],'.terminitor','test.term'))
+        FileUtils.rm("Termfile")
       end
+      
+      should("have path with a project") { @test_runner.resolve_path('hey') }.nil
 
-      context "without a project" do
-        setup { mock(@test_runner).options { {:root => '.'} }  }
-        setup { @test_runner.resolve_path("") }
-        asserts_topic.nil
-      end
+      should("have path without a project") do
+        mock(@test_runner).options.returns(:root => '.')
+        @test_runner.resolve_path ""
+      end.nil
+
     end
 
   end
 
   context "config_path" do
-    context "for yaml" do
-      setup { @test_runner.config_path('test',:yml) }
-      asserts_topic.equals File.join(ENV['HOME'],'.terminitor','test.yml')
+    should("have yaml") { @test_runner.config_path('test',:yml)   }.equals File.join(ENV['HOME'],'.terminitor','test.yml')
+    should("have term") { @test_runner.config_path('test', :term) }.equals File.join(ENV['HOME'],'.terminitor', 'test.term')
+    
+    should "have Termfile" do
+      mock(@test_runner).options { {:root => '/tmp'} }
+      @test_runner.config_path ""
+    end.equals '/tmp/Termfile'
+
+  end
+
+  asserts "#grab_comment_for_file executes" do
+    File.open('foo.yml','w') { |f| f.puts @yaml }
+    @test_runner.grab_comment_for_file('foo.yml')
+  end.matches %r{- Foo.yml}
+
+
+  context "#return_error_message" do
+    
+    should "return message with project" do
+      mock(@test_runner).say(%r{'hi' doesn't exist}) { true }
+      @test_runner.return_error_message('hi')
     end
 
-    context "for term" do
-      setup { @test_runner.config_path('test', :term) }
-      asserts_topic.equals File.join(ENV['HOME'],'.terminitor', 'test.term')
-    end
-
-    context "for Termfile" do
-      setup { mock(@test_runner).options { {:root => '/tmp'} } }
-      setup { @test_runner.config_path("") }
-      asserts_topic.equals "/tmp/Termfile"
+    should "return message without project" do
+      mock(@test_runner).say(%r{Termfile}) { true }
+      @test_runner.return_error_message('')
     end
 
   end
 
-  context "grab_comment_for_file" do
-    setup { File.open('foo.yml','w') { |f| f.puts @yaml } }
-    setup { @test_runner.grab_comment_for_file('foo.yml') }
-    asserts_topic.matches %r{- Foo.yml}
-  end
+  context "#execute_core" do
 
-  context "return_error_message" do
-    context "with project" do
-      setup { mock(@test_runner).say(%r{'hi' doesn't exist}) { true } }
-      asserts("that it says") { @test_runner.return_error_message('hi') }
-    end
-    context "without project" do
-      setup { mock(@test_runner).say(%r{Termfile}) { true } }
-      asserts("that is says") { @test_runner.return_error_message('') }
-    end
-  end
-
-  context "execute_core" do
-
-    context "with no found path" do
-      setup { mock(@test_runner).resolve_path('project') { nil } }
-      setup { mock(@test_runner).return_error_message('project') { true } }
-      asserts("shows error message") { @test_runner.execute_core(:process!,'project') }
+    should "have error message with no path" do
+      mock(@test_runner).resolve_path('project')         { nil  }
+      mock(@test_runner).return_error_message('project') { true }
+      @test_runner.execute_core(:process!,'project')
     end
 
-    context "with no found core" do
-      setup { mock(@test_runner).resolve_path('project') { true }  }
-      setup { mock(@test_runner).find_core(anything)     { nil  }  }
-      setup { mock(@test_runner).say(/No suitable/)      { true }  }
-      asserts("shows message") { @test_runner.execute_core(:process!,'project') }
+    should "have error message with no core" do
+      mock(@test_runner).resolve_path('project') { true }
+      mock(@test_runner).find_core(anything)     { nil  }
+      mock(@test_runner).say(/No suitable/)      { true }
+      @test_runner.execute_core(:process!,'project')
     end
 
     context "with found core" do
-      context "#process!" do
-        setup { mock(@test_runner).resolve_path('project') { '/path/to' } }
-        setup do
-          any_instance_of(Terminitor::AbstractCore) do |core|
-            stub(core).load_termfile('/path/to')  { true }
-            stub(core).process! { true }
-          end
-          mock(@test_runner).find_core(anything) { Terminitor::AbstractCore }
+
+      should "call #process!" do
+        mock(@test_runner).resolve_path('project') { '/path/to' }
+        any_instance_of(Terminitor::AbstractCore) do |core|
+          stub(core).load_termfile('/path/to')  { true }
+          stub(core).process! { true }
         end
-        asserts("calls process!") { @test_runner.execute_core(:process!, 'project') }
+        mock(@test_runner).find_core(anything) { Terminitor::AbstractCore }
+        @test_runner.execute_core(:process!, 'project')
       end
 
-      context "#setup!" do
-        setup { mock(@test_runner).resolve_path('project') { '/path/to' } }
-        setup do
-          any_instance_of(Terminitor::AbstractCore) do |core|
-            stub(core).load_termfile('/path/to')  { true }
-            stub(core).setup! { true }
-          end
-          mock(@test_runner).find_core(anything) { Terminitor::AbstractCore }
+      should "call #setup!" do
+        mock(@test_runner).resolve_path('project') { '/path/to' }
+        any_instance_of(Terminitor::AbstractCore) do |core|
+          stub(core).load_termfile('/path/to')  { true }
+          stub(core).setup! { true }
         end
-        asserts("calls process!") { @test_runner.execute_core(:setup!, 'project') }
+        mock(@test_runner).find_core(anything) { Terminitor::AbstractCore }
+        @test_runner.execute_core(:setup!, 'project')
       end
+
     end
   end
 
-  context "github_clone" do
+  context "#github_clone" do
+
     context "with github" do
       setup { stub(@test_runner).__double_definition_create__.call(:`,'which github') { "github" } }
-      context "with read/write priv" do
-        setup { mock(@test_runner).system("github clone achiu terminitor --ssh") { true } }
-        asserts("invokes ssh") { @test_runner.github_clone('achiu','terminitor') }
+      
+      should "invoke ssh with read/write priv" do
+        mock(@test_runner).system("github clone achiu terminitor --ssh") { true }
+        @test_runner.github_clone('achiu','terminitor')
       end
 
-      context "with read only" do
-        setup { mock(@test_runner).system("github clone achiu terminitor --ssh") { false } }
-        setup { mock(@test_runner).system("github clone achiu terminitor") { true } }
-        asserts("invokes git://") { @test_runner.github_clone('achiu', 'terminitor') }
+      should "invoke git:// with read only" do
+        mock(@test_runner).system("github clone achiu terminitor --ssh") { false }
+        mock(@test_runner).system("github clone achiu terminitor") { true }
+        @test_runner.github_clone('achiu', 'terminitor')
       end
+    
     end
+  
   end
 
   context "github_repo" do
-    context "with setup" do
-      setup { mock(@test_runner).github_clone('achiu','terminitor') { true } }
-      setup { mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true } }
-      setup { mock(@test_runner).invoke(:setup, []) { true } }
-      asserts("invokes setup") { @test_runner.github_repo('achiu','terminitor', :setup => true) }
+    should "invoke setup" do
+      mock(@test_runner).github_clone('achiu','terminitor') { true }
+      mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true }
+      mock(@test_runner).invoke(:setup, []) { true }
+      @test_runner.github_repo('achiu','terminitor', :setup => true)
     end
 
-    context "without setup" do
-      setup { mock(@test_runner).github_clone('achiu','terminitor') { true } }
-      setup { mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true } }
-      asserts("invokes setup") { @test_runner.github_repo('achiu','terminitor') }.nil
-    end
+    should "invoke without setup" do
+      mock(@test_runner).github_clone('achiu','terminitor') { true }
+      mock(FileUtils).cd(File.join(Dir.pwd,'terminitor')) { true }
+      @test_runner.github_repo('achiu','terminitor')
+    end.nil
 
-    context "failed on repo" do
-      setup { mock(@test_runner).github_clone('achiu','terminitor') { false } }
-      setup { mock(@test_runner).say("could not fetch repo!") { true } }
-      asserts("invokes say") { @test_runner.github_repo('achiu', 'terminitor') }
+    should "return a message on a failed repo" do
+      mock(@test_runner).github_clone('achiu','terminitor') { false }
+      mock(@test_runner).say("could not fetch repo!") { true }
+      @test_runner.github_repo('achiu', 'terminitor')
     end
 
   end
