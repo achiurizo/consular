@@ -11,12 +11,13 @@ module Terminitor
     # Run the setup block in Termfile
     def setup!
       @working_dir = Dir.pwd
-      commands = @termfile[:setup].insert(0, "cd #{working_dir}")
+      commands = @termfile[:setup].insert(0, "cd #{@working_dir}")
       commands.each { |cmd| execute_command(cmd, :in => active_window) }
     end
 
     # Executes the Termfile
     def process!
+      @working_dir = Dir.pwd
       term_windows = @termfile[:windows]
       run_in_window('default', term_windows['default'], :default => true) unless term_windows['default'][:tabs].empty?
       term_windows.delete('default')

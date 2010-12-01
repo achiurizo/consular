@@ -60,6 +60,7 @@ context "AbstractCore" do
             }
           }
         end
+        stub(Dir).pwd { nil }
         Terminitor::AbstractCore.new('/path/to')
       end
 
@@ -105,6 +106,7 @@ context "AbstractCore" do
             }
           end
         end
+        stub(Dir).pwd { nil }
         Terminitor::AbstractCore.new('/path/to')
       end
       
@@ -136,6 +138,7 @@ context "AbstractCore" do
             }
           }
         end
+        stub(Dir).pwd { nil }
         Terminitor::AbstractCore.new('/path/to')
       end
 
