@@ -19,6 +19,7 @@ context "Dsl" do
                                                      },
                                               :options => {:size=>[70,30]}},
                                   "window2"=>{:tabs=>{"tab0"=>{:commands=>["uptime"]}},
+                                              :before => ['whoami'],
                                               :options => {:name => 'server'}},
                                   "default"=>{:tabs=>{"tab0"=>{:commands=>["echo 'default'", "echo 'default tab'", "ok", "for real"]}}}}
   end

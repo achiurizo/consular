@@ -4,9 +4,9 @@ module Terminitor
 
     def initialize(path)
       file = File.read(path)
-      @setup = []
-      @windows = { 'default' => {:tabs => {}}}
-      @_context = @windows['default'][:tabs]
+      @setup    = []
+      @windows  = { 'default' => {:tabs => {}}}
+      @_context = @windows['default']
       instance_eval(file)
     end
 
@@ -26,10 +26,10 @@ module Terminitor
     # window(:name => 'new window', :size => [80,30], :position => [9, 100]) { tab('ls','gitx') }
     # window { tab('ls', 'gitx') }
     def window(options = {}, &block)
-      window_name = "window#{@windows.keys.size}"
+      window_name     = "window#{@windows.keys.size}"
       window_contents = @windows[window_name] = {:tabs => {}}
       window_contents[:options] = options unless options.empty?
-      in_context window_contents[:tabs], &block
+      in_context window_contents, &block
     end
 
     # stores command in context
@@ -38,17 +38,31 @@ module Terminitor
       @_context << command
     end
 
+    # runs commands before each tab in window context
+    # window do
+    #   before { run 'whoami' }
+    # end
+    def before(*commands, &block)
+      @_context[:before] ||= []
+      if block_given?
+        in_context @_context[:before], &block
+      else
+        @_context.concat(commands)
+      end
+    end
+
     # sets command context to be run inside specific tab
     # tab(:name => 'new tab', :settings => 'Grass') { run 'mate .' }
     # tab 'ls', 'gitx'
     def tab(options = {}, *commands, &block)
+      tabs     = @_context[:tabs]
+      tab_name = "tab#{tabs.keys.size}"
       if block_given?
-        tab_name =  "tab#{@_context.keys.size}"
-        tab_contents = @_context[tab_name] = {:commands => []}
+        tab_contents = tabs[tab_name] = {:commands => []}
         tab_contents[:options] = options unless options.empty?
         in_context tab_contents[:commands], &block
       else
-        tab_tasks = @_context["tab#{@_context.keys.size}"] = { :commands => [options] + commands}
+        tabs[tab_name] = { :commands => [options] + commands}
       end
     end
 

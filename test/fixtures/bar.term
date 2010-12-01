@@ -19,6 +19,7 @@ window :size => [70,30] do
 end
 
 window :name => 'server' do
+  before { run 'whoami' }
   tab "uptime"
 end
 
