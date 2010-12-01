@@ -84,6 +84,8 @@ module Terminitor
           delayed_option(option, value, object)
         when :miniaturized # works for windows only
           delayed_option(option, value, object)
+        when :name
+          # ignore it.
         else # trying to apply any other option
           begin
             object.instance_eval(option.to_s).set(value)

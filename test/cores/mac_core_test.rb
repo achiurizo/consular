@@ -95,12 +95,21 @@ if platform?("darwin") # Only run test if it's darwin
         Terminitor::MacCore.new('/path/to').set_options(@object, :settings => :valid_settings)
       end
 
-      should "return a message on invalid settings" do
-        stub(@terminal).settings_sets {{:invalid_settings => true}}
-        stub(Object).raise 
-        stub(@object).current_settings.stub!.set(anything) { raise Appscript::CommandError.new("code","error","object","reference", "command") }
+      context "invalid settings" do
+        should "return a error message that" do
+          stub(@terminal).settings_sets {{:invalid_settings => true}}
+          stub(Object).raise 
+          stub(@object).current_settings.stub!.set(anything) { raise Appscript::CommandError.new("code","error","object","reference", "command") }
+          capture(:stdout) { Terminitor::MacCore.new('/path/to').set_options(@object, :settings => :invalid_settings) }
+        end.matches %r{Error: invalid settings}
       end
-        
+
+      context "name option" do
+        should "ignore :name" do
+          capture(:stdout) { Terminitor::MacCore.new('/path/to').set_options(@object, :name => 'hihi') }
+        end.matches ""
+      end
+
       context "bounds" do
 
         should "set bounds" do
