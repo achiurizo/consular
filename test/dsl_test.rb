@@ -11,8 +11,15 @@ context "Dsl" do
     setup { @yaml.to_hash }
     asserts_topic.equivalent_to :setup=>["echo \"setup\""], 
                                 :windows=>{
-                                  "window1"=>{:tabs=>{"named tab"=>{:commands=>["echo 'named tab'", "ls"], :options => {:settings=>"Grass"}}, 
-                                                      "tab0"=>{:commands=>["echo 'first tab'", "echo 'of window'", "echo 'than now'"]}}, :options => {:size=>[70,30]}}, 
+                                  "window1"=>{:tabs=>{"tab1"=>{:commands=>["echo 'named tab'", "ls"], 
+                                                               :options => {:name => "named tab", :settings=>"Grass"}}, 
+                                                      "tab0"=>{:commands=>["echo 'first tab'", "echo 'of window'", "echo 'than now'"]},
+                                                      "tab2"=>{:commands=>["top"],
+                                                               :options =>{:name => "a tab", :settings => "Pro"}}
+                                                     },
+                                              :options => {:size=>[70,30]}},
+                                  "window2"=>{:tabs=>{"tab0"=>{:commands=>["uptime"]}},
+                                              :options => {:name => 'server'}},
                                   "default"=>{:tabs=>{"tab0"=>{:commands=>["echo 'default'", "echo 'default tab'", "ok", "for real"]}}}}
   end
 

@@ -25,10 +25,8 @@ module Terminitor
     # sets command context to be run inside a specific window
     # window(:name => 'new window', :size => [80,30], :position => [9, 100]) { tab('ls','gitx') }
     # window { tab('ls', 'gitx') }
-    def window(name =nil, options = nil, &block)
-      options ||= {}
-      options, name = name, nil if name.is_a?(Hash)    
-      window_name = name || "window#{@windows.keys.size}"
+    def window(options = {}, &block)
+      window_name = "window#{@windows.keys.size}"
       window_contents = @windows[window_name] = {:tabs => {}}
       window_contents[:options] = options unless options.empty?
       in_context window_contents[:tabs], &block
@@ -43,16 +41,14 @@ module Terminitor
     # sets command context to be run inside specific tab
     # tab(:name => 'new tab', :settings => 'Grass') { run 'mate .' }
     # tab 'ls', 'gitx'
-    def tab(name = nil, options = nil, *commands, &block)
-      options ||= {}
+    def tab(options = {}, *commands, &block)
       if block_given?
-        options, name = name, nil if name.is_a?(Hash)    
-        tab_name = name || "tab#{@_context.keys.size}"
+        tab_name =  "tab#{@_context.keys.size}"
         tab_contents = @_context[tab_name] = {:commands => []}
         tab_contents[:options] = options unless options.empty?
         in_context tab_contents[:commands], &block
       else
-        tab_tasks = @_context["tab#{@_context.keys.size}"] = { :commands => [name] + [options] +commands}
+        tab_tasks = @_context["tab#{@_context.keys.size}"] = { :commands => [options] + commands}
       end
     end
 

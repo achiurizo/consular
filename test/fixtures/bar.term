@@ -8,10 +8,17 @@ tab "echo 'default'", "echo 'default tab'", "ok", "for real"
 window :size => [70,30] do
   tab "echo 'first tab'", "echo 'of window'", "echo 'than now'"
   
-  tab "named tab", :settings => "Grass" do
+  tab :name => "named tab", :settings => "Grass" do
     run "echo 'named tab'"
     run "ls"
   end
+
+  tab :name => "a tab", :settings => "Pro" do
+    run "top"
+  end
 end
 
+window :name => 'server' do
+  tab "uptime"
+end
 
