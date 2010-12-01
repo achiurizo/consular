@@ -26,7 +26,7 @@ module Terminitor
     # this command will run commands in the designated window
     # run_in_window 'window1', {:tab1 => ['ls','ok']}
     def run_in_window(window_name, window_content, options = {})
-      window_options = window_content[:options]      
+      window_options = window_content[:options]
       first_tab = true
       window_content[:tabs].each_pair do |tab_name, tab_content|
         # Open window on first 'tab' statement
@@ -40,7 +40,8 @@ module Terminitor
         else
           tab = open_tab(tab_options)
         end
-        tab_content[:commands].insert(0,  "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
+        tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
+        tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
         tab_content[:commands].each do |cmd|
           execute_command(cmd, :in => tab)
         end

@@ -53,13 +53,14 @@ context "AbstractCore" do
       setup do
         any_instance_of(Terminitor::AbstractCore) do |core|
           stub(core).load_termfile('/path/to')  { 
-            {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok']}, 'tab2' => {:commands => ['ps']}}},
+            {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok']}, 
+                                                  'tab2' => {:commands => ['ps']}}},
                           'default' => {:tabs => {}}
                          }
             }
           }
         end
-        @core = Terminitor::AbstractCore.new('/path/to')
+        Terminitor::AbstractCore.new('/path/to')
       end
 
       should "execute without default" do
@@ -93,8 +94,10 @@ context "AbstractCore" do
       setup do
         any_instance_of(Terminitor::AbstractCore) do |core|
           stub(core).load_termfile('/path/to') do 
-            {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok'], :options => {:settings => 'cool', :name => 'first tab'}}, 
-                                                  'tab2' => {:commands => ['ps'], :options => {:settings => 'grass', :name => 'second tab'}},  
+            {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls', 'ok'], 
+                                                             :options => {:settings => 'cool', :name => 'first tab'}}, 
+                                                  'tab2' => {:commands => ['ps'], 
+                                                             :options => {:settings => 'grass', :name => 'second tab'}},  
                                                  }, 
                                         :options => {:bounds => [10,10]}},
                           'default' => {:tabs => {}}
@@ -117,6 +120,35 @@ context "AbstractCore" do
       end  
     end
   
+
+    context "with before" do 
+      setup do
+        any_instance_of(Terminitor::AbstractCore) do |core|
+          stub(core).load_termfile('/path/to')  { 
+            {:windows => {'window1' => {:tabs => {'tab1' => {:commands => ['ls']}, 
+                                                  'tab2' => {:commands => ['ps']}},
+                                        :before => ['whoami']
+                                       },
+                          'default' => {:tabs => {}}
+                         }
+            }
+          }
+        end
+        Terminitor::AbstractCore.new('/path/to')
+      end
+
+      should "execute without default" do
+        core = topic.dup
+        mock(core).open_window(nil)    { "first"  }
+        mock(core).open_tab(nil)       { "second" }
+        mock(core).set_delayed_options { true     }
+        mock(core).execute_command('whoami', :in => 'first')
+        mock(core).execute_command('ls', :in => "first")
+        mock(core).execute_command('whoami', :in => "second")
+        mock(core).execute_command('ps', :in => "second")
+        core.process!
+      end
+    end
   end
 
 
