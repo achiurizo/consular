@@ -15,13 +15,10 @@ module Terminitor
     # setup "bundle install", "brew update"
     # setup { run('bundle install') }
     def setup(*commands, &block)
-      setup_tasks = @setup
       if block_given?
-        @_context, @_old_context = setup_tasks, @_context
-        instance_eval(&block)
-        @_context = @_old_context
+        in_context @setup, &block
       else
-        setup_tasks.concat(commands)
+        @setup.concat(commands)
       end
     end
 
@@ -34,9 +31,7 @@ module Terminitor
       window_name = name || "window#{@windows.keys.size}"
       window_contents = @windows[window_name] = {:tabs => {}}
       window_contents[:options] = options unless options.empty?
-      @_context, @_old_context = window_contents[:tabs], @_context
-      instance_eval(&block)
-      @_context = @_old_context
+      in_context window_contents[:tabs], &block
     end
 
     # stores command in context
@@ -55,9 +50,7 @@ module Terminitor
         tab_name = name || "tab#{@_context.keys.size}"
         tab_contents = @_context[tab_name] = {:commands => []}
         tab_contents[:options] = options unless options.empty?
-        @_context, @_old_context = tab_contents[:commands], @_context
-        instance_eval(&block)
-        @_context = @_old_context
+        in_context tab_contents[:commands], &block
       else
         tab_tasks = @_context["tab#{@_context.keys.size}"] = { :commands => [name] + [options] +commands}
       end
@@ -70,17 +63,12 @@ module Terminitor
 
     private
 
-    #
-    # in_context @setup, commands, &block
-    # in_context @tabs["name"], commands, &block
-    def in_context(tasks_instance,*commands, &block)
-      if block_given?
-        @_context, @_old_context = instance_variable_get(name), @_context
-        instance_eval(&block)
-        @_context = @_old_context
-      else
-        @setup << commands
-      end
+    # in_context @setup, &block
+    # in_context @tabs["name"], &block
+    def in_context(context, &block)
+      @_context, @_old_context = context, @_context
+      instance_eval(&block)
+      @_context = @_old_context
     end
 
 
