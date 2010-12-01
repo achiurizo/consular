@@ -28,11 +28,12 @@ module Terminitor
     def run_in_window(window_name, window_content, options = {})
       window_options = window_content[:options]
       first_tab = true
-      window_content[:tabs].each_pair do |tab_name, tab_content|
+      window_content[:tabs].each_pair do |_, tab_content|
         # Open window on first 'tab' statement
         # first tab is already opened in the new window, so first tab should be
         # opened as a new tab in default window only
         tab_options = tab_content[:options]
+        tab_name    = tab_options[:name] if tab_options
         if first_tab && !options[:default]
           first_tab = false 
           window_options = Hash[window_options.to_a + tab_options.to_a] # safe merge
@@ -40,6 +41,7 @@ module Terminitor
         else
           tab = open_tab(tab_options)
         end
+        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
         tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
         tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
         tab_content[:commands].each do |cmd|
