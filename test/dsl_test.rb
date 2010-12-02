@@ -11,17 +11,22 @@ context "Dsl" do
     setup { @yaml.to_hash }
     asserts_topic.equivalent_to :setup=>["echo \"setup\""], 
                                 :windows=>{
-                                  "window1"=>{:tabs=>{"tab1"=>{:commands=>["echo 'named tab'", "ls"], 
+                                  "window1"=>{:tabs=>{"tab2"=>{:commands=>["echo 'named tab'", "ls"], 
                                                                :options => {:name => "named tab", :settings=>"Grass"}}, 
-                                                      "tab0"=>{:commands=>["echo 'first tab'", "echo 'of window'", "echo 'than now'"]},
-                                                      "tab2"=>{:commands=>["top"],
-                                                               :options =>{:name => "a tab", :settings => "Pro"}}
+                                                      "tab1"=>{:commands=>["echo 'first tab'", "echo 'of window'", "echo 'than now'"]},
+                                                      "tab3"=>{:commands=>["top"],
+                                                               :options =>{:name => "a tab", :settings => "Pro"}},
+                                                      "default"=>{:commands=>['whoami']}
                                                      },
                                               :options => {:size=>[70,30]}},
-                                  "window2"=>{:tabs=>{"tab0"=>{:commands=>["uptime"]}},
+                                  "window2"=>{:tabs=>{"tab1"=>{:commands=>["uptime"]},
+                                                      "default"=>{:commands=>[]}
+                                                     },
                                               :before => ['whoami'],
                                               :options => {:name => 'server'}},
-                                  "default"=>{:tabs=>{"tab0"=>{:commands=>["echo 'default'", "echo 'default tab'", "ok", "for real"]}}}}
+                                  "default"=>{:tabs=>{"tab1"=>{:commands=>["echo 'default'", "echo 'default tab'", "ok", "for real"]},
+                                                      "default"=>{:commands=>[]}
+                                                     }}}
   end
 
 end

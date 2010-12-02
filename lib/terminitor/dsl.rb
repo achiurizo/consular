@@ -5,7 +5,7 @@ module Terminitor
     def initialize(path)
       file = File.read(path)
       @setup    = []
-      @windows  = { 'default' => {:tabs => {}}}
+      @windows  = { 'default' => {:tabs => {'default' =>{:commands=>[]}}}}
       @_context = @windows['default']
       instance_eval(file)
     end
@@ -27,7 +27,7 @@ module Terminitor
     # window { tab('ls', 'gitx') }
     def window(options = {}, &block)
       window_name     = "window#{@windows.keys.size}"
-      window_contents = @windows[window_name] = {:tabs => {}}
+      window_contents = @windows[window_name] = {:tabs => {'default' => {:commands =>[]}}}
       window_contents[:options] = options unless options.empty?
       in_context window_contents, &block
     end
@@ -35,7 +35,11 @@ module Terminitor
     # stores command in context
     # run 'brew update'
     def run(command)
-      @_context << command
+      if @_context.is_a?(Hash) && @_context[:tabs] # if we are in a window context, append commands to default tab.
+        @_context[:tabs]['default'][:commands]<<(command)
+      else
+        @_context<<(command)
+      end
     end
 
     # runs commands before each tab in window context

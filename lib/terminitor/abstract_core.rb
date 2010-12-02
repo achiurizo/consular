@@ -29,7 +29,7 @@ module Terminitor
     def run_in_window(window_name, window_content, options = {})
       window_options = window_content[:options]
       first_tab = true
-      window_content[:tabs].each_pair do |_, tab_content|
+      window_content[:tabs].each_pair do |tab_key, tab_content|
         # Open window on first 'tab' statement
         # first tab is already opened in the new window, so first tab should be
         # opened as a new tab in default window only
@@ -40,11 +40,12 @@ module Terminitor
           window_options = Hash[window_options.to_a + tab_options.to_a] # safe merge
           tab = window_options.empty? ? open_window(nil) : open_window(window_options)
         else
-          tab = open_tab(tab_options)
+          tab = ( tab_key == 'default' ? active_window : open_tab(tab_options) ) # give us the current window if its default, else open a tab.
         end
-        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
+        tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty? # clean up prompt
+        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name   # add title to tab
         tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
-        tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
+        tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before] # append our before block commands.
         tab_content[:commands].each do |cmd|
           execute_command(cmd, :in => tab)
         end
@@ -63,7 +64,8 @@ module Terminitor
     # yay.
 
     # Executes the Command
-    # execute_command 'cd /path/to', {}
+    # should use the :in key to interact with terminal object.
+    # execute_command 'cd /path/to', {:in => #<TerminalObject>}
     def execute_command(cmd, options = {})
     end
 

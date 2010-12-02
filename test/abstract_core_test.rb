@@ -75,17 +75,25 @@ context "AbstractCore" do
         core.process!
       end
 
-      should "execute with default" do
+      should "execute with default window" do
         core = topic.dup
         mock(core).open_tab(nil) { true  }
         mock(core).execute_command('echo', :in => true)
         core.run_in_window('default',{:tabs => {'tab0'=>{:commands => ['echo']}}}, :default => true)
       end
 
+      should "execute with default tab" do
+        core = topic.dup
+        mock(core).active_window { true }
+        mock(core).execute_command('uptime', :in => true)
+        core.run_in_window('default',{:tabs => {'default'=>{:commands=>['uptime']}}}, :default => true)
+      end
+
       should "execute with working_dir" do
         core = topic.dup
-        stub(Dir).pwd { '/tmp/path' } 
+        stub(Dir).pwd { '/tmp/path' }
         mock(core).execute_command("cd \"/tmp/path\"", :in => '/tmp/path')
+        mock(core).execute_command('clear', :in => '/tmp/path')
         mock(core).execute_command('ls', :in => '/tmp/path')
         core.run_in_window('window1', {:tabs => {'tab1' => {:commands => ['ls']}}})
       end
@@ -116,9 +124,11 @@ context "AbstractCore" do
         mock(core).open_tab(:settings => 'grass', :name => 'second tab')    { "second"  }
         mock(core).set_delayed_options { true  }
         mock(core).execute_command('PS1=$PS1"\e]2;first tab\a"', :in => 'first')
+        mock(core).execute_command('clear', :in => 'first')
         mock(core).execute_command('ls', :in => "first")
         mock(core).execute_command('ok', :in => "first")
         mock(core).execute_command('PS1=$PS1"\e]2;second tab\a"', :in => 'second')
+        mock(core).execute_command('clear', :in => 'second')
         mock(core).execute_command('ps', :in => "second")
         core.process!
       end  
