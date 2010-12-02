@@ -1,7 +1,7 @@
 Terminitor
 ===========
 
-Terminitor automates your development workflow by allowing you to script the commands to run in your terminal to begin working on a given project.
+Terminitor automates your development workflow setup. Less time setting up,  more time getting things done.
 
 Installation
 ------------
@@ -47,16 +47,24 @@ To use the legacy syntax, you can invoke it with terminitor like so:
 
     $ terminitor edit foo --syntax yml
 
+It is recommended that you move over to the newer Ruby DSL Syntax as it
+provides more robust features, however terminitor will still support the older
+YAML syntax.
+
 
 #### Ruby DSL Syntax ####
 
-    setup 'echo "setup"'
+    setup 'echo "setup"'   # code to run during setup
 
+    # open a tab in current window with these commands
     tab "echo 'default'", "echo 'default tab'"
 
     window do
-      tab "echo 'first tab'", "echo 'of window'"
-  
+      before { run 'cd /path' } # run this command before each command.
+      
+      run 'padrino start' # run in new window
+
+      tab "echo 'first tab'", "echo 'of window'" # create a new tab in window and run it.
       tab "named tab" do
         run "echo 'named tab'"
         run "ls"
@@ -83,12 +91,39 @@ or even pass it a block:
 to create windows, we can simply invoke the window command with a block containing additional commands like:
 
     window do
-      tab "echo 'hi'"
-      tab "mate ."
-      tab do
+
+      run "whoami"    # Runs the command in the current window.
+
+      tab "echo 'hi'" # Creates another tab
+      tab "mate ."    # And another
+      tab do          # Last hoorah
         run "open http://www.google.com"
       end
     end
+
+
+##### Before #####
+
+Sometimes you'll want to create a few commands that you want to run in each tab instance. You can do that with 'before':
+
+    before { run "cd /path" } # execute this command before other commands in the default window
+    run "whoami"
+    tab 'uptime'
+
+    # In this instance, "cd /path" wil be executed in the default window before 'whoami' 
+    # and also in the tab before 'uptime'.
+    # You can also use this inside a specific window context:
+
+    window do
+      before 'cd /tmp'
+      run 'watchr test.watchr' # "cd /tmp" first than run watchr
+
+      tab do
+        run 'padrino start' # "cd /tmp" is ran beforehand and then padrino start is executed
+      end
+    end
+
+
 
 ##### Setup #####
 
@@ -103,19 +138,28 @@ or with a block:
     setup do
       run "echo 'hi'"
       run "bundle install"
+      run 'git remote add upstream git://github.com/achiu/terminitor.git'
     end
 
 
+Once defined, you can invoke your projects setup with:
+
+    terminitor setup my_project
+
 ##### Settings #####
+_currently only available for Mac OSX Terminal_
 
 You can also set settings on each of your tabs and windows. for example, this is possible:
 
 Open a tab with terminal settings "Grass"
 
-    tab "named tab", :settings => "Grass" do
+    tab :name => "named tab", :settings => "Grass" do
       run "echo 'named tab'"
       run "ls"
     end
+
+This will create a tab with a title of 'named tab' using Terminals 'Grass' setting.
+
 
 How about a window with a specific size:
 
@@ -187,7 +231,7 @@ Now, when you or another developer clones a project, you could simply:
 
     $ git clone git://path/to/my/foo/project.git
     $ cd project
-    $ bundle install
+    $ terminitor setup
     $ terminitor start
 
 This would clone the project repo, and then install all dependencies and then launch the ideal development environment for the project. Clearly
@@ -201,7 +245,7 @@ In addition, you are in the project folder and you wish to remove the Termfile, 
 This will clear the `Termfile` for the particular project.
 
 ### Capturing Terminal Settings with Terminitor ###
-
+_Currently Mac OSX Terminal only_
 Terminitor has the ability to also capture your terminal setup and settings simply with:
 
     $ terminitor edit my_project --capture
@@ -211,10 +255,10 @@ this will open up a new terminitor project with the captured settings for you to
 
 ### Fetching Github Projects with Terminitor ###
 
-Terminitor can also fetch code repositories off Skynet, I mean Github. This will have terminitor clone the repo into the current directory:
+Terminitor can also fetch code repositories off Github. This will have terminitor clone the repo into the current directory:
 
     $ terminitor fetch achiu terminitor
-    
+
 After the repo has been fetched, terminitor will go ahead and run the setup block from the Termfile included in the repository. In the event you wouldn't want the setup block to be executed, simply set setup to false:
 
     $ terminitor fetch achiu terminitor --setup=false
