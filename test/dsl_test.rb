@@ -18,6 +18,7 @@ context "Dsl" do
                                                                :options =>{:name => "a tab", :settings => "Pro"}},
                                                       "default"=>{:commands=>['whoami']}
                                                      },
+                                              :before => ['cd /path'],
                                               :options => {:size=>[70,30]}},
                                   "window2"=>{:tabs=>{"tab1"=>{:commands=>["uptime"]},
                                                       "default"=>{:commands=>[]}

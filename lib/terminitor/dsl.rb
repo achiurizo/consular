@@ -51,7 +51,7 @@ module Terminitor
       if block_given?
         in_context @_context[:before], &block
       else
-        @_context.concat(commands)
+        @_context[:before].concat(commands)
       end
     end
 

@@ -6,6 +6,9 @@ setup 'echo "setup"'
 tab "echo 'default'", "echo 'default tab'", "ok", "for real"
 
 window :size => [70,30] do
+  
+  before 'cd /path'
+
   run "whoami"
   tab "echo 'first tab'", "echo 'of window'", "echo 'than now'"
   
