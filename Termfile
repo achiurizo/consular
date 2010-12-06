@@ -1,11 +1,7 @@
 # Terminitor Termfile
 
-setup do
-  run 'bundle install'
-end
+setup 'bundle install'
 
-window do
-  tab 'watchr test.watchr'
-  tab "gitx", "irb"
-  tab "open 'http://www.github.com/achiu/terminitor/issues'"
-end
+run 'watchr test.watchr'
+tab "irb"
+tab "open 'http://www.github.com/achiu/terminitor/issues'"
