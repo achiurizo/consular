@@ -9,7 +9,7 @@ window :size => [70,30] do
   
   before 'cd /path'
 
-  run "whoami"
+  run "whoami","who", "ls"
   tab "echo 'first tab'", "echo 'of window'", "echo 'than now'"
   
   tab :name => "named tab", :settings => "Grass" do
