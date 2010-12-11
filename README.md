@@ -9,6 +9,29 @@ Installation
     $ gem install terminitor
     $ terminitor init
 
+Development Setup
+---------------------
+
+To begin development on Terminitor, run bundler:
+
+    $ gem install bundler
+    $ bundle install
+
+The test suite uses ([Riot](https://www.github.com/thumblemonks/riot/)).
+to run the test run:
+
+    $ rake test
+
+or use watchr:
+
+    $ watchr test.watchr
+
+or if you have terminitor installed,
+
+    $ terminitor fetch achiu terminitor
+
+this will git clone the repo and bundle install.
+
 Usage
 -------
 
@@ -30,7 +53,7 @@ This will open your default editor (set through the $TERM_EDITOR or $EDITOR vari
       - cd ~/foo/bar
       - gitx
     - tab2:
-      - mysql -u root
+      - mysql -u root)
       - use test;
       - show tables;
     - tab3: echo "hello world"
