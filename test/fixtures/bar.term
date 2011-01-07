@@ -21,7 +21,7 @@ window :size => [70,30] do
     run "top"
   end
   
-  tab("another named tab") { run "ls" }
+  tab("another named tab", :settings => 'Grass') { run "ls" }
 end
 
 window :name => 'server' do

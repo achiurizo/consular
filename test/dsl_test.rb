@@ -17,7 +17,7 @@ context "Dsl" do
                                                       "tab3"=>{:commands=>["top"],
                                                                :options =>{:name => "a tab", :settings => "Pro"}},
                                                       "tab4"=>{:commands=>["ls"],
-                                                               :options =>{:name => "another named tab"}},
+                                                               :options =>{:name => "another named tab", :settings => "Grass"}},
                                                       "default"=>{:commands=>['whoami && who && ls']}
                                                      },
                                               :before => ['cd /path'],
