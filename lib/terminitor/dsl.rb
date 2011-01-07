@@ -59,15 +59,21 @@ module Terminitor
     # sets command context to be run inside specific tab
     # tab(:name => 'new tab', :settings => 'Grass') { run 'mate .' }
     # tab 'ls', 'gitx'
-    def tab(options = {}, *commands, &block)
+    def tab(*args, &block)
       tabs     = @_context[:tabs]
       tab_name = "tab#{tabs.keys.size}"
       if block_given?
         tab_contents = tabs[tab_name] = {:commands => []}
+        
+        options = {}
+        options = args.pop          if args.last.is_a? Hash
+        options[:name] = args.first if args.first.is_a?(String) || args.first.is_a?(Symbol)
+        
         tab_contents[:options] = options unless options.empty?
+        
         in_context tab_contents[:commands], &block
       else
-        tabs[tab_name] = { :commands => [options] + commands}
+        tabs[tab_name] = { :commands => args}
       end
     end
 

@@ -36,7 +36,7 @@ module Terminitor
         tab_options = tab_content[:options]
         tab_name    = tab_options[:name] if tab_options
         if first_tab && !options[:default]
-          first_tab = false 
+          first_tab = false
           window_options = Hash[window_options.to_a + tab_options.to_a] # safe merge
           tab = window_options.empty? ? open_window(nil) : open_window(window_options)
         else
