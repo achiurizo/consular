@@ -17,20 +17,13 @@ context "AbstractCapture" do
     end
     
     setup { @capture.capture_settings() }
-    asserts_topic.equivalent_to <<-OUTPUT
-window :size => [10, 20], :name => "main window" do
-    tab :settings => "Grass" do
-    end
-
-end
-
-window :size => [14, 30], :name => "another window" do
-    tab :settings => "Yello" do
-    end
-
-end
-
-OUTPUT
-
+    asserts_topic.matches %r{window .* do}
+    asserts_topic.matches %r{tab .* do\s+end}
+    asserts_topic.matches %r{\:name \=\> "main window"}
+    asserts_topic.matches %r{\:size \=\> \[10\, 20\]}
+    asserts_topic.matches %r{\:settings \=\> "Grass"}
+    asserts_topic.matches %r{\:name \=\> "another window"}
+    asserts_topic.matches %r{\:size \=\> \[14, 30\]}
+    asserts_topic.matches %r{\:settings \=\> "Yello"}
   end
 end
