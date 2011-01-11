@@ -164,6 +164,39 @@ context "AbstractCore" do
         core.process!
       end
     end
+    
+    should "execute tabs in order" do
+      any_instance_of(Terminitor::AbstractCore) do |core|
+        stub(core).load_termfile('/path/to') {
+          {:windows => {'default' => {:tabs => {'tab1' => {:commands => ['ls']}, 
+                                                'tab2' => {:commands => ['ps']},
+                                                'tab3' => {:commands => ['whoami']},
+                                                'tab4' => {:commands => ['cd']},
+                                                'tab5' => {:commands => ['clear']},
+                                                'tab6' => {:commands => ['nmap']}}
+                                     }
+                       }
+          }
+        }
+      end
+      stub(Dir).pwd { nil }
+      core = Terminitor::AbstractCore.new('/path/to')
+      
+      mock(core).
+        open_tab(nil) { "first" }.then.
+        execute_command('ls', :in => "first").then.
+        open_tab(nil) { "second" }.then.
+        execute_command('ps', :in => "second").then.
+        open_tab(nil) { "third" }.then.
+        execute_command('whoami', :in => "third").then.
+        open_tab(nil) { "fourth" }.then.
+        execute_command('cd', :in => "fourth").then.
+        open_tab(nil) { "fifth" }.then.
+        execute_command('clear', :in => "fifth").then.
+        open_tab(nil) { "sixth" }.then.
+        execute_command('nmap', :in => "sixth")
+      core.process!
+    end
   end
 
 
