@@ -6,7 +6,12 @@ module Terminitor
     # find_core RUBY_PLATFORM
     def find_core(platform)
       core = case platform.downcase
-      when %r{darwin} then Terminitor::MacCore
+      when %r{darwin} then 
+        if ENV['TERM_PROGRAM'] == 'iTerm.app'
+          Terminitor::ItermCore
+        else
+          Terminitor::MacCore
+        end
       when %r{linux}  then Terminitor::KonsoleCore # TODO check for gnome and others
       else nil
       end
@@ -15,7 +20,12 @@ module Terminitor
     # Defines how to capture terminal settings on the specified platform
     def capture_core(platform)
       core = case platform.downcase
-      when %r{darwin} then Terminitor::MacCapture
+      when %r{darwin} then 
+        if ENV['TERM_PROGRAM'] == 'iTerm.app'
+          Terminitor::ItermCapture
+        else
+          Terminitor::MacCapture
+        end
       when %r{linux}  then Terminitor::KonsoleCapture # TODO check for gnome and others
       else nil
       end
@@ -109,4 +119,5 @@ module Terminitor
     end
 
   end
+  
 end

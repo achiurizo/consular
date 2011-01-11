@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    terminitor (0.2.2)
+    terminitor (0.3.1)
       github (~> 0.4.5)
       rb-appscript
       thor (~> 0.14.0)
