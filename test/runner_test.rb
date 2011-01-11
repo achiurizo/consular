@@ -28,7 +28,11 @@ context "Runner" do
 
 
   context "#find_core" do
-    should("have Darwin") { @test_runner.find_core('darwin') }.equals Terminitor::MacCore
+    if ENV['TERM_PROGRAM'] == 'iTerm.app'
+      should("have Darwin") { @test_runner.find_core('darwin') }.equals Terminitor::ItermCore
+    else
+      should("have Darwin") { @test_runner.find_core('darwin') }.equals Terminitor::MacCore
+    end
 
     if platform?('linux') # TODO Gotta be a better way.
       should("have KDE") { @test_runner.find_core('linux') }.equals Terminitor::KonsoleCore
@@ -36,7 +40,11 @@ context "Runner" do
   end
   
   context "#capture_core" do 
-    should("have Darwin") { @test_runner.capture_core('darwin') }.equals Terminitor::MacCapture
+    if ENV['TERM_PROGRAM'] == 'iTerm.app'
+      should("have Darwin") { @test_runner.capture_core('darwin') }.equals Terminitor::ItermCapture
+    else
+      should("have Darwin") { @test_runner.capture_core('darwin') }.equals Terminitor::MacCapture
+    end
   end
 
   context "#open_in_editor" do
