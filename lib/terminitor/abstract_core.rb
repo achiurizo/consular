@@ -29,7 +29,8 @@ module Terminitor
     def run_in_window(window_name, window_content, options = {})
       window_options = window_content[:options]
       first_tab = true
-      window_content[:tabs].each_pair do |tab_key, tab_content|
+      window_content[:tabs].keys.sort.each do |tab_key|
+        tab_content = window_content[:tabs][tab_key]
         # Open window on first 'tab' statement
         # first tab is already opened in the new window, so first tab should be
         # opened as a new tab in default window only
