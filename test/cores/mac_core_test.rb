@@ -81,7 +81,7 @@ if platform?("darwin") # Only run test if it's darwin
 
     context "set_options" do 
       setup do 
-        @object, @terminal, @windows= 3.times.collect { Object.new }
+        @object, @terminal, @windows = Array.new(3) { Object.new }
         stub(@terminal).windows { @windows }
         any_instance_of(Terminitor::MacCore) do |core|
           stub(core).app('Terminal')           { @terminal }

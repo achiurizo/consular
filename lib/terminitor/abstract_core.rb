@@ -37,7 +37,8 @@ module Terminitor
         tab_name    = tab_options[:name] if tab_options
         if first_tab && !options[:default]
           first_tab = false
-          window_options = Hash[window_options.to_a + tab_options.to_a] # safe merge
+          combined_options = (window_options.to_a + tab_options.to_a).inject([]) {|arr, pair| arr += pair }
+          window_options = Hash[*combined_options] # safe merge
           tab = window_options.empty? ? open_window(nil) : open_window(window_options)
         else
           tab = ( tab_key == 'default' ? active_window : open_tab(tab_options) ) # give us the current window if its default, else open a tab.

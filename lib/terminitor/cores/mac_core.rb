@@ -128,7 +128,8 @@ module Terminitor
     
     # selects options allowed for window or tab
     def allowed_options(object_type, options)
-      Hash[ options.select {|option, value| ALLOWED_OPTIONS[object_type].include?(option) }]
+      pairs = options.select {|option, value| ALLOWED_OPTIONS[object_type].include?(option) }.inject([]) {|arr, pair| arr += pair }
+      Hash[*pairs]
     end
     
     # Add option to the list of delayed options
