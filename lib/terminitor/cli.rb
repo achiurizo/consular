@@ -30,7 +30,7 @@ module Terminitor
     def list
       say "Global scripts: \n"
       Dir.glob("#{ENV['HOME']}/.terminitor/*").each do |file|
-        say "  * #{File.basename(file).gsub('.yml','')} #{grab_comment_for_file(file)}"
+        say "  * #{File.basename(file, '.term')} #{grab_comment_for_file(file)}"
       end
     end
 
