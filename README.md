@@ -334,6 +334,8 @@ Thanks to the following people for their contributions so far:
  * Alexey Kuleshov ([kulesa](https://github.com/kulesa)) for contributing the terminal settings and terminal settings capture functionality
  * Arthur Gunn     ([gunn](https://github.com/gunn)) for contributing a path to support tab syntax and load path.
  * Elliot Winkler  ([mcmire](https://github.com/mcmire)) for adding 1.8.6 compatiblity and ensuring tabs open in order.
+ * Justin Hilemen  ([bobthecow](https://github.com/bobthecow)) for fixing the list command to remove the term extensions.
+ * recurser        ([recurser](https://github.com/recurser)) for adding basic iTerm support.
  
 Acknowledgements
 -----------------
