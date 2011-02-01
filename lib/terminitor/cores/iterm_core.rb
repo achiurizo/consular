@@ -31,7 +31,7 @@ module Terminitor
     # Opens a new tab and returns itself.
     # TODO : handle options (?)
     def open_tab(options = nil)
-      session = @terminal.current_terminal.sessions.end.make( :new => :session )
+      session = current_terminal.sessions.end.make( :new => :session )
       session.exec(:command => ENV['SHELL'])
       session
     end
@@ -39,7 +39,7 @@ module Terminitor
     # Opens A New Window, applies settings to the first tab and returns the tab object.
     # TODO : handle options (?)
     def open_window(options = nil)
-      window  = @terminal.make( :new => :terminal )
+      window  = terminal.make( :new => :terminal )
       session = window.sessions.end.make( :new => :session )
       session.exec(:command => ENV['SHELL'])
       session
@@ -54,14 +54,19 @@ module Terminitor
     
     # Returns the last instantiated tab from active window
     def return_last_tab
-      @terminal.current_terminal.sessions.last.get rescue false
+      current_terminal.sessions.last.get rescue false
     end
 
-    # returns the active window
+    # returns the active windows
     def active_window
-      @terminal.current_terminal.current_session.get
+      current_terminal.current_session.get
     end
     
+    # Returns the current terminal
+    def current_terminal
+      @terminal.current_terminal
+    end
+
     # Sets options of the given object
     def set_options(object, options = {})
       options.each_pair do |option, value| 
