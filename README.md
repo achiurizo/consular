@@ -296,6 +296,7 @@ Cores allow Terminitor to operate on a variety of platforms. They abstract the g
 
  * MacCore        - Mac OS X Terminal
  * KonsoleCore    - KDE Konsole
+ * ITermCore      - Mac OS X iTerm
 
 Feel free to contribute more cores so that Terminitor can support your terminal of choice :)
 
@@ -307,6 +308,13 @@ Limitations
 
 Right now the Mac OS X Terminal tabs are created by invoking keystrokes which means there are limitations with the terminal being in
 focus during execution of these commands. Obviously the long term goal is to solve this issue as well but in all honesty, this solution works well enough most of the time.
+
+
+#### ITermCore ####
+
+Currently the iTerm Core only provides basic functionality such as opening tabs, windows, and executing commands within them. The capture
+and settings functionality will be integrated soon.
+
 
 #### Fetching ####
 
