@@ -21,8 +21,10 @@ Gem::Specification.new do |s|
   else
   end
   
+  s.add_dependency "text-hyphen", "1.0.0"
+  s.add_dependency "text-format", "1.0.0"
   s.add_dependency "thor",   "~>0.14.0"
-  s.add_dependency "github", "~>0.4.5"
+  s.add_dependency "github", "~>0.6.0"
   s.add_development_dependency "bundler", "~>1.0.0"
   s.add_development_dependency "riot",    "~>0.12.0"
   s.add_development_dependency "rr",      "~>1.0.0"
@@ -40,3 +42,6 @@ Gem::Specification.new do |s|
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
   s.require_path = 'lib'
 end
+
+
+
