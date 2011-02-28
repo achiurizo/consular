@@ -1,6 +1,6 @@
 require File.expand_path('../../teststrap',__FILE__)
 
-if platform?("darwin") # Only run test if it's darwin
+on_platform "darwin" do
   context "MacCapture" do
     # Stub out the initialization
     setup do
@@ -34,9 +34,5 @@ if platform?("darwin") # Only run test if it's darwin
       setup { @mac_capture.object_options(@object) }
       asserts_topic.equals { {:bounds => [10,20,30,40]} }
     end
-  end
-else
-  context "MacCore" do
-    puts "Nothing to do, you are not on OSX"
   end
 end

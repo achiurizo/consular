@@ -4,7 +4,7 @@ def fake_exec_success
   IO.popen("true").read
 end
 
-if platform?('linux')
+on_platform 'linux' do
   context "TerminatorCore" do
     setup do
       @xdotool = `which xdotool`.chomp

@@ -11,9 +11,11 @@ end
 class Riot::Context
 end
 
-# Checks to see if Ruby Platform matches designated platform
-def platform?(platform)
-  RUBY_PLATFORM.downcase.include?(platform)
+# Yield the block if the platform matches current platform
+# example:
+#   on_platform('linux') { puts 'hi' }
+def on_platform(platform)
+  yield if RUBY_PLATFORM.downcase.include?(platform)
 end
 
 module Kernel

@@ -1,5 +1,5 @@
 require File.expand_path('../../teststrap',__FILE__)
-if platform?('linux')
+on_platform 'linux' do
   require 'dbus'
   context "KonsoleCore" do
     # Stub out the initialization

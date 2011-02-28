@@ -1,6 +1,7 @@
 require File.expand_path('../../teststrap',__FILE__)
 
-if platform?("darwin") # Only run test if it's darwin
+on_platform "darwin" do 
+
   context "ItermCore" do
     setup do
       any_instance_of(Terminitor::ItermCore) do |core|
@@ -58,10 +59,6 @@ if platform?("darwin") # Only run test if it's darwin
       core.active_window
     end
 
-  end
-else
-  context "itermCore" do
-    puts "Nothing to do, you are not on OSX"
   end
 end
 

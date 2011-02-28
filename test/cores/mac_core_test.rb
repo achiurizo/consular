@@ -1,13 +1,14 @@
 require File.expand_path('../../teststrap',__FILE__)
 
-if platform?("darwin") # Only run test if it's darwin
+on_platform "darwin" do
+
   context "MacCore" do
     setup do
       any_instance_of(Terminitor::MacCore) do |core|
         stub(core).app('Terminal')           { mock!.windows { true } }
         stub(core).load_termfile('/path/to') { true }
       end
-     @mac_core = Terminitor::MacCore.new('/path/to')  
+      Terminitor::MacCore.new('/path/to')
     end
 
     asserts "#terminal_process calls System Events" do
@@ -98,9 +99,12 @@ if platform?("darwin") # Only run test if it's darwin
       context "invalid settings" do
         should "return a error message that" do
           stub(@terminal).settings_sets {{:invalid_settings => true}}
-          stub(Object).raise 
-          stub(@object).current_settings.stub!.set(anything) { raise Appscript::CommandError.new("code","error","object","reference", "command") }
-          capture(:stdout) { Terminitor::MacCore.new('/path/to').set_options(@object, :settings => :invalid_settings) }
+          stub(@object).current_settings.stub!.set(anything) do
+            raise Appscript::CommandError.new("code","error","object","reference", "command")
+          end
+          capture(:stdout) do
+            Terminitor::MacCore.new('/path/to').set_options(@object, :settings => :invalid_settings)
+          end
         end.matches %r{Error: invalid settings}
       end
 
@@ -124,8 +128,9 @@ if platform?("darwin") # Only run test if it's darwin
       context "unknown option" do
         
         should "return a message" do
-          stub(Object).raise 
-          stub(@object).unknown_option.stub!.set(anything) { raise Appscript::CommandError.new("code","error","object","reference", "command") }
+          stub(@object).unknown_option.stub!.set(anything) do
+            raise Appscript::CommandError.new("code","error","object","reference", "command")
+          end
           capture(:stdout) { Terminitor::MacCore.new('/path/to').set_options(@object, :unknown_option => true)}
         end.matches %r{Error}
 
@@ -151,9 +156,5 @@ if platform?("darwin") # Only run test if it's darwin
 
     end
 
-  end
-else
-  context "MacCore" do
-    puts "Nothing to do, you are not on OSX"
   end
 end
