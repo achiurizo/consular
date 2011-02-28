@@ -18,6 +18,8 @@ Gem::Specification.new do |s|
   case RUBY_PLATFORM.downcase
   when %r{darwin}
     s.add_dependency "rb-appscript"
+  when %r{linux}
+    s.add_dependency "ruby-dbus"
   else
   end
   
