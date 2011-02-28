@@ -12,7 +12,12 @@ module Terminitor
         else
           Terminitor::MacCore
         end
-      when %r{linux}  then Terminitor::KonsoleCore # TODO check for gnome and others
+      when %r{linux}  then
+       if not `which terminator`.chomp.empty?
+         Terminitor::TerminatorCore
+       else
+         Terminitor::KonsoleCore # TODO silly fallback, make better check
+       end
       else nil
       end
     end
@@ -26,7 +31,12 @@ module Terminitor
         else
           Terminitor::MacCapture
         end
-      when %r{linux}  then Terminitor::KonsoleCapture # TODO check for gnome and others
+      when %r{linux}  then
+        if not `which terminator`.chomp.empty?
+          Terminitor::TerminatorCapture
+        else
+          Terminitor::KonsoleCapture # TODO silly fallback, make better check
+        end
       else nil
       end
     end

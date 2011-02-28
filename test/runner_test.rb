@@ -37,7 +37,11 @@ context "Runner" do
     end
 
     if platform?('linux') # TODO Gotta be a better way.
-      should("have KDE") { @test_runner.find_core('linux') }.equals Terminitor::KonsoleCore
+      if `which terminator`.chomp.empty?
+        should("have KDE") { @test_runner.find_core('linux') }.equals Terminitor::KonsoleCore
+      else
+        should("have terminator") { @test_runner.find_core('linux') }.equals Terminitor::TerminatorCore
+      end
     end
   end
   
