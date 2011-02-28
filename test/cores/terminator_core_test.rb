@@ -1,11 +1,8 @@
 require File.expand_path('../../teststrap', __FILE__)
 
-def fake_exec_success
-  IO.popen("true").read
-end
-
 on_platform 'linux' do
   context "TerminatorCore" do
+    helper(:fake_exec_success) { IO.popen("true").read }
     setup do
       @xdotool = `which xdotool`.chomp
       # stub xdotool invocations and termfile loading

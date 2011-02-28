@@ -6,13 +6,7 @@ module Terminitor
   # everything is done by using "xdotool" to simulate keypresses.
   class TerminatorCore < AbstractCore
     def initialize(path)
-      if RUBY_PLATFORM.include? 'linux'
-        if (@xdotool = `which xdotool`.chomp).empty?
-          abort("xdotool required for Terminator support")
-        end
-      else
-        abort("Terminator support only available on Linux")
-      end
+      abort("xdotool required for Terminator support") if (@xdotool = `which xdotool`.chomp).empty?
       super
     end
 
