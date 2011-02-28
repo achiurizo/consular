@@ -3,7 +3,9 @@ module Terminitor
   module Runner
 
     # Finds the appropriate platform core, else say you don't got it.
-    # find_core RUBY_PLATFORM
+    # @param [String] the ruby platform
+    # @example
+    #   find_core RUBY_PLATFORM
     def find_core(platform)
       core = case platform.downcase
       when %r{darwin} then 
@@ -23,6 +25,7 @@ module Terminitor
     end
     
     # Defines how to capture terminal settings on the specified platform
+    # @param [String] the ruby platform
     def capture_core(platform)
       core = case platform.downcase
       when %r{darwin} then 
@@ -42,8 +45,11 @@ module Terminitor
     end
 
     # Execute the core with the given method.
-    # execute_core :process!, 'project'
-    # execute_core :setup!, 'my_project'
+    # @param [Symbol] symbol of method
+    # @param [String] Termfile name
+    # @example
+    #   execute_core :process!, 'project'
+    #   execute_core :setup!, 'my_project'
     def execute_core(method, project)
       if path = resolve_path(project)
         core = find_core(RUBY_PLATFORM)
@@ -54,7 +60,10 @@ module Terminitor
     end
 
     # opens doc in system designated editor
-    # open_in_editor '/path/to', 'nano'
+    # @param [String] path to termfile
+    # @param [String] editor
+    # @example
+    #   open_in_editor '/path/to', 'nano'
     def open_in_editor(path, editor=nil)
       editor = editor || ENV['TERM_EDITOR'] || ENV['EDITOR']
       say "please set $EDITOR or $TERM_EDITOR in your .bash_profile." unless editor
@@ -62,7 +71,8 @@ module Terminitor
     end
 
     # returns path to file
-    # resolve_path 'my_project'
+    # @param [String] Termfile name
+    # @example resolve_path 'my_project'
     def resolve_path(project)
       unless project.empty?
         path = config_path(project, :yml) # Give old yml path
@@ -78,14 +88,17 @@ module Terminitor
     end
 
     # returns first line of file
-    # grab_comment_for_file '/path/to'
+    # @param [String] Termfile path
+    # @example grab_comment_for_file '/path/to'
     def grab_comment_for_file(file)
       first_line = File.readlines(file).first
       first_line =~ /^\s*?#/ ? ("-" + first_line.gsub("#","")) : "\n"
     end
 
     # Return file in config_path
-    # config_path '/path/to', :term
+    # @param [String] Termfile path
+    # @param [Symbol] Type of file
+    # @example config_path '/path/to', :term
     def config_path(file, type = :yml)
       return File.join(options[:root],"Termfile") if file.empty?
       dir = File.join(ENV['HOME'],'.terminitor')
@@ -97,7 +110,8 @@ module Terminitor
     end
 
     # Returns error message depending if project is specified
-    # return_error_message 'hi
+    # @param [String] Termfile name
+    # @example return_error_message 'hi
     def return_error_message(project)
       unless project.empty?
         say "'#{project}' doesn't exist! Please run 'terminitor open #{project.gsub(/\..*/,'')}'"
@@ -109,6 +123,9 @@ module Terminitor
     # This will clone a repo in the current directory.
     # It will first try to clone via ssh(read/write),
     # if not fall back to git-read only, else, fail.
+    # @param [String] Github username
+    # @param [String] Github project name
+    # @example github_clone 'achiu', 'terminitor'
     def github_clone(username, project)
       github = `which github`
       return false if github.empty?
@@ -117,7 +134,10 @@ module Terminitor
     end
 
     # Fetch the git repo and run the setup block
-    # fetch_repo 'achiu', 'terminitor', :setup => true
+    # @param [String] Github username
+    # @param [String] Github project
+    # @param [Hash] options hash
+    # @example fetch_repo 'achiu', 'terminitor', :setup => true
     def github_repo(username, project, options ={})
       if github_clone(username, project)
         path = File.join(Dir.pwd, project)

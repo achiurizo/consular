@@ -2,6 +2,7 @@ module Terminitor
   # This class parses the Termfile to fit the new Ruby Dsl Syntax
   class Dsl
 
+    # @param [String] path to termfile
     def initialize(path)
       file = File.read(path)
       @setup    = []
@@ -12,8 +13,11 @@ module Terminitor
 
     # Contains all commands that will be run prior to the usual 'workflow'
     # e.g bundle install, setup forks, etc ...
-    # setup "bundle install", "brew update"
-    # setup { run('bundle install') }
+    # @param [Array<String>] array of commands
+    # @param [Proc]
+    # @example
+    #   setup "bundle install", "brew update"
+    #   setup { run('bundle install') }
     def setup(*commands, &block)
       if block_given?
         in_context @setup, &block
@@ -23,8 +27,11 @@ module Terminitor
     end
 
     # sets command context to be run inside a specific window
-    # window(:name => 'new window', :size => [80,30], :position => [9, 100]) { tab('ls','gitx') }
-    # window { tab('ls', 'gitx') }
+    # @param [Hash] options hash.
+    # @param [Proc] 
+    # @example
+    #   window(:name => 'new window', :size => [80,30], :position => [9, 100]) { tab('ls','gitx') }
+    #   window { tab('ls', 'gitx') }
     def window(options = {}, &block)
       window_name     = "window#{@windows.keys.size}"
       window_contents = @windows[window_name] = {:tabs => {'default' => {:commands =>[]}}}
@@ -33,9 +40,12 @@ module Terminitor
     end
 
     # stores command in context
-    # run 'brew update'
+    # @param [Array<String>] Array of commands
+    # @example
+    #   run 'brew update'
     def run(*commands)
-      if @_context.is_a?(Hash) && @_context[:tabs] # if we are in a window context, append commands to default tab.
+      # if we are in a window context, append commands to default tab.
+      if @_context.is_a?(Hash) && @_context[:tabs] 
         current = @_context[:tabs]['default'][:commands]
       else
         current = @_context
@@ -44,9 +54,12 @@ module Terminitor
     end
 
     # runs commands before each tab in window context
-    # window do
-    #   before { run 'whoami' }
-    # end
+    # @param [Array<String>] Array of commands
+    # @param [Proc]
+    # @example
+    #   window do
+    #     before { run 'whoami' }
+    #   end
     def before(*commands, &block)
       @_context[:before] ||= []
       if block_given?
@@ -57,8 +70,11 @@ module Terminitor
     end
 
     # sets command context to be run inside specific tab
-    # tab(:name => 'new tab', :settings => 'Grass') { run 'mate .' }
-    # tab 'ls', 'gitx'
+    # @param [Array<String>] Array of commands
+    # @param [Proc]
+    # @example
+    #   tab(:name => 'new tab', :settings => 'Grass') { run 'mate .' }
+    #   tab 'ls', 'gitx'
     def tab(*args, &block)
       tabs     = @_context[:tabs]
       tab_name = "tab#{tabs.keys.size}"
@@ -78,6 +94,7 @@ module Terminitor
     end
 
     # Returns yaml file as Terminitor formmatted hash
+    # @return [Hash] Return hash format of Termfile
     def to_hash
       { :setup => @setup, :windows => @windows }
     end

@@ -4,6 +4,7 @@ module Terminitor
     attr_accessor :terminal, :windows, :working_dir, :termfile
 
     # set the terminal object, windows, and load the Termfile.
+    # @param [String] path to termfile
     def initialize(path)
       @termfile = load_termfile(path)
     end
@@ -26,6 +27,9 @@ module Terminitor
 
     # this command will run commands in the designated window
     # run_in_window 'window1', {:tab1 => ['ls','ok']}
+    # @param [String] name of window
+    # @param [Hash] Hash of window's content extracted from Termfile
+    # @param [Hash] Hash of options
     def run_in_window(window_name, window_content, options = {})
       window_options = window_content[:options]
       first_tab = true
@@ -44,19 +48,22 @@ module Terminitor
         else
           tab = ( tab_key == 'default' ? active_window : open_tab(tab_options) ) # give us the current window if its default, else open a tab.
         end
-        tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before] # append our before block commands.
-        tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty? # clean up prompt
-        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name   # add title to tab
+        # append our before block commands.
+        tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
+        # clean up prompt
+        tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
+        # add title to tab
+        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
         tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
-        tab_content[:commands].each do |cmd|
-          execute_command(cmd, :in => tab)
-        end
+        tab_content[:commands].each { |cmd| execute_command(cmd, :in => tab) }
       end
       set_delayed_options
     end
 
     # Loads commands via the termfile and returns them as a hash
     # if it matches legacy yaml, parse as yaml, else use new dsl
+    # @param  [String] path to termfile
+    # @return [Hash] returns a hash containing termfile details
     def load_termfile(path)
       File.extname(path) == '.yml' ? Terminitor::Yaml.new(path).to_hash : Terminitor::Dsl.new(path).to_hash
     end
@@ -67,11 +74,14 @@ module Terminitor
 
     # Executes the Command
     # should use the :in key to interact with terminal object.
+    # @param [String] command to be ran.
+    # @param [Hash] options hash
     # execute_command 'cd /path/to', {:in => #<TerminalObject>}
     def execute_command(cmd, options = {})
     end
 
     # Opens a new tab and returns itself.
+    # @param [Hash] options hash.
     def open_tab(options = nil)
       @working_dir = Dir.pwd # pass in current directory.
     end
@@ -81,6 +91,7 @@ module Terminitor
     end
 
     # Opens a new window and returns the tab object.
+    # @param [Hahs] options hash.
     def open_window(options = nil)
       @working_dir = Dir.pwd # pass in current directory.      
     end
