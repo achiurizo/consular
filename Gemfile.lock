@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    terminitor (0.4.0)
+    terminitor (0.4.1)
       github (~> 0.6.0)
       rb-appscript
       text-format (= 1.0.0)
