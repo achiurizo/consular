@@ -296,6 +296,7 @@ Cores allow Terminitor to operate on a variety of platforms. They abstract the g
 
  * MacCore        - Mac OS X Terminal
  * KonsoleCore    - KDE Konsole
+ * TerminatorCore - Terminator (http://www.tenshu.net/terminator/)
  * ITermCore      - Mac OS X iTerm
 
 Feel free to contribute more cores so that Terminitor can support your terminal of choice :)
@@ -324,6 +325,13 @@ The fetch task only pulls off Github repositories at the moment. Later on, this 
 #### Settings and Captures ####
 
 This feature is currently only available in Mac OS X at the moment.
+
+
+#### Terminator support ####
+
+This feature currently requires the "xdotool" utility to be installed and in
+the search path. The xdotool homepage is
+http://www.semicomplete.com/blog/projects/xdotool/.
 
 
 Authors
