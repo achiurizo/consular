@@ -20,6 +20,7 @@ module Terminitor
   when %r{linux}
     require 'dbus'
     autoload :KonsoleCore,    'terminitor/cores/konsole_core'
-    autoload :KonsoleCapture, 'terminitor/capture/konsole_capture'    
+    autoload :KonsoleCapture, 'terminitor/capture/konsole_capture'
+    autoload :TerminatorCore, 'terminitor/cores/terminator_core'
   end
 end
