@@ -22,5 +22,6 @@ module Terminitor
     autoload :KonsoleCore,    'terminitor/cores/konsole_core'
     autoload :KonsoleCapture, 'terminitor/capture/konsole_capture'
     autoload :TerminatorCore, 'terminitor/cores/terminator_core'
+    autoload :TerminatorCapture, 'terminitor/capture/terminator_capture'
   end
 end
