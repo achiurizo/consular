@@ -29,14 +29,14 @@ module Terminitor
     desc "list", "lists all terminitor scripts"
     def list
       say "Global scripts: \n"
-      Dir.glob("#{ENV['HOME']}/.terminitor/*").each do |file|
+      Dir.glob("#{TERM_PATH}/*").each do |file|
         say "  * #{File.basename(file, '.term')} #{grab_comment_for_file(file)}"
       end
     end
 
     desc "init", "create initial root terminitor folder"
     def init
-      empty_directory "#{ENV['HOME']}/.terminitor"
+      empty_directory TERM_PATH
     end
 
     desc "edit PROJECT_NAME", "open termitor script"

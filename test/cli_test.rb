@@ -1,12 +1,16 @@
 require File.expand_path('../teststrap', __FILE__)
 
 context "Terminitor" do
+
+  helper(:terminitor_root) { |file| File.join(ENV['HOME'],'.terminitor',file) }
+
   setup do
-    @yaml = File.read(File.expand_path('../fixtures/foo.yml', __FILE__))
+    @yaml     = File.read(File.expand_path('../fixtures/foo.yml', __FILE__))
     @template = File.read(File.expand_path('../../lib/templates/example.yml.tt', __FILE__))
     FakeFS.activate!
     FileUtils.mkdir_p(File.join(ENV["HOME"],'.terminitor'))
   end
+
   teardown  { FakeFS.deactivate! }
 
   context "help" do
@@ -18,9 +22,8 @@ context "Terminitor" do
 
   context "list" do
     setup do
-      @path = "#{ENV['HOME']}/.terminitor/"
-      File.open(File.join(@path,'foo.yml'),"w") { |f| f.puts @template }
-      File.open(File.join(@path,'bar.yml'),"w") { |f| f.puts @template }
+      File.open(terminitor_root('foo.yml'),"w") { |f| f.puts @template }
+      File.open(terminitor_root('bar.yml'),"w") { |f| f.puts @template }
       capture(:stdout) { Terminitor::Cli.start(['list']) }
     end
     asserts_topic.matches %r{foo\.yml - COMMENT OF SCRIPT HERE}
@@ -35,14 +38,14 @@ context "Terminitor" do
   context "edit" do
     setup do
       FakeFS.deactivate!
-      `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.yml`
-      `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.term`
+      `rm -rf #{terminitor_root('test_foo_bar2.yml')}`
+      `rm -rf #{terminitor_root('test_foo_bar2.term')}`
     end
 
     teardown  do
       `rm -rf /tmp/sample_project`
-      `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.yml`
-      `rm -rf #{ENV['HOME']}/.terminitor/test_foo_bar2.term`
+      `rm -rf #{terminitor_root('test_foo_bar2.yml')}`
+      `rm -rf #{terminitor_root('test_foo_bar2.term')}`
     end
 
     context "for project" do
@@ -50,39 +53,41 @@ context "Terminitor" do
       context "for yaml" do
         setup do 
           capture(:stdout) do
-            mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.yml",nil) { true }.once
+            mock.instance_of(Terminitor::Cli).open_in_editor(terminitor_root('test_foo_bar2.yml'),nil) { true }.once
             Terminitor::Cli.start(['edit','test_foo_bar2', '-s=yml'])
           end
         end
         asserts_topic.matches %r{create}
         asserts_topic.matches %r{test_foo_bar2.yml}
-        asserts("has yml template") { File.read(File.join(ENV['HOME'],'.terminitor','test_foo_bar2.yml')) }.matches %r{- tab1}
+        asserts("has yml template") { File.read terminitor_root('test_foo_bar2.yml') }.matches %r{- tab1}
       end
 
       context "for term" do
         setup do
           capture(:stdout) do
-            mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.term",nil) { true }.once
+            mock.instance_of(Terminitor::Cli).open_in_editor(terminitor_root('test_foo_bar2.term'),nil) { true }.once
             Terminitor::Cli.start(['edit','test_foo_bar2', '-s=term'])
           end
         end
         asserts_topic.matches %r{create}
         asserts_topic.matches %r{test_foo_bar2.term}
-        asserts("has term template") { File.read(File.join(ENV['HOME'],'.terminitor','test_foo_bar2.term')) }.matches %r{setup}
+        asserts("has term template") { File.read terminitor_root('test_foo_bar2.term') }.matches %r{setup}
       end
 
     end
 
     context "for Termfile" do
+
+      helper(:termfile) { '/tmp/sample_project/Termfile' }
       setup do
         capture(:stdout) do
-          mock.instance_of(Terminitor::Cli).open_in_editor("/tmp/sample_project/Termfile",nil) { true }.once
+          mock.instance_of(Terminitor::Cli).open_in_editor(termfile,nil) { true }.once
           Terminitor::Cli.start ['edit','-s=yml','-r=/tmp/sample_project']
         end
       end
       asserts_topic.matches %r{create}
       asserts_topic.matches %r{Termfile}
-      asserts("has term template") { File.read('/tmp/sample_project/Termfile') }.matches %r{setup}
+      asserts("has term template") { File.read termfile }.matches %r{setup}
     end
 
     should "accept editor flag" do
@@ -104,7 +109,7 @@ context "Terminitor" do
         asserts "with no core returns a message that" do
           capture(:stdout) do
             mock.instance_of(Terminitor::Cli).capture_core(anything) { nil }
-            FileUtils.touch("#{ENV['HOME']}/.terminitor/delete_this.term")
+            FileUtils.touch terminitor_root('delete_this.term')
             Terminitor::Cli.start(['edit', 'test_foo_bar2', '--capture'])
           end
         end.matches %r{No suitable core found!}
@@ -112,7 +117,7 @@ context "Terminitor" do
 
         asserts "with core that it executes" do
           mock.instance_of(Terminitor::Cli).capture_core(anything) { mock!.new.mock!.capture_settings { "settings"} }
-          mock.instance_of(Terminitor::Cli).open_in_editor("#{ENV['HOME']}/.terminitor/test_foo_bar2.term",nil) { true }
+          mock.instance_of(Terminitor::Cli).open_in_editor(terminitor_root('test_foo_bar2.term'),nil) { true }
           Terminitor::Cli.start(['edit','test_foo_bar2', '--capture'])
         end
 
@@ -144,15 +149,15 @@ context "Terminitor" do
     end
 
     denies "yaml exists" do
-      FileUtils.touch "#{ENV['HOME']}/.terminitor/delete_this.yml"
+      FileUtils.touch terminitor_root('delete_this.yml')
       capture(:stdout) { Terminitor::Cli.start(['delete','delete_this', '-s=yml']) }
-      File.exists? "#{ENV['HOME']}/.terminitor/delete_this.yml"
+      File.exists? terminitor_root('delete_this.yml')
     end
 
     denies "term exists" do
-      FileUtils.touch "#{ENV['HOME']}/.terminitor/delete_this.term"
+      FileUtils.touch terminitor_root('delete_this.term')
       capture(:stdout) { Terminitor::Cli.start(['delete','delete_this']) }
-      File.exists? "#{ENV['HOME']}/.terminitor/delete_this.term"
+      File.exists? terminitor_root('delete_this.term')
     end
   end
 

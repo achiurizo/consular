@@ -2,6 +2,9 @@ module Terminitor
   # This module contains all the helper methods for the Cli component.
   module Runner
 
+    # Terminitor Global Path
+    TERM_PATH = File.join(ENV['HOME'], '.terminitor')
+
     # Finds the appropriate platform core, else say you don't got it.
     # @param [String] the ruby platform
     # @example
@@ -101,11 +104,10 @@ module Terminitor
     # @example config_path '/path/to', :term
     def config_path(file, type = :yml)
       return File.join(options[:root],"Termfile") if file.empty?
-      dir = File.join(ENV['HOME'],'.terminitor')
       if type == :yml
-        File.join(dir, "#{file.sub(/\.yml$/, '')}.yml")
+        File.join(TERM_PATH, "#{file.sub(/\.yml$/, '')}.yml")
       else
-        File.join(dir, "#{file.sub(/\.term$/, '')}.term")
+        File.join(TERM_PATH, "#{file.sub(/\.term$/, '')}.term")
       end
     end
 
