@@ -19,7 +19,7 @@ end
 
 context "Runner" do
 
-  helper(:terminitor_root) { |file| File.join(ENV['HOME'],'.terminitor', file) } 
+  helper(:terminitor_root) { |file| File.join(ENV['HOME'],'.config','terminitor', file) } 
 
   setup do 
     @yaml = File.read(File.expand_path('../fixtures/foo.yml', __FILE__))
@@ -96,7 +96,7 @@ context "Runner" do
   end
 
   context "#resolve_path" do
-    setup { FileUtils.mkdir_p(File.join(ENV['HOME'],'.terminitor')) }
+    setup { FileUtils.mkdir_p(File.join(ENV['HOME'],'.config','terminitor')) }
 
     should "return yaml" do
       FileUtils.touch terminitor_root('test.yml')

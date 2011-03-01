@@ -2,13 +2,13 @@ require File.expand_path('../teststrap', __FILE__)
 
 context "Terminitor" do
 
-  helper(:terminitor_root) { |file| File.join(ENV['HOME'],'.terminitor',file) }
+  helper(:terminitor_root) { |file| File.join(ENV['HOME'],'.config','terminitor',file) }
 
   setup do
     @yaml     = File.read(File.expand_path('../fixtures/foo.yml', __FILE__))
     @template = File.read(File.expand_path('../../lib/templates/example.yml.tt', __FILE__))
     FakeFS.activate!
-    FileUtils.mkdir_p(File.join(ENV["HOME"],'.terminitor'))
+    FileUtils.mkdir_p(File.join(ENV["HOME"],'.config','terminitor'))
   end
 
   teardown  { FakeFS.deactivate! }
@@ -32,7 +32,7 @@ context "Terminitor" do
 
   asserts "#init creates .terminitor" do
     capture(:stdout) { Terminitor::Cli.start(['init']) }
-    File.exists?("#{ENV['HOME']}/.terminitor")
+    File.exists?("#{ENV['HOME']}/.config/terminitor")
   end
 
   context "edit" do

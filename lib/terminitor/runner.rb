@@ -3,7 +3,7 @@ module Terminitor
   module Runner
 
     # Terminitor Global Path
-    TERM_PATH = File.join(ENV['HOME'], '.terminitor')
+    TERM_PATH = File.join(ENV['HOME'],'.config','terminitor')
 
     # Finds the appropriate platform core, else say you don't got it.
     # @param [String] the ruby platform
