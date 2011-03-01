@@ -182,4 +182,31 @@ context "Terminitor" do
       Terminitor::Cli.start ['fetch','achiu','terminitor']
     end
   end
+
+  context "#update" do
+
+    context "with old global path" do
+      helper(:test_yml) { File.join(ENV["HOME"], '.terminitor', 'test.yml') }
+
+      setup do
+        FileUtils.mkdir_p File.join(ENV['HOME'], '.terminitor')
+        FileUtils.touch test_yml
+      end
+
+      asserts "that it will move the old global folder over to the new one" do
+        capture(:stdout) do
+          Terminitor::Cli.start(['update'])
+        end
+      end.matches %r{Terminitor has updated your global folder}
+
+      denies "that their exists the old folder" do
+        File.exists? test_yml
+      end
+
+      asserts "that the new folder exists" do
+        File.exists? File.join(ENV['HOME'],'.config','terminitor', 'test.yml')
+      end
+    end
+
+  end
 end

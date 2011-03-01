@@ -91,5 +91,16 @@ module Terminitor
       remove_file path
     end
 
+    desc "update", "update Terminitor to new global path(.config/.terminitor)"
+    def update
+      if File.exists?(old_path = File.join(ENV['HOME'],'.terminitor/'))
+        FileUtils.cp_r "#{old_path}/.", TERM_PATH
+        FileUtils.rm_r old_path
+        say "Terminitor has updated your global folder to ~/.config/terminitor/ !"
+      else
+        say "Old .terminitor/ global path doesn't exist. cool."
+      end
+    end
+
   end
 end
