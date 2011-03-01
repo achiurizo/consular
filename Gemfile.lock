@@ -25,11 +25,9 @@ GEM
       rake (>= 0.8.1)
     rake (0.8.7)
     rb-appscript (0.6.0)
-    riot (0.12.1)
+    riot (0.12.2)
       rr
-      term-ansicolor
     rr (1.0.2)
-    term-ansicolor (1.0.5)
     text-format (1.0.0)
       text-hyphen (~> 1.0.0)
     text-hyphen (1.0.0)

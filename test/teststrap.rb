@@ -3,7 +3,8 @@ require 'riot'
 require 'riot/rr'
 require File.expand_path('../../lib/terminitor',__FILE__)
 require 'fakefs/safe'
-Riot.reporter = Riot::DotMatrixReporter
+
+Riot.pretty_dots
 
 class Riot::Situation
 end
