@@ -50,7 +50,7 @@ module Terminitor
       else
         current = @_context
       end
-      current << commands.join(" && ")
+      current << commands.map { |c| "(#{c})" }.join(" && ")
     end
 
     # runs commands before each tab in window context
