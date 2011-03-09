@@ -296,7 +296,7 @@ Cores allow Terminitor to operate on a variety of platforms. They abstract the g
 
  * MacCore        - Mac OS X Terminal
  * KonsoleCore    - KDE Konsole
- * TerminatorCore - Terminator (http://www.tenshu.net/terminator/)
+ * TerminatorCore - [Terminator](http://www.tenshu.net/terminator/)
  * ITermCore      - Mac OS X iTerm
 
 Feel free to contribute more cores so that Terminitor can support your terminal of choice :)
@@ -346,12 +346,15 @@ Contributors
 Thanks to the following people for their contributions so far:
 
  * Pat George      ([pcg79](https://github.com/pcg79)) for contributing a patch for when a project is not found.
+ * Tim Gossett     ([[MrGossett](https://github.com/MrGossett)) for a patch to fix comment reading
  * Flavio Castelli ([flavio](https://github.com/flavio)) for contributing Konsole(KDE) core.
  * Alexey Kuleshov ([kulesa](https://github.com/kulesa)) for contributing the terminal settings and terminal settings capture functionality
  * Arthur Gunn     ([gunn](https://github.com/gunn)) for contributing a path to support tab syntax and load path.
  * Elliot Winkler  ([mcmire](https://github.com/mcmire)) for adding 1.8.6 compatiblity and ensuring tabs open in order.
  * Justin Hilemen  ([bobthecow](https://github.com/bobthecow)) for fixing the list command to remove the term extensions.
- * recurser        ([recurser](https://github.com/recurser)) for adding basic iTerm support.
+ * Dave Perrett    ([recurser](https://github.com/recurser)) for adding basic iTerm support.
+ * Ilkka Laukkanen ([ilkka](https://github.com/achiu/terminitor/commits/master?author=ilkka)) for Terminator core and other fixes
+ * Elia Schito     ([elia](https://github.com/achiu/terminitor/commits/master?author=elia)) for patch to allow usage of "&" for background operations
  
 Acknowledgements
 -----------------
