@@ -23,5 +23,7 @@ module Terminitor
     autoload :KonsoleCapture, 'terminitor/capture/konsole_capture'
     autoload :TerminatorCore, 'terminitor/cores/terminator_core'
     autoload :TerminatorCapture, 'terminitor/capture/terminator_capture'
+  when %r{mswin|mingw}
+	autoload :CmdCore, 'terminitor/cores/cmd_core'
   end
 end

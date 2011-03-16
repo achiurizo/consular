@@ -23,6 +23,8 @@ module Terminitor
        else
          Terminitor::KonsoleCore # TODO silly fallback, make better check
        end
+      when %r{mswin|mingw} then
+        Terminitor::CmdCore
       else nil
       end
     end

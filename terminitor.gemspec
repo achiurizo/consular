@@ -20,6 +20,10 @@ Gem::Specification.new do |s|
     s.add_dependency "rb-appscript"
   when %r{linux}
     s.add_dependency "ruby-dbus"
+  when %r{mswin|mingw}
+    s.add_dependency "windows-api", "= 0.4.0"
+    s.add_dependency "windows-pr", "= 1.1.2"
+    s.add_dependency "win32-process", "= 0.6.4"
   else
   end
   
