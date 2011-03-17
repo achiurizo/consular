@@ -2,8 +2,7 @@ module Terminitor
   class CmdCore < AbstractCore
  
     CMD_XLT = {
-      'clear' => 'clear', #uncomment when debugging
-      'open'  => 'start'
+      'clear' => 'cls'
     }
     
     def initialize(path)
