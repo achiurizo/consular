@@ -24,6 +24,13 @@ module Terminitor
     autoload :TerminatorCore, 'terminitor/cores/terminator_core'
     autoload :TerminatorCapture, 'terminitor/capture/terminator_capture'
   when %r{mswin|mingw}
-	autoload :CmdCore, 'terminitor/cores/cmd_core'
+	require 'windows/process'
+	require 'windows/handle'
+	require 'win32/process'
+	require 'windows/window'
+
+	require 'terminitor/cores/cmd_core/input'
+	require 'terminitor/cores/cmd_core/windows_console'
+	autoload :CmdCore, 'terminitor/cores/cmd_core/cmd_core'
   end
 end
