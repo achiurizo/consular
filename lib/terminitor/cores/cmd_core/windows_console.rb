@@ -3,7 +3,7 @@ module Terminitor
   class CurrentWindowsConsole
     include Input
     def send_command(cmd)
-	puts "[current] #{cmd}"
+      # puts "[current] #{cmd}"
       type_in cmd
     end
   end
@@ -75,7 +75,7 @@ module Terminitor
     def send_command(cmd)
       @hwnd ||= find_window(@thread_id)
       SetForegroundWindow(@hwnd) 
-      puts "[#{@hwnd}] #{cmd}"
+      # puts "[#{@hwnd}] #{cmd}"
       type_in(cmd)
     end
   end
