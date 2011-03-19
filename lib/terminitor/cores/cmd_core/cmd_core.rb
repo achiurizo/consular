@@ -17,12 +17,16 @@ module Terminitor
     end
 
     def open_tab(options = nil)
-      WindowsConsole.new :name=>'cmd'
+      create_window 
     end
 
     def open_window(options = nil)
-      WindowsConsole.new :name=>'cmd'
+      create_window
     end 
+
+    def create_window
+      WindowsConsole.new :name=>'cmd'
+    end
   end
 end
 

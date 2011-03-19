@@ -51,7 +51,7 @@ module Terminitor
       @pid
     end
 
-    def kill
+    def kill!
       CloseHandle(@process_handle)
       CloseHandle(@thread_handle)
 
