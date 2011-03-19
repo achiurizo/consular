@@ -1,6 +1,7 @@
 module Terminitor
   class CmdCore < AbstractCore
- 
+    attr_reader :current_window
+
     CMD_XLT = {
       'clear' => 'cls'
     }
@@ -13,7 +14,7 @@ module Terminitor
     def execute_command(cmd, options = {})
       cmd = CMD_XLT[cmd] || cmd
       cmd += "\n" if (cmd =~ /\n\Z/).nil?
-      (options[:in] || @current_window).send_command(cmd)
+      (options[:in] || current_window).send_command(cmd)
     end
 
     def open_tab(options = nil)
