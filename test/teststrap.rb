@@ -2,7 +2,19 @@ require 'rubygems'
 require 'riot'
 require 'riot/rr'
 require File.expand_path('../../lib/terminitor',__FILE__)
-require 'fakefs/safe'
+
+
+# Yield the block if the platform matches current platform
+# example:
+#   on_platform('linux') { puts 'hi' }
+def on_platform(*platform)
+  platform = [platform] unless platform.respond_to? :each
+  platform.each { |p|  yield && break if RUBY_PLATFORM.downcase.include?(p) }
+end
+
+on_platform('linux', 'darwin') do
+  require 'fakefs/safe'
+end
 
 Riot.pretty_dots
 
@@ -10,13 +22,6 @@ class Riot::Situation
 end
 
 class Riot::Context
-end
-
-# Yield the block if the platform matches current platform
-# example:
-#   on_platform('linux') { puts 'hi' }
-def on_platform(platform)
-  yield if RUBY_PLATFORM.downcase.include?(platform)
 end
 
 module Kernel
