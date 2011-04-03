@@ -1,7 +1,16 @@
 Terminitor
 ===========
 
-Terminitor automates your development workflow setup. Less time setting up,  more time getting things done.
+Terminitor automates your development workflow setup. Less time setting up, more time getting things done.
+
+Upgrading Terminitor from 0.4.1 and under
+------------------------------------------
+
+For those upgrading from Terminitor 0.4.1, please run:
+
+    $ terminitor update
+
+This will move your terminitor files to the new directory located at .config/terminitor 
 
 Installation
 ------------
@@ -45,7 +54,7 @@ This will open your default editor (set through the $TERM_EDITOR or $EDITOR vari
 
 #### YAML Syntax ( Legacy ) ####
     
-    # ~/.terminitor/foo.yml
+    # ~/.config/terminitor/foo.yml
     # you can make as many tabs as you wish...
     # tab names are actually arbitrary at this point too.
     ---
@@ -208,7 +217,7 @@ __windows__
 
 ### Running Terminitor Projects ###
 
-Once the project file has been declared to your satisfaction, simply execute any project defined in the `~/.terminitor` directory with:
+Once the project file has been declared to your satisfaction, simply execute any project defined in the `~/.config/terminitor` directory with:
 
     $ terminitor start foo
 
@@ -334,6 +343,12 @@ the search path. The xdotool homepage is
 http://www.semicomplete.com/blog/projects/xdotool/.
 
 
+#### Windows suppport ####
+
+Windows support is currently limited to plain cmd.exe. It is also
+limited to only creating new windows, as cmd.exe does not support tabs.
+
+
 Authors
 -------
 
@@ -355,6 +370,7 @@ Thanks to the following people for their contributions so far:
  * Dave Perrett    ([recurser](https://github.com/recurser)) for adding basic iTerm support.
  * Ilkka Laukkanen ([ilkka](https://github.com/achiu/terminitor/commits/master?author=ilkka)) for Terminator core and other fixes
  * Elia Schito     ([elia](https://github.com/achiu/terminitor/commits/master?author=elia)) for patch to allow usage of "&" for background operations
+ * Dotan J. Nahum  ([[jondot](https://github.com/jondot)) for adding windows(cmd.exe) support
  
 Acknowledgements
 -----------------

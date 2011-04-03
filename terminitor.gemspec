@@ -37,10 +37,17 @@ Gem::Specification.new do |s|
   s.add_development_dependency "fakefs"
   s.post_install_message = %q{********************************************************************************
 
-    Terminitor is installed! 
-    Please run 'terminitor init'. 
-    This will create a directory at ~/.terminitor which will hold all your global scripts.
-    Thanks!
+    Terminitor is installed!  Please run:
+    
+      terminitor init
+
+    This will create a directory at ~/.config/terminitor which will hold all your global scripts.
+
+    For those updating from a previous version of Terminitor(<=0.4.1) please run
+
+      terminitor update
+
+    This will copy over your terminitor files from the old path to the newer .config/terminitor location.
 
 ********************************************************************************
   }
