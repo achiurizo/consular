@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ['Arthur Chiu', 'Nathan Esquenazi']
   s.email       = ['mr.arthur.chiu@gmail.com','nesquena@gmail.com']
   s.homepage    = "http://rubygems.org/gems/terminitor"
-  s.summary     = "Outsource your workflow to Skynet"
+  s.summary     = "Automate your development workflow"
   s.description = "Automate your development workflow"
 
   s.required_rubygems_version = ">= 1.3.6"
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   # Platform Specific Dependencies
   case RUBY_PLATFORM.downcase
   when %r{darwin}
-    s.add_dependency "rb-appscript"
+    s.add_dependency "rb-appscript", "~>0.6.1"
   when %r{linux}
     s.add_dependency "ruby-dbus"
   when %r{mswin|mingw}
@@ -27,12 +27,10 @@ Gem::Specification.new do |s|
   else
   end
   
-  s.add_dependency "text-hyphen", "1.0.0"
-  s.add_dependency "text-format", "1.0.0"
   s.add_dependency "thor",   "~>0.14.0"
-  s.add_dependency "github", "~>0.6.0"
+  s.add_dependency "github", "~>0.6.2"
   s.add_development_dependency "bundler", "~>1.0.0"
-  s.add_development_dependency "riot",    "~>0.12.0"
+  s.add_development_dependency "riot",    "~>0.12.3"
   s.add_development_dependency "rr",      "~>1.0.0"
   s.add_development_dependency "fakefs"
   s.post_install_message = %q{********************************************************************************
