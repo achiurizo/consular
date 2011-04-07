@@ -14,9 +14,9 @@ module Terminitor
   when %r{darwin}
     require 'appscript'
     autoload :MacCore,        'terminitor/cores/mac_core'
-    autoload :MacCapture,     'terminitor/capture/mac_capture'  
+    autoload :MacCapture,     'terminitor/capture/mac_capture'
     autoload :ItermCore,      'terminitor/cores/iterm_core'
-    autoload :ItermCapture,   'terminitor/capture/iterm_capture' 
+    autoload :ItermCapture,   'terminitor/capture/iterm_capture'
   when %r{linux}
     require 'dbus'
     autoload :KonsoleCore,    'terminitor/cores/konsole_core'
