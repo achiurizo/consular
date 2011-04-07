@@ -10,7 +10,7 @@ window :size => [70,30] do
   before 'cd /path'
 
   run "whoami","who", "ls"
-  tab "echo 'first tab'", "echo 'of window'", "echo 'than now'"
+  tab "echo 'first tab'", "motion &", "echo 'than now'"
   
   tab :name => "named tab", :settings => "Grass" do
     run "echo 'named tab'"
@@ -19,6 +19,7 @@ window :size => [70,30] do
 
   tab "a tab", :settings => "Pro" do
     run "top"
+    run "mate &", "gitx &", "cd /this"
   end
   
   tab("another named tab", :settings => 'Grass') { run "ls" }

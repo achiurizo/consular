@@ -22,7 +22,7 @@ context "Dsl" do
           setup { topic[:tabs] }
           
           asserts([:[], 'tab2']).equivalent_to({
-            :commands=>["(echo 'named tab')", "(ls)"], 
+            :commands=>["echo 'named tab'", "ls"],
             :options => {
               :name => "named tab",
               :settings=>"Grass"
@@ -30,11 +30,11 @@ context "Dsl" do
           })
 
           asserts([:[], 'tab1']).equivalent_to({
-            :commands=>["echo 'first tab'", "echo 'of window'", "echo 'than now'"]
+            :commands=>["echo 'first tab'", "motion &", "echo 'than now'"]
           })
 
           asserts([:[],'tab3']).equivalent_to({
-            :commands=>["(top)"],
+            :commands=>["top","(mate &) && (gitx &) && cd /this"],
             :options =>{
               :name => "a tab",
               :settings => "Pro"
@@ -42,7 +42,7 @@ context "Dsl" do
           })
 
           asserts([:[],'tab4']).equivalent_to({
-            :commands=>["(ls)"],
+            :commands=>["ls"],
             :options =>{
               :name => "another named tab",
               :settings => "Grass"
@@ -50,7 +50,7 @@ context "Dsl" do
           })
 
           asserts([:[],'default']).equivalent_to({
-            :commands=>['(whoami) && (who) && (ls)']
+            :commands=>['whoami && who && ls']
           })
         end
 
@@ -59,7 +59,7 @@ context "Dsl" do
       context "with 'window2' key" do
         setup { topic['window2'] }
 
-        asserts([:[],:before]).equals ['(whoami)']
+        asserts([:[],:before]).equals ['whoami']
 
         context "with :tabs" do
           setup { topic[:tabs] }

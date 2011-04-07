@@ -45,12 +45,14 @@ module Terminitor
     #   run 'brew update'
     def run(*commands)
       # if we are in a window context, append commands to default tab.
-      if @_context.is_a?(Hash) && @_context[:tabs] 
+      if @_context.is_a?(Hash) && @_context[:tabs]
         current = @_context[:tabs]['default'][:commands]
       else
         current = @_context
       end
-      current << commands.map { |c| "#{c}" }.join(" && ")
+      current << commands.map do |c|
+        c =~ /&$/ ? "(#{c})" : c
+      end.join(" && ")
     end
 
     # runs commands before each tab in window context
