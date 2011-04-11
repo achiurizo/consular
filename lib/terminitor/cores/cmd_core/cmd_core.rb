@@ -17,16 +17,19 @@ module Terminitor
       (options[:in] || current_window).send_command(cmd)
     end
 
-    def open_tab(options = nil)
-      create_window 
+    def open_tab(options = {})
+      create_window options
     end
 
-    def open_window(options = nil)
-      create_window
+    def open_window(options = {})
+      create_window options
     end 
 
-    def create_window
-      WindowsConsole.new :name=>'cmd'
+    def create_window(options = {})
+      c = WindowsConsole.new :name=>'cmd'
+      c.send_command "title #{options[:name]}\n" if options[:name]
+      c.send_command "mode con: cols=#{options[:bounds][0]} lines=#{options[:bounds][1]}\n" if options[:bounds]
+      c
     end
   end
 end

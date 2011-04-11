@@ -47,5 +47,28 @@ on_platform 'mingw32', 'mswin32' do
       asserts("that it executes in injected current window") { topic.execute_command "clear", :in => @window }
       teardown { @window.kill! }
     end
+    
+    context "accepts name" do
+      hookup do
+        any_instance_of(Terminitor::WindowsConsole) do |console|
+          mock(console).send_command("title named\n")
+        end
+      end
+
+      asserts("send_command was called"){ @window = topic.open_window :name=>'named' }
+      teardown { @window.kill! }
+    end
+
+    context "accepts bounds" do
+      hookup do
+        any_instance_of(Terminitor::WindowsConsole) do |console|
+          mock(console).send_command("mode con: cols=80 lines=90\n")
+        end
+      end
+
+      asserts("send_command was called"){ @window = topic.open_window :bounds=>[80,90] }
+      teardown { @window.kill! }
+    end
+
   end
 end
