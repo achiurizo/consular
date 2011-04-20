@@ -29,7 +29,7 @@ module Terminitor
     desc "list", "lists all terminitor scripts"
     def list
       say "Global scripts: \n"
-      Dir.glob("#{TERM_PATH}/*").each do |file|
+      Dir.glob("#{TERM_PATH}/*[^~]").each do |file|
         say "  * #{File.basename(file, '.term')} #{grab_comment_for_file(file)}"
       end
     end

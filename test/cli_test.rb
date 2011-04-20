@@ -24,10 +24,14 @@ context "Terminitor" do
     setup do
       File.open(terminitor_root('foo.yml'),"w") { |f| f.puts @template }
       File.open(terminitor_root('bar.yml'),"w") { |f| f.puts @template }
+      File.open(terminitor_root('baz.term'),"w") { |f| f.puts @template }
+      File.open(terminitor_root('baz.term~'),"w") { |f| f.puts @template }
       capture(:stdout) { Terminitor::Cli.start(['list']) }
     end
     asserts_topic.matches %r{foo\.yml - COMMENT OF SCRIPT HERE}
-    asserts_topic.matches %r{bar\.yml - COMMENT OF SCRIPT HERE}
+    asserts_topic.matches %r{bar\.yml - COMMENT OF SCRIPT HERE}   # yaml style
+    asserts_topic.matches %r{baz - COMMENT OF SCRIPT HERE}        # .term style
+    denies_topic.matches %r{baz\.term~ - COMMENT OF SCRIPT HERE}  # backup files
   end
 
   asserts "#init creates .terminitor" do
