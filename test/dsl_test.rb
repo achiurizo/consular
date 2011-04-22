@@ -8,20 +8,20 @@ context "Dsl" do
  
   context "to_hash" do
     setup { topic.to_hash }
-    asserts([:[],:setup]).equals ["echo \"setup\""]
+    asserts(:[],:setup).equals ["echo \"setup\""]
     context ":windows" do
       setup { topic[:windows] }
 
       context "with 'window1' key" do
         setup { topic['window1'] }
 
-        asserts([:[],:before]).equals ['cd /path']
-        asserts([:[],:options]).equals({ :size => [70,30]})
+        asserts(:[],:before).equals ['cd /path']
+        asserts(:[],:options).equals({ :size => [70,30]})
 
         context "with :tabs" do
           setup { topic[:tabs] }
           
-          asserts([:[], 'tab2']).equivalent_to({
+          asserts(:[], 'tab2').equivalent_to({
             :commands=>["echo 'named tab'", "ls"],
             :options => {
               :name => "named tab",
@@ -29,11 +29,11 @@ context "Dsl" do
             }
           })
 
-          asserts([:[], 'tab1']).equivalent_to({
+          asserts(:[], 'tab1').equivalent_to({
             :commands=>["echo 'first tab'", "motion &", "echo 'than now'"]
           })
 
-          asserts([:[],'tab3']).equivalent_to({
+          asserts(:[],'tab3').equivalent_to({
             :commands=>["top","(mate &) && (gitx &) && cd /this"],
             :options =>{
               :name => "a tab",
@@ -41,7 +41,7 @@ context "Dsl" do
             }
           })
 
-          asserts([:[],'tab4']).equivalent_to({
+          asserts(:[],'tab4').equivalent_to({
             :commands=>["ls"],
             :options =>{
               :name => "another named tab",
@@ -49,7 +49,7 @@ context "Dsl" do
             }
           })
 
-          asserts([:[],'default']).equivalent_to({
+          asserts(:[],'default').equivalent_to({
             :commands=>['whoami && who && ls']
           })
         end
@@ -59,13 +59,13 @@ context "Dsl" do
       context "with 'window2' key" do
         setup { topic['window2'] }
 
-        asserts([:[],:before]).equals ['whoami']
+        asserts(:[],:before).equals ['whoami']
 
         context "with :tabs" do
           setup { topic[:tabs] }
 
-          asserts([:[], 'tab1']).equals({ :commands => ["uptime"]})
-          asserts([:[], 'default']).equals({ :commands => []})
+          asserts(:[], 'tab1').equals({ :commands => ["uptime"]})
+          asserts(:[], 'default').equals({ :commands => []})
         end
       end
 
@@ -75,11 +75,11 @@ context "Dsl" do
         context "with :tags key" do
           setup { topic[:tabs] }
 
-          asserts([:[],'tab1']).equals({
+          asserts(:[],'tab1').equals({
             :commands=>["echo 'default'", "echo 'default tab'", "ok", "for real"]
           })
 
-          asserts([:[],'default']).equals({
+          asserts(:[],'default').equals({
             :commands => []
           })
         end
