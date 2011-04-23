@@ -106,6 +106,49 @@ module Terminitor
       end
     end
 
+    # Methods for splitting panes
+    #
+    # Note:
+    # Panes can be addressed via terminal.sessions-array.
+    # Panes are listed in the sessions-array from left to right
+    # and numbered from 1 - n.
+    # 
+    #    ########################################
+    #    #            #            #            #
+    #    # session[1] #            #            #
+    #    #            # session[4] #            #
+    #    ##############            #            #
+    #    #            #            #            #
+    #    # session[2] ############## session[6] #
+    #    #            #            #            #
+    #    ##############            #            #
+    #    #            # session[5] #            #
+    #    # session[3] #            #            #
+    #    #            #            #            #
+    #    ########################################
+    #
+    # If there was a second tab the first session of the second tab
+    # would be session [7] and so on.
+    def iterm_menu
+      terminal_process.menu_bars.first
+    end
+    
+    def call_ui_action(menu, submenu = nil, action)
+      menu = iterm_menu.menu_bar_items[menu].menus[menu]
+      if submenu
+        menu = menu.menu_items[submenu].menus[submenu]
+      end
+      menu.menu_items[action].click
+    end
+
+    def split_v
+      call_ui_action("Shell", nil, "Split vertically")
+    end
+
+    def split_h
+      call_ui_action("Shell", nil, "Split horizontally")
+    end
+
     private
     
     # These methods are here for reference so I can ponder later
