@@ -49,7 +49,7 @@ module Terminitor
     # We need this method to workaround appscript so that we can instantiate new tabs and windows.
     # otherwise it would have looked something like window.make(:new => :tab) but that doesn't work.
     def terminal_process
-      app("System Events").application_processes["iTerm.app"]
+      Appscript.app("System Events").application_processes["iTerm.app"]
     end
     
     # Returns the last instantiated tab from active window
@@ -106,12 +106,57 @@ module Terminitor
       end
     end
 
+    # this command will run commands in the designated window
+    # run_in_window 'window1', {:tab1 => ['ls','ok']}
+    # @param [String] name of window
+    # @param [Hash] Hash of window's content extracted from Termfile
+    # @param [Hash] Hash of options
+    #
+    # this method is hideous and needs a refactoring!
+    def run_in_window(window_name, window_content, options = {})
+      window_options = window_content[:options]
+      first_tab = true
+      window_content[:tabs].keys.sort.each do |tab_key|
+        tab_content = window_content[:tabs][tab_key]
+        # Open window on first 'tab' statement
+        # first tab is already opened in the new window, so first tab should be
+        # opened as a new tab in default window only
+        tab_options = tab_content[:options]
+        tab_name    = tab_options[:name] if tab_options
+        if first_tab && !options[:default]
+          first_tab = false
+          combined_options = (window_options.to_a + tab_options.to_a).inject([]) {|arr, pair| arr += pair }
+          window_options = Hash[*combined_options] # safe merge
+          tab = window_options.empty? ? open_window(nil) : open_window(window_options)
+        else
+          tab = ( tab_key == 'default' ? active_window : open_tab(tab_options) ) # give us the current window if its default, else open a tab.
+        end
+        # append our before block commands.
+        tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
+        # clean up prompt
+        tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
+        # add title to tab
+        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
+        tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
+        # if tab_content hash has a key :panes we know this tab should be split
+        # we can execute tab commands as before if there is no key :panes
+        if tab_content.key?(:panes)
+          #do some shit with the pane
+        else
+          tab_content[:commands].each { |cmd| execute_command(cmd, :in => tab) }
+        end
+      end
+      set_delayed_options
+    end
+
     # Methods for splitting panes
     #
     # Note:
     # Panes can be addressed via terminal.sessions-array.
     # Panes are listed in the sessions-array from left to right
     # and numbered from 1 - n.
+    #
+    # terminal.sessions[1].terminate
     # 
     #    ########################################
     #    #            #            #            #
@@ -127,6 +172,7 @@ module Terminitor
     #    #            #            #            #
     #    ########################################
     #
+    # Numbering sessions from left to right applies to tabs as well.
     # If there was a second tab the first session of the second tab
     # would be session [7] and so on.
     def iterm_menu

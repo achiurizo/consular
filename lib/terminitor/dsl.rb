@@ -89,9 +89,24 @@ module Terminitor
         
         tab_contents[:options] = options unless options.empty?
         
+        @_tab_context = tabs[tab_name]
         in_context tab_contents[:commands], &block
       else
         tabs[tab_name] = { :commands => args}
+      end
+    end
+
+    def pane(*args, &block)
+      # @_context points to :commands-array in a tab when we're inside
+      # a pane
+      @_tab_context.merge!({:panes =>{}}) unless @_tab_context.key?(:panes)
+      panes = @_tab_context[:panes]
+      pane_name = "#{panes.keys.size}"
+      if block_given?
+        pane_contents = panes[pane_name] = {:commands => []}
+        in_context pane_contents[:commands], &block
+      else
+        panes[pane_name] = { :commands => args }
       end
     end
 
