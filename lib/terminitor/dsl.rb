@@ -97,10 +97,8 @@ module Terminitor
     end
 
     def pane(*args, &block)
-      # @_context points to :commands-array in a tab when we're inside
-      # a pane
-      @_tab_context.merge!({:panes =>{}}) unless @_tab_context.key?(:panes)
-      panes = @_tab_context[:panes]
+      current_tab[:panes] = {} unless current_tab.has_key? :panes
+      panes = current_tab[:panes]
       pane_name = "#{panes.keys.size}"
       if block_given?
         pane_contents = panes[pane_name] = {:commands => []}
@@ -125,7 +123,10 @@ module Terminitor
       instance_eval(&block)
       @_context = @_old_context
     end
-
+    
+    def current_tab
+      @_tab_context
+    end
 
   end
 end

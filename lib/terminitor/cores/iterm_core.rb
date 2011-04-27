@@ -49,7 +49,7 @@ module Terminitor
     # We need this method to workaround appscript so that we can instantiate new tabs and windows.
     # otherwise it would have looked something like window.make(:new => :tab) but that doesn't work.
     def terminal_process
-      Appscript.app("System Events").application_processes["iTerm.app"]
+      Appscript.app("System Events").processes["iTerm"]
     end
     
     # Returns the last instantiated tab from active window
@@ -65,6 +65,10 @@ module Terminitor
     # Returns the current terminal
     def current_terminal
       @terminal.current_terminal
+    end
+
+    def last_session
+      current_terminal.sessions.last
     end
 
     # Sets options of the given object
@@ -141,13 +145,33 @@ module Terminitor
         # if tab_content hash has a key :panes we know this tab should be split
         # we can execute tab commands as before if there is no key :panes
         if tab_content.key?(:panes)
-          #do some shit with the pane
+          handle_panes(tab_content) 
         else
           tab_content[:commands].each { |cmd| execute_command(cmd, :in => tab) }
         end
       end
       set_delayed_options
     end
+    
+    # handle panes
+    # 
+    def handle_panes(tab_content)
+      panes = tab_content[:panes]
+      tab_commands = tab_content[:commands]
+      first_pane = true
+      panes.keys.sort.each do |pane_key|
+        # split and execute commands
+        split_v unless first_pane
+        first_pane = false if first_pane
+        pane_commands = panes[pane_key][:commands] 
+        # tab commands in each pane
+        pane_commands = tab_commands + pane_commands        
+        pane_commands.each {|cmd| execute_command cmd, :in => last_session}
+        #check if pane includes a pane
+        # puts "awesome there's a subpane I have to split_h here" if panes[pane_key].keys.include?(:panes)
+      end
+    end
+
 
     # Methods for splitting panes
     #
