@@ -153,13 +153,10 @@ module Terminitor
       set_delayed_options
     end
     
-    # handle panes
-    # 
     def handle_panes(tab_content)
       panes = tab_content[:panes]
       tab_commands = tab_content[:commands]
       first_pane_level_split(panes, tab_commands)
-      @session_counter = 0
       second_pane_level_split(panes, tab_commands)
     end
 
@@ -190,19 +187,16 @@ module Terminitor
     end
 
     def handle_subpanes(subpanes, tab_commands)
-      split_h_count = 0
       subpanes.keys.sort.each do |subpane_key|
         subpane_commands = subpanes[subpane_key][:commands]
         split_h
-        split_h_count += 1
-        execute_pane_commands(subpane_commands, tab_commands, active_window)
+        execute_pane_commands(subpane_commands, tab_commands)
       end
-      split_h_count.times { select_pane_above }
     end
 
-    def execute_pane_commands(pane_commands, tab_commands, session = last_session)
+    def execute_pane_commands(pane_commands, tab_commands)
       pane_commands = tab_commands + pane_commands
-      pane_commands.each { |cmd| execute_command cmd, :in => session }
+      pane_commands.each { |cmd| execute_command cmd}
     end
 
 
@@ -261,10 +255,6 @@ module Terminitor
       else
         puts "Error: #{direction} is not a valid direction to select a pane; Only Above/Below/Left/Right are valid directions"
       end
-    end
-
-    def select_pane_above
-      select_pane('Above')
     end
 
     def select_left_pane
