@@ -97,8 +97,21 @@ module Terminitor
     end
 
     def pane(*args, &block)
-      current_tab[:panes] = {} unless current_tab.has_key? :panes
+      current_tab[:panes] = {} unless current_tab.has_key? :panes 
       panes = current_tab[:panes]
+      pane_name = "pane#{panes.keys.size}"
+      if block_given?
+        pane_contents = panes[pane_name] = {:commands => []}
+        @_subpane_context = panes[pane_name]
+        in_context pane_contents[:commands], &block
+      else
+        panes[pane_name] = { :commands => args }
+      end
+    end
+
+    def subpane(*args, &block)
+      @_subpane_context[:panes] = {} unless @_subpane_context.has_key? :panes
+      panes = @_subpane_context[:panes]
       pane_name = "#{panes.keys.size}"
       if block_given?
         pane_contents = panes[pane_name] = {:commands => []}
@@ -107,7 +120,7 @@ module Terminitor
         panes[pane_name] = { :commands => args }
       end
     end
-
+    
     # Returns yaml file as Terminitor formmatted hash
     # @return [Hash] Return hash format of Termfile
     def to_hash
@@ -123,10 +136,10 @@ module Terminitor
       instance_eval(&block)
       @_context = @_old_context
     end
-    
+
     def current_tab
       @_tab_context
     end
-
+    
   end
 end

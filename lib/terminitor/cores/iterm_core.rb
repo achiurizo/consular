@@ -59,7 +59,7 @@ module Terminitor
 
     # returns the active windows
     def active_window
-      current_terminal.current_session.get
+      current_terminal.current_session
     end
     
     # Returns the current terminal
@@ -158,18 +158,51 @@ module Terminitor
     def handle_panes(tab_content)
       panes = tab_content[:panes]
       tab_commands = tab_content[:commands]
+      first_pane_level_split(panes, tab_commands)
+      @session_counter = 0
+      second_pane_level_split(panes, tab_commands)
+    end
+
+    def first_pane_level_split(panes, tab_commands)
       first_pane = true
+      split_v_counter = 0
       panes.keys.sort.each do |pane_key|
-        # split and execute commands
-        split_v unless first_pane
+        pane_content = panes[pane_key]
+        unless first_pane
+          split_v
+          split_v_counter += 1 
+        end
         first_pane = false if first_pane
-        pane_commands = panes[pane_key][:commands] 
-        # tab commands in each pane
-        pane_commands = tab_commands + pane_commands        
-        pane_commands.each {|cmd| execute_command cmd, :in => last_session}
-        #check if pane includes a pane
-        # puts "awesome there's a subpane I have to split_h here" if panes[pane_key].keys.include?(:panes)
+        pane_commands = pane_content[:commands] 
+        execute_pane_commands(pane_commands, tab_commands)
       end
+      split_v_counter.times { select_left_pane }
+    end
+
+    def second_pane_level_split(panes, tab_commands)
+      panes.keys.sort.each do |pane_key|
+        pane_content = panes[pane_key]
+        handle_subpanes(pane_content[:panes], tab_commands) if pane_content.has_key? :panes
+        # if not last in array
+        # select next vertical pane
+        select_pane_right
+      end
+    end
+
+    def handle_subpanes(subpanes, tab_commands)
+      split_h_count = 0
+      subpanes.keys.sort.each do |subpane_key|
+        subpane_commands = subpanes[subpane_key][:commands]
+        split_h
+        split_h_count += 1
+        execute_pane_commands(subpane_commands, tab_commands, active_window)
+      end
+      split_h_count.times { select_pane_above }
+    end
+
+    def execute_pane_commands(pane_commands, tab_commands, session = last_session)
+      pane_commands = tab_commands + pane_commands
+      pane_commands.each { |cmd| execute_command cmd, :in => session }
     end
 
 
@@ -217,6 +250,29 @@ module Terminitor
 
     def split_h
       call_ui_action("Shell", nil, "Split horizontally")
+    end
+    
+    # to select panes; iTerm's Appscript select method does not work
+    # as expected, we have to select via menu instead
+    def select_pane(direction)
+      valid_directions = %w[Above Below Left Right]
+      if valid_directions.include?(direction)
+        call_ui_action("Window", "Select Split Pane", "Select Pane #{direction}")
+      else
+        puts "Error: #{direction} is not a valid direction to select a pane; Only Above/Below/Left/Right are valid directions"
+      end
+    end
+
+    def select_pane_above
+      select_pane('Above')
+    end
+
+    def select_left_pane
+      select_pane('Left')
+    end
+
+    def select_pane_right
+      select_pane('Right')
     end
 
     private
