@@ -52,11 +52,6 @@ module Terminitor
       Appscript.app("System Events").processes["iTerm"]
     end
     
-    # Returns the last instantiated tab from active window
-    def return_last_tab
-      current_terminal.sessions.last.get rescue false
-    end
-
     # returns the active windows
     def active_window
       current_terminal.current_session
@@ -173,16 +168,15 @@ module Terminitor
         pane_commands = pane_content[:commands] 
         execute_pane_commands(pane_commands, tab_commands)
       end
-      split_v_counter.times { select_left_pane }
+      split_v_counter.times { select_pane('Left') }
     end
 
     def second_pane_level_split(panes, tab_commands)
       panes.keys.sort.each do |pane_key|
         pane_content = panes[pane_key]
         handle_subpanes(pane_content[:panes], tab_commands) if pane_content.has_key? :panes
-        # if not last in array
         # select next vertical pane
-        select_pane_right
+        select_pane('Right')
       end
     end
 
@@ -255,14 +249,6 @@ module Terminitor
       else
         puts "Error: #{direction} is not a valid direction to select a pane; Only Above/Below/Left/Right are valid directions"
       end
-    end
-
-    def select_left_pane
-      select_pane('Left')
-    end
-
-    def select_pane_right
-      select_pane('Right')
     end
 
     private
