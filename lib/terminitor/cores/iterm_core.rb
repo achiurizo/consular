@@ -31,19 +31,14 @@ module Terminitor
     # Opens a new tab and returns itself.
     # TODO : handle options (?)
     def open_tab(options = nil)
-      session = current_terminal.sessions.end.make( :new => :session )
-      session.exec(:command => ENV['SHELL'])
-      puts "finished; session count: #{current_terminal.sessions.count}"
-      session
+      current_terminal.launch_ :session => 'New session'
     end
     
     # Opens A New Window, applies settings to the first tab and returns the tab object.
     # TODO : handle options (?)
     def open_window(options = nil)
-      window  = terminal.make( :new => :terminal )
-      session = window.sessions.end.make( :new => :session )
-      session.exec(:command => ENV['SHELL'])
-      session
+      window  = @terminal.make( :new => :terminal )
+      window.launch_ :session => 'New session'
     end
 
     # Returns the Terminal Process
@@ -53,12 +48,12 @@ module Terminitor
       Appscript.app("System Events").processes["iTerm"]
     end
     
-    # returns the active windows
+    # Returns the active window i.e. the active terminal session in iTerm 
     def active_window
       current_terminal.current_session
     end
     
-    # Returns the current terminal
+    # Returns the current terminal i.e. the active iTerm window
     def current_terminal
       @terminal.current_terminal
     end
@@ -129,7 +124,8 @@ module Terminitor
           window_options = Hash[*combined_options] # safe merge
           tab = window_options.empty? ? open_window(nil) : open_window(window_options)
         else
-          tab = ( tab_key == 'default' ? active_window : open_tab(tab_options) ) # give us the current window if its default, else open a tab.
+        # give us the current window if its default, else open a tab.
+          tab = ( tab_key == 'default' ? active_window : open_tab(tab_options) )
         end
         # append our before block commands.
         tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
@@ -139,7 +135,7 @@ module Terminitor
         tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
         tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
         # if tab_content hash has a key :panes we know this tab should be split
-        # we can execute tab commands as before if there is no key :panes
+        # we can execute tab commands if there is no key :panes
         if tab_content.key?(:panes)
           handle_panes(tab_content) 
         else
