@@ -47,6 +47,8 @@ module Terminitor
       # if we are in a window context, append commands to default tab.
       if @_context.is_a?(Hash) && @_context[:tabs]
         current = @_context[:tabs]['default'][:commands]
+      elsif @_context.is_a?(Hash)
+        current = @_context[:commands]
       else
         current = @_context
       end
@@ -89,38 +91,26 @@ module Terminitor
         
         tab_contents[:options] = options unless options.empty?
         
-        @_tab_context = tabs[tab_name]
-        in_context tab_contents[:commands], &block
+        in_context tab_contents, &block
+        clean_up_context
       else
         tabs[tab_name] = { :commands => args}
       end
     end
 
     def pane(*args, &block)
-      current_tab[:panes] = {} unless current_tab.has_key? :panes 
-      panes = current_tab[:panes]
+      @_context[:panes] = {} unless @_context.has_key? :panes 
+      panes = @_context[:panes]
       pane_name = "pane#{panes.keys.size}"
       if block_given?
         pane_contents = panes[pane_name] = {:commands => []}
-        @_subpane_context = panes[pane_name]
-        in_context pane_contents[:commands], &block
+        in_context pane_contents, &block
       else
         panes[pane_name] = { :commands => args }
       end
+      puts @_context[:panes]
     end
 
-    def subpane(*args, &block)
-      @_subpane_context[:panes] = {} unless @_subpane_context.has_key? :panes
-      panes = @_subpane_context[:panes]
-      pane_name = "#{panes.keys.size}"
-      if block_given?
-        pane_contents = panes[pane_name] = {:commands => []}
-        in_context pane_contents[:commands], &block
-      else
-        panes[pane_name] = { :commands => args }
-      end
-    end
-    
     # Returns yaml file as Terminitor formmatted hash
     # @return [Hash] Return hash format of Termfile
     def to_hash
@@ -136,10 +126,10 @@ module Terminitor
       instance_eval(&block)
       @_context = @_old_context
     end
-
-    def current_tab
-      @_tab_context
-    end
     
+    def clean_up_context
+      last_open_window_key = @windows.keys.last
+      @_context = @windows[last_open_window_key]
+    end
   end
 end

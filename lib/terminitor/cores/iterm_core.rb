@@ -33,6 +33,7 @@ module Terminitor
     def open_tab(options = nil)
       session = current_terminal.sessions.end.make( :new => :session )
       session.exec(:command => ENV['SHELL'])
+      puts "finished; session count: #{current_terminal.sessions.count}"
       session
     end
     
@@ -133,7 +134,7 @@ module Terminitor
         # append our before block commands.
         tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
         # clean up prompt
-        tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
+        #tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
         # add title to tab
         tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
         tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
