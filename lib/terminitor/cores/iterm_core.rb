@@ -34,20 +34,13 @@ module Terminitor
       current_terminal.launch_ :session => 'New session'
     end
     
-    # Opens A New Window, applies settings to the first tab and returns the tab object.
+    # Open new window, applies settings to the first tab and returns the tab object.
     # TODO : handle options (?)
     def open_window(options = nil)
       window  = @terminal.make( :new => :terminal )
       window.launch_ :session => 'New session'
     end
 
-    # Returns the Terminal Process
-    # We need this method to workaround appscript so that we can instantiate new tabs and windows.
-    # otherwise it would have looked something like window.make(:new => :tab) but that doesn't work.
-    def terminal_process
-      Appscript.app("System Events").processes["iTerm"]
-    end
-    
     # Returns the active window i.e. the active terminal session in iTerm 
     def active_window
       current_terminal.current_session
@@ -106,8 +99,6 @@ module Terminitor
     # @param [String] name of window
     # @param [Hash] Hash of window's content extracted from Termfile
     # @param [Hash] Hash of options
-    #
-    # this method is hideous and needs a refactoring!
     def run_in_window(window_name, window_content, options = {})
       window_options = window_content[:options]
       first_tab = true
@@ -130,7 +121,7 @@ module Terminitor
         # append our before block commands.
         tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
         # clean up prompt
-        #tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
+        tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
         # add title to tab
         tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
         tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
@@ -165,7 +156,7 @@ module Terminitor
         pane_commands = pane_content[:commands] 
         execute_pane_commands(pane_commands, tab_commands)
       end
-      split_v_counter.times { select_pane('Left') }
+      split_v_counter.times { select_pane 'Left' }
     end
 
     def second_pane_level_split(panes, tab_commands)
@@ -173,7 +164,7 @@ module Terminitor
         pane_content = panes[pane_key]
         handle_subpanes(pane_content[:panes], tab_commands) if pane_content.has_key? :panes
         # select next vertical pane
-        select_pane('Right')
+        select_pane 'Right'
       end
     end
 
@@ -198,7 +189,7 @@ module Terminitor
     # Panes are listed in the sessions-array from left to right
     # and numbered from 1 - n.
     #
-    # terminal.sessions[1].terminate
+    # e.g. terminal.sessions[1].terminate
     # 
     #    ########################################
     #    #            #            #            #
@@ -218,6 +209,7 @@ module Terminitor
     # If there was a second tab the first session of the second tab
     # would be session [7] and so on.
     def iterm_menu
+      terminal_process = Appscript.app("System Events").processes["iTerm"]
       terminal_process.menu_bars.first
     end
     

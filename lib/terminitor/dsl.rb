@@ -106,7 +106,7 @@ module Terminitor
         pane_contents = panes[pane_name] = {:commands => []}
         if @_context.has_key? :is_pane
           # after in_context  we should be able to access
-          # @_old_context as before
+          # @_context and @_old_context as before
           context = @_context
           old_context = @_old_context
           in_context pane_contents[:commands], &block
