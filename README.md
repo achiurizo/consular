@@ -86,22 +86,24 @@ YAML syntax.
 
 #### Ruby DSL Syntax ####
 
-    setup 'echo "setup"'   # code to run during setup
+````ruby
+setup 'echo "setup"'   # code to run during setup
 
-    # open a tab in current window with these commands
-    tab "echo 'default'", "echo 'default tab'"
+# open a tab in current window with these commands
+tab "echo 'default'", "echo 'default tab'"
 
-    window do
-      before { run 'cd /path' } # run this command before each command.
-      
-      run 'padrino start' # run in new window
+window do
+  before { run 'cd /path' } # run this command before each command.
+  
+  run 'padrino start' # run in new window
 
-      tab "echo 'first tab'", "echo 'of window'" # create a new tab in window and run it.
-      tab "named tab" do
-        run "echo 'named tab'"
-        run "ls"
-      end
-    end
+  tab "echo 'first tab'", "echo 'of window'" # create a new tab in window and run it.
+  tab "named tab" do
+    run "echo 'named tab'"
+    run "ls"
+  end
+end
+````
 
 The newer Ruby DSL syntax allows for more complicated behavior such as window creation as well as setup blocks that can be executed prior loading a project.
 
@@ -109,51 +111,58 @@ The newer Ruby DSL syntax allows for more complicated behavior such as window cr
 
 to create tabs, we can simply invoke the tab command with either the command arguments like:
 
-    tab "echo 'hi'", "gitx"
-    
+````ruby
+tab "echo 'hi'", "gitx"
+````
+
 or even pass it a block:
 
-    tab do
-      run "echo 'hi'"
-      run "mate ."
-    end
+````ruby
+tab do
+  run "echo 'hi'"
+  run "mate ."
+end
+````
 
 ##### Windows #####
 
 to create windows, we can simply invoke the window command with a block containing additional commands like:
 
-    window do
+````ruby
+window do
 
-      run "whoami"    # Runs the command in the current window.
+  run "whoami"    # Runs the command in the current window.
 
-      tab "echo 'hi'" # Creates another tab
-      tab "mate ."    # And another
-      tab do          # Last hoorah
-        run "open http://www.google.com"
-      end
-    end
-
+  tab "echo 'hi'" # Creates another tab
+  tab "mate ."    # And another
+  tab do          # Last hoorah
+    run "open http://www.google.com"
+  end
+end
+````
 
 ##### Before #####
 
 Sometimes you'll want to create a few commands that you want to run in each tab instance. You can do that with 'before':
 
-    before { run "cd /path" } # execute this command before other commands in the default window
-    run "whoami"
-    tab 'uptime'
+````ruby
+before { run "cd /path" } # execute this command before other commands in the default window
+run "whoami"
+tab 'uptime'
 
-    # In this instance, "cd /path" wil be executed in the default window before 'whoami' 
-    # and also in the tab before 'uptime'.
-    # You can also use this inside a specific window context:
+# In this instance, "cd /path" wil be executed in the default window before 'whoami' 
+# and also in the tab before 'uptime'.
+# You can also use this inside a specific window context:
 
-    window do
-      before 'cd /tmp'
-      run 'watchr test.watchr' # "cd /tmp" first than run watchr
+window do
+  before 'cd /tmp'
+  run 'watchr test.watchr' # "cd /tmp" first than run watchr
 
-      tab do
-        run 'padrino start' # "cd /tmp" is ran beforehand and then padrino start is executed
-      end
-    end
+  tab do
+    run 'padrino start' # "cd /tmp" is ran beforehand and then padrino start is executed
+  end
+end
+````
 
 
 
@@ -163,15 +172,19 @@ The setup block allows you to store commands that can be ran specifically before
 
 the command arguments:
 
-    setup "bundle install", "gitx"
+````ruby
+setup "bundle install", "gitx"
+````
     
 or with a block:
 
-    setup do
-      run "echo 'hi'"
-      run "bundle install"
-      run 'git remote add upstream git://github.com/achiu/terminitor.git'
-    end
+````ruby
+setup do
+  run "echo 'hi'"
+  run "bundle install"
+  run 'git remote add upstream git://github.com/achiu/terminitor.git'
+end
+````
 
 
 Once defined, you can invoke your projects setup with:
@@ -185,19 +198,23 @@ You can also set settings on each of your tabs and windows. for example, this is
 
 Open a tab with terminal settings "Grass"
 
-    tab :name => "named tab", :settings => "Grass" do
-      run "echo 'named tab'"
-      run "ls"
-    end
+````ruby
+tab :name => "named tab", :settings => "Grass" do
+  run "echo 'named tab'"
+  run "ls"
+end
+````
 
 This will create a tab with a title of 'named tab' using Terminals 'Grass' setting.
 
 
 How about a window with a specific size:
 
-    window :bounds => [10,20,300,200] do
+````ruby
+window :bounds => [10,20,300,200] do
 
-    end
+end
+````ruby
 
 Currently, the following options are available:
 
