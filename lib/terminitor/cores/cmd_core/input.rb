@@ -194,11 +194,11 @@ module Terminitor
 
       case char
         when '0'..'9'
-          [code - ?0 + 0x30]
+          [code - ?0.ord + 0x30]
         when 'A'..'Z'
           [VK_SHIFT, code]
         when 'a'..'z'
-          [code - ?a + ?A]
+          [code - ?a.ord + ?A.ord]
         when ' '
           [code]
         when '+'

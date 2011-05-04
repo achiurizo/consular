@@ -123,11 +123,11 @@ context "AbstractCore" do
         mock(core).open_window(:bounds => [10,10], :settings => 'cool', :name => "first tab")  { "first"  }
         mock(core).open_tab(:settings => 'grass', :name => 'second tab')    { "second"  }
         mock(core).set_delayed_options { true  }
-        mock(core).execute_command('PS1=$PS1"\e]2;first tab\a"', :in => 'first')
+        mock(core).execute_command('PS1="$PS1\e]2;first tab\a"', :in => 'first')
         mock(core).execute_command('clear', :in => 'first')
         mock(core).execute_command('ls', :in => "first")
         mock(core).execute_command('ok', :in => "first")
-        mock(core).execute_command('PS1=$PS1"\e]2;second tab\a"', :in => 'second')
+        mock(core).execute_command('PS1="$PS1\e]2;second tab\a"', :in => 'second')
         mock(core).execute_command('clear', :in => 'second')
         mock(core).execute_command('ps', :in => "second")
         core.process!

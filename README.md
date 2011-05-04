@@ -365,13 +365,14 @@ Thanks to the following people for their contributions so far:
  * Flavio Castelli ([flavio](https://github.com/flavio)) for contributing Konsole(KDE) core.
  * Alexey Kuleshov ([kulesa](https://github.com/kulesa)) for contributing the terminal settings and terminal settings capture functionality
  * Arthur Gunn     ([gunn](https://github.com/gunn)) for contributing a path to support tab syntax and load path.
- * Elliot Winkler  ([mcmire](https://github.com/mcmire)) for adding 1.8.6 compatiblity and ensuring tabs open in order.
+ * Elliot Winkler  ([mcmire](https://github.com/mcmire)) for adding 1.8.6 compatiblity and ensuring tabs open in order and fixing named tabs
  * Justin Hilemen  ([bobthecow](https://github.com/bobthecow)) for fixing the list command to remove the term extensions.
  * Dave Perrett    ([recurser](https://github.com/recurser)) for adding basic iTerm support.
  * Ilkka Laukkanen ([ilkka](https://github.com/achiu/terminitor/commits/master?author=ilkka)) for Terminator core and other fixes
  * Elia Schito     ([elia](https://github.com/achiu/terminitor/commits/master?author=elia)) for patch to allow usage of "&" for background operations
- * Dotan J. Nahum  ([[jondot](https://github.com/jondot)) for adding windows(cmd.exe) support
- * Kyriacos Souroullas ([[kyriacos](https://github.com/kyriacos) For removing params to support generic commands
+ * Dotan J. Nahum  ([jondot](https://github.com/jondot)) for adding windows(cmd.exe) support
+ * Kyriacos Souroullas ([kyriacos](https://github.com/kyriacos) For removing params to support generic commands
+ * Jerry Cheung ([jch](https://github.com/jch)) For adding ignore for emac backups
 
 Acknowledgements
 -----------------
