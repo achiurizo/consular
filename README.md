@@ -214,7 +214,7 @@ How about a window with a specific size:
 window :bounds => [10,20,300,200] do
 
 end
-````ruby
+````
 
 Currently, the following options are available:
 
