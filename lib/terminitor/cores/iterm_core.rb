@@ -51,10 +51,6 @@ module Terminitor
       @terminal.current_terminal
     end
 
-    def last_session
-      current_terminal.sessions.last
-    end
-
     # Sets options of the given object
     def set_options(object, options = {})
       options.each_pair do |option, value| 
@@ -182,32 +178,8 @@ module Terminitor
     end
 
 
-    # Methods for splitting panes
+    # Methods for splitting panes (GUI_scripting)
     #
-    # Note:
-    # Panes can be addressed via terminal.sessions-array.
-    # Panes are listed in the sessions-array from left to right
-    # and numbered from 1 - n.
-    #
-    # e.g. terminal.sessions[1].terminate
-    # 
-    #    ########################################
-    #    #            #            #            #
-    #    # session[1] #            #            #
-    #    #            # session[4] #            #
-    #    ##############            #            #
-    #    #            #            #            #
-    #    # session[2] ############## session[6] #
-    #    #            #            #            #
-    #    ##############            #            #
-    #    #            # session[5] #            #
-    #    # session[3] #            #            #
-    #    #            #            #            #
-    #    ########################################
-    #
-    # Numbering sessions from left to right applies to tabs as well.
-    # If there was a second tab the first session of the second tab
-    # would be session [7] and so on.
     def iterm_menu
       terminal_process = Appscript.app("System Events").processes["iTerm"]
       terminal_process.menu_bars.first
