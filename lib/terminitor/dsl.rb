@@ -47,6 +47,8 @@ module Terminitor
       # if we are in a window context, append commands to default tab.
       if @_context.is_a?(Hash) && @_context[:tabs]
         current = @_context[:tabs]['default'][:commands]
+      elsif @_context.is_a?(Hash)
+        current = @_context[:commands]
       else
         current = @_context
       end
@@ -89,9 +91,32 @@ module Terminitor
         
         tab_contents[:options] = options unless options.empty?
         
-        in_context tab_contents[:commands], &block
+        in_context tab_contents, &block
+        clean_up_context
       else
         tabs[tab_name] = { :commands => args}
+      end
+    end
+
+    def pane(*args, &block)
+      @_context[:panes] = {} unless @_context.has_key? :panes 
+      panes = @_context[:panes]
+      pane_name = "pane#{panes.keys.size}"
+      if block_given?
+        pane_contents = panes[pane_name] = {:commands => []}
+        if @_context.has_key? :is_pane
+          # after in_context  we should be able to access
+          # @_context and @_old_context as before
+          context = @_context
+          old_context = @_old_context
+          in_context pane_contents[:commands], &block
+          clean_up_context(context, old_context)
+        else
+          pane_contents[:is_pane] = true
+          in_context pane_contents, &block
+        end
+      else
+        panes[pane_name] = { :commands => args }
       end
     end
 
@@ -110,7 +135,14 @@ module Terminitor
       instance_eval(&block)
       @_context = @_old_context
     end
+    
+    def clean_up_context(context = last_open_window, old_context = nil)
+      @_context = context
+      @_old_context = old_context
+    end
 
-
+    def last_open_window
+      @windows[@windows.keys.last]
+    end
   end
 end

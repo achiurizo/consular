@@ -339,8 +339,38 @@ focus during execution of these commands. Obviously the long term goal is to sol
 
 #### ITermCore ####
 
-Currently the iTerm Core only provides basic functionality such as opening tabs, windows, and executing commands within them. The capture
+Currently the iTerm Core only provides basic functionality such as opening tabs, windows, and executing commands within them. It is also possible to split tabs into panes. The capture
 and settings functionality will be integrated soon.
+
+Splitting tabs into panes works as follows:
+
+    tab do
+      pane "gitx" # first pane
+        pane do      # second pane level => horizontal split
+          run "irb"
+        end
+      pane 'ls'   # first pane level => vertical split
+    end
+
+should result into something like this:
+
+    #    ###########################
+    #    #            #            #
+    #    #            #            #
+    #    #   'gitx'   #            #
+    #    #            #            #
+    #    #            #            #
+    #    ##############    'ls'    #
+    #    #            #            #
+    #    #            #            #
+    #    #   'irb'    #            #
+    #    #            #            #
+    #    #            #            #
+    #    ###########################
+
+It is not possible to split the second level panes (the horizontal
+ones). Nevertheless you should be able to split tabs into any kind of pane pattern you wish
+with this syntax.
 
 
 #### Fetching ####

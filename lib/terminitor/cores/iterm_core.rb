@@ -31,38 +31,22 @@ module Terminitor
     # Opens a new tab and returns itself.
     # TODO : handle options (?)
     def open_tab(options = nil)
-      session = current_terminal.sessions.end.make( :new => :session )
-      session.exec(:command => ENV['SHELL'])
-      session
+      current_terminal.launch_ :session => 'New session'
     end
     
-    # Opens A New Window, applies settings to the first tab and returns the tab object.
+    # Open new window, applies settings to the first tab and returns the tab object.
     # TODO : handle options (?)
     def open_window(options = nil)
-      window  = terminal.make( :new => :terminal )
-      session = window.sessions.end.make( :new => :session )
-      session.exec(:command => ENV['SHELL'])
-      session
+      window  = @terminal.make( :new => :terminal )
+      window.launch_ :session => 'New session'
     end
 
-    # Returns the Terminal Process
-    # We need this method to workaround appscript so that we can instantiate new tabs and windows.
-    # otherwise it would have looked something like window.make(:new => :tab) but that doesn't work.
-    def terminal_process
-      app("System Events").application_processes["iTerm.app"]
-    end
-    
-    # Returns the last instantiated tab from active window
-    def return_last_tab
-      current_terminal.sessions.last.get rescue false
-    end
-
-    # returns the active windows
+    # Returns the active window i.e. the active terminal session in iTerm 
     def active_window
-      current_terminal.current_session.get
+      current_terminal.current_session
     end
     
-    # Returns the current terminal
+    # Returns the current terminal i.e. the active iTerm window
     def current_terminal
       @terminal.current_terminal
     end
@@ -103,6 +87,128 @@ module Terminitor
       @delayed_options.length.times do 
         option = @delayed_options.shift
         option[:object].instance_eval(option[:option]).set(option[:value])
+      end
+    end
+
+    # this command will run commands in the designated window
+    # run_in_window 'window1', {:tab1 => ['ls','ok']}
+    # @param [String] name of window
+    # @param [Hash] Hash of window's content extracted from Termfile
+    # @param [Hash] Hash of options
+    def run_in_window(window_name, window_content, options = {})
+      window_options = window_content[:options]
+      first_tab = true
+      window_content[:tabs].keys.sort.each do |tab_key|
+        tab_content = window_content[:tabs][tab_key]
+        # Open window on first 'tab' statement
+        # first tab is already opened in the new window, so first tab should be
+        # opened as a new tab in default window only
+        tab_options = tab_content[:options]
+        tab_name    = tab_options[:name] if tab_options
+        if first_tab && !options[:default]
+          first_tab = false
+          combined_options = (window_options.to_a + tab_options.to_a).inject([]) {|arr, pair| arr += pair }
+          window_options = Hash[*combined_options] # safe merge
+          tab = window_options.empty? ? open_window(nil) : open_window(window_options)
+        else
+        # give us the current window if its default, else open a tab.
+          tab = ( tab_key == 'default' ? active_window : open_tab(tab_options) )
+        end
+        # append our before block commands.
+        tab_content[:commands].insert(0, window_content[:before]).flatten! if window_content[:before]
+        # clean up prompt
+        tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
+        # add title to tab
+        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
+        tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
+        # if tab_content hash has a key :panes we know this tab should be split
+        # we can execute tab commands if there is no key :panes
+        if tab_content.key?(:panes)
+          handle_panes(tab_content) 
+        else
+          tab_content[:commands].each { |cmd| execute_command(cmd, :in => tab) }
+        end
+      end
+      set_delayed_options
+    end
+    
+    def handle_panes(tab_content)
+      panes = tab_content[:panes]
+      tab_commands = tab_content[:commands]
+      first_pane_level_split(panes, tab_commands)
+      second_pane_level_split(panes, tab_commands)
+    end
+
+    def first_pane_level_split(panes, tab_commands)
+      first_pane = true
+      split_v_counter = 0
+      panes.keys.sort.each do |pane_key|
+        pane_content = panes[pane_key]
+        unless first_pane
+          split_v
+          split_v_counter += 1 
+        end
+        first_pane = false if first_pane
+        pane_commands = pane_content[:commands] 
+        execute_pane_commands(pane_commands, tab_commands)
+      end
+      split_v_counter.times { select_pane 'Left' }
+    end
+
+    def second_pane_level_split(panes, tab_commands)
+      panes.keys.sort.each do |pane_key|
+        pane_content = panes[pane_key]
+        handle_subpanes(pane_content[:panes], tab_commands) if pane_content.has_key? :panes
+        # select next vertical pane
+        select_pane 'Right'
+      end
+    end
+
+    def handle_subpanes(subpanes, tab_commands)
+      subpanes.keys.sort.each do |subpane_key|
+        subpane_commands = subpanes[subpane_key][:commands]
+        split_h
+        execute_pane_commands(subpane_commands, tab_commands)
+      end
+    end
+
+    def execute_pane_commands(pane_commands, tab_commands)
+      pane_commands = tab_commands + pane_commands
+      pane_commands.each { |cmd| execute_command cmd}
+    end
+
+
+    # Methods for splitting panes (GUI_scripting)
+    #
+    def iterm_menu
+      terminal_process = Appscript.app("System Events").processes["iTerm"]
+      terminal_process.menu_bars.first
+    end
+    
+    def call_ui_action(menu, submenu = nil, action)
+      menu = iterm_menu.menu_bar_items[menu].menus[menu]
+      if submenu
+        menu = menu.menu_items[submenu].menus[submenu]
+      end
+      menu.menu_items[action].click
+    end
+
+    def split_v
+      call_ui_action("Shell", nil, "Split vertically")
+    end
+
+    def split_h
+      call_ui_action("Shell", nil, "Split horizontally")
+    end
+    
+    # to select panes; iTerm's Appscript select method does not work
+    # as expected, we have to select via menu instead
+    def select_pane(direction)
+      valid_directions = %w[Above Below Left Right]
+      if valid_directions.include?(direction)
+        call_ui_action("Window", "Select Split Pane", "Select Pane #{direction}")
+      else
+        puts "Error: #{direction} is not a valid direction to select a pane; Only Above/Below/Left/Right are valid directions"
       end
     end
 

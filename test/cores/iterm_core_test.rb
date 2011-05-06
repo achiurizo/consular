@@ -11,12 +11,6 @@ on_platform "darwin" do
      @iterm_core = Terminitor::ItermCore.new('/path/to')  
     end
 
-    asserts "#terminal_process calls System Events" do
-      core = topic.dup
-      mock(core).app('System Events') { mock!.application_processes.returns("iTerm.app" => true) }
-      core.terminal_process
-    end
-
     context "#open_tab" do
 
       should "return the current tab" do
