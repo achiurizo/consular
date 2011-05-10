@@ -21,21 +21,6 @@ on_platform "darwin" do
 
     end
     
-    # context "#open_window" do
-
-    #   should "open a new window" do
-    #     core = topic.dup
-    #     @terminal.stub!.make(:new => terminal)
-    #     core.open_window
-    #   end
-
-    #   should "open a new session" do
-    #     core = topic.dup
-    #     mock(core).terminal.stub!.make(:new => :terminal).stub!.launch_( :session => 'New session')
-    #     core.open_window
-    #   end
-    # end
-    
     asserts "#execute_command executes" do
       core = topic.dup
       mock(core).active_window.stub!.write(:text => "hasta").returns(true)
