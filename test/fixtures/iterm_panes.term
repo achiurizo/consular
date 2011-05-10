@@ -1,0 +1,20 @@
+tab do 
+  run 'ls'
+  pane do
+    run "echo 'first level pane'"
+    pane do
+      run "echo 'first second level pane'"
+    end
+  end
+  pane do
+    run "gitx"
+    pane 'ls'
+    pane do
+      run "echo 'wohoo'"
+      run "echo '2nd cmd'"
+    end
+  end
+end
+tab do
+  run "echo 'second tab'"
+end
