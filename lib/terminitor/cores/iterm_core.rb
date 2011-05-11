@@ -3,12 +3,12 @@ module Terminitor
   # This Core manages all the interaction with Appscript and the Terminal
   class ItermCore < AbstractCore
     include Appscript
-    
+
     ALLOWED_OPTIONS = {
       :window => [:bounds, :visible, :miniaturized],
       :tab => [:settings, :selected]
     }
-    
+
     # Initialize @terminal with Terminal.app, Load the Windows, store the Termfile
     # Terminitor::MacCore.new('/path')
     def initialize(path)
@@ -17,10 +17,10 @@ module Terminitor
       @windows  = @terminal.terminals
       @delayed_options = []
     end
-            
+
     # executes the given command via appscript
     # execute_command 'cd /path/to', :in => #<tab>
-    def execute_command(cmd, options = {})      
+    def execute_command(cmd, options = {})
       if options[:in]
         options[:in].write(:text => "#{cmd}")
       else
@@ -33,12 +33,12 @@ module Terminitor
     def open_tab(options = nil)
       current_terminal.launch_ :session => 'New session'
     end
-    
+
     # Open new window, applies settings to the first tab. iterm sets focus on 
     # new tab
     # TODO : handle options (?)
     def open_window(options = nil)
-      window  = @terminal.make( :new => :terminal )
+      window  = terminal.make( :new => :terminal )
       window.launch_ :session => 'New session'
     end
 
@@ -46,7 +46,7 @@ module Terminitor
     def active_window
       current_terminal.current_session
     end
-    
+
     # Returns the current terminal i.e. the active iTerm window
     def current_terminal
       @terminal.current_terminal
@@ -54,7 +54,7 @@ module Terminitor
 
     # Sets options of the given object
     def set_options(object, options = {})
-      options.each_pair do |option, value| 
+      options.each_pair do |option, value|
         case option
         when :settings   # works for windows and tabs, for example :settings => "Grass"
           begin
@@ -82,7 +82,7 @@ module Terminitor
         end
       end
     end
-    
+
     # Apply delayed options and remove them from the queue
     def set_delayed_options
       @delayed_options.length.times do 
@@ -132,7 +132,7 @@ module Terminitor
       end
       set_delayed_options
     end
-    
+
     def handle_panes(tab_content)
       panes = tab_content[:panes]
       tab_commands = tab_content[:commands]
@@ -185,7 +185,7 @@ module Terminitor
       terminal_process = Appscript.app("System Events").processes["iTerm"]
       terminal_process.menu_bars.first
     end
-    
+
     def call_ui_action(menu, submenu = nil, action)
       menu = iterm_menu.menu_bar_items[menu].menus[menu]
       if submenu
@@ -201,7 +201,7 @@ module Terminitor
     def split_h
       call_ui_action("Shell", nil, "Split horizontally")
     end
-    
+
     # to select panes; iTerm's Appscript select method does not work
     # as expected, we have to select via menu instead
     def select_pane(direction)
@@ -214,11 +214,11 @@ module Terminitor
     end
 
     private
-    
+
     # These methods are here for reference so I can ponder later
     # how I could possibly use them.
     # And Currently aren't tested. =(
-    
+
     # returns a window by the id
     def window_by_id(id)
       @windows.ID(id)
@@ -234,12 +234,12 @@ module Terminitor
     def set_window_title(window, title)
       window.custom_title.set(title)
     end
-    
+
     # selects options allowed for window or tab
     def allowed_options(object_type, options)
       Hash[ options.select {|option, value| ALLOWED_OPTIONS[object_type].include?(option) }]
     end
-    
+
     # Add option to the list of delayed options
     def delayed_option(option, value, object)
       @delayed_options << {
