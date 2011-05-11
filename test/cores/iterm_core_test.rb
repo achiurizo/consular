@@ -13,32 +13,12 @@ on_platform "darwin" do
 
     context "#open_tab" do
 
-      should "return the current tab" do
+      should "open a new tab" do
         core = topic.dup
-        mock(core).current_terminal.stub!.sessions.stub!.end.
-          stub!.make(:new => :session).stub!.
-          exec(:command => ENV['SHELL'])
+        mock(core).current_terminal.stub!.launch_(:session => 'New session')
         core.open_tab
-      end
+      end.equals(nil)
 
-    end
-
-    context "#open_window" do
-    
-      should "return the last tab" do
-        core = topic.dup
-        mock(core).terminal.stub!.make(:new=>:terminal).
-          stub!.sessions.stub!.end.stub!.make(:new=>:session).
-          stub!.exec(:command => ENV['SHELL'])
-        core.open_window
-      end
-    end
-    
-    asserts "#return_last_tab returns the last tab" do
-     core = topic.dup
-     mock(core).current_terminal.stub!.sessions.stub!.
-       last.stub!.get.returns(true)
-     core.return_last_tab
     end
     
     asserts "#execute_command executes" do
@@ -52,7 +32,6 @@ on_platform "darwin" do
       mock(core).current_terminal.stub!.current_session.stub!.get.returns(true)
       core.active_window
     end
-
   end
 end
 

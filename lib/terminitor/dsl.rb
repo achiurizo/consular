@@ -104,7 +104,7 @@ module Terminitor
       pane_name = "pane#{panes.keys.size}"
       if block_given?
         pane_contents = panes[pane_name] = {:commands => []}
-        if @_context.has_key? :is_pane
+        if @_context.has_key? :is_first_lvl_pane
           # after in_context  we should be able to access
           # @_context and @_old_context as before
           context = @_context
@@ -112,7 +112,7 @@ module Terminitor
           in_context pane_contents[:commands], &block
           clean_up_context(context, old_context)
         else
-          pane_contents[:is_pane] = true
+          pane_contents[:is_first_lvl_pane] = true
           in_context pane_contents, &block
         end
       else

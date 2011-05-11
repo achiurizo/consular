@@ -28,13 +28,14 @@ module Terminitor
       end
     end
 
-    # Opens a new tab and returns itself.
+    # Opens a new tab, iterm sets focus on new tab 
     # TODO : handle options (?)
     def open_tab(options = nil)
       current_terminal.launch_ :session => 'New session'
     end
     
-    # Open new window, applies settings to the first tab and returns the tab object.
+    # Open new window, applies settings to the first tab. iterm sets focus on 
+    # new tab
     # TODO : handle options (?)
     def open_window(options = nil)
       window  = @terminal.make( :new => :terminal )

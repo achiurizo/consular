@@ -87,3 +87,58 @@ context "Dsl" do
     end
   end
 end
+
+context "with panes" do
+  setup { Terminitor::Dsl.new File.expand_path('../fixtures/iterm_panes.term', __FILE__) }
+  asserts_topic.assigns :setup
+  asserts_topic.assigns :windows
+  asserts_topic.assigns :_context
+ 
+  context "creates correct hash" do
+    setup { topic.to_hash }
+
+    context "in windows" do
+      setup { topic[:windows] }
+
+      context "with default window" do
+        setup { topic['default'] }
+
+        context "tabs with panes " do
+          setup { topic[:tabs] }
+
+          context "tabs can hold panes" do
+            asserts(:[], 'tab1').equivalent_to({
+              :commands=>["ls"],
+              :panes => {
+                'pane0' => {
+                  :commands => ["echo 'first level pane'"],
+                  :is_first_lvl_pane => true,
+                  :panes => {
+                    'pane0' => {
+                      :commands => ["echo 'first second level pane'"]
+                    }
+                   }
+                },
+                'pane1' => {
+                  :commands => ["gitx"],
+                  :is_first_lvl_pane => true,
+                  :panes => {
+                    'pane0' => {
+                      :commands => ["ls"]
+                    },
+                    'pane1' => {
+                      :commands => ["echo 'wohoo'", "echo '2nd cmd'"]
+                    }
+                  }
+                }
+              }
+            })
+            asserts(:[], 'tab2').equivalent_to({
+              :commands => ["echo 'second tab'"]
+            })
+          end
+        end
+      end
+    end
+  end
+end
