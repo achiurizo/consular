@@ -418,8 +418,9 @@ Thanks to the following people for their contributions so far:
  * Ilkka Laukkanen ([ilkka](https://github.com/achiu/terminitor/commits/master?author=ilkka)) for Terminator core and other fixes
  * Elia Schito     ([elia](https://github.com/achiu/terminitor/commits/master?author=elia)) for patch to allow usage of "&" for background operations
  * Dotan J. Nahum  ([jondot](https://github.com/jondot)) for adding windows(cmd.exe) support
- * Kyriacos Souroullas ([kyriacos](https://github.com/kyriacos) For removing params to support generic commands
- * Jerry Cheung ([jch](https://github.com/jch)) For adding ignore for emac backups
+ * Kyriacos Souroullas ([kyriacos](https://github.com/kyriacos) for removing params to support generic commands
+ * Jerry Cheung ([jch](https://github.com/jch)) for adding ignore for emac backups
+ * Michael Klein ([LevelbossMike](https://github.com/LevelbossMike)) for adding iTerm Pane support
 
 Acknowledgements
 -----------------
