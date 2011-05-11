@@ -20,7 +20,7 @@ context "Dsl" do
 
         context "with :tabs" do
           setup { topic[:tabs] }
-          
+
           asserts(:[], 'tab2').equivalent_to({
             :commands=>["echo 'named tab'", "ls"],
             :options => {

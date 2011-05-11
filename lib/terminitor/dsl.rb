@@ -28,7 +28,7 @@ module Terminitor
 
     # sets command context to be run inside a specific window
     # @param [Hash] options hash.
-    # @param [Proc] 
+    # @param [Proc]
     # @example
     #   window(:name => 'new window', :size => [80,30], :position => [9, 100]) { tab('ls','gitx') }
     #   window { tab('ls', 'gitx') }
@@ -84,13 +84,13 @@ module Terminitor
       tab_name = "tab#{tabs.keys.size}"
       if block_given?
         tab_contents = tabs[tab_name] = {:commands => []}
-        
+
         options = {}
         options = args.pop          if args.last.is_a? Hash
         options[:name] = args.first if args.first.is_a?(String) || args.first.is_a?(Symbol)
-        
+
         tab_contents[:options] = options unless options.empty?
-        
+
         in_context tab_contents, &block
         clean_up_context
       else
@@ -98,6 +98,14 @@ module Terminitor
       end
     end
 
+    # Generates a pane in the terminal. These can be nested to
+    # create horizontal panes. Vertical panes are created with each top
+    # level nest.
+    # @param [Array<String>] Array of comamnds
+    # @param [Proc]
+    # @example
+    #   pane "top"
+    #   pane { pane "uptime" }
     def pane(*args, &block)
       @_context[:panes] = {} unless @_context.has_key? :panes 
       panes = @_context[:panes]
@@ -135,7 +143,7 @@ module Terminitor
       instance_eval(&block)
       @_context = @_old_context
     end
-    
+
     def clean_up_context(context = last_open_window, old_context = nil)
       @_context = context
       @_old_context = old_context
