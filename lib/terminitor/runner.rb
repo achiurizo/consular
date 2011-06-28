@@ -118,9 +118,9 @@ module Terminitor
     # @example return_error_message 'hi
     def return_error_message(project)
       unless project.empty?
-        say "'#{project}' doesn't exist! Please run 'terminitor open #{project.gsub(/\..*/,'')}'"
+        say "'#{project}' doesn't exist! Please run 'terminitor edit #{project.gsub(/\..*/,'')}'"
       else
-        say "Termfile doesn't exist! Please run 'terminitor open' in project directory"
+        say "Termfile doesn't exist! Please run 'terminitor edit' in project directory"
       end
     end
 
