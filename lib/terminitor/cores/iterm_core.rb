@@ -120,7 +120,7 @@ module Terminitor
         # clean up prompt
         tab_content[:commands].insert(0, 'clear') if tab_name || !@working_dir.to_s.empty?
         # add title to tab
-        tab_content[:commands].insert(0, "PS1=$PS1\"\\e]2;#{tab_name}\\a\"") if tab_name
+        tab_content[:commands].insert(0, "PS1=\"$PS1\\[\\e]2;#{tab_name}\\a\\]\"") if tab_name
         tab_content[:commands].insert(0, "cd \"#{@working_dir}\"") unless @working_dir.to_s.empty?
         # if tab_content hash has a key :panes we know this tab should be split
         # we can execute tab commands if there is no key :panes
