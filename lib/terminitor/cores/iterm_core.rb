@@ -188,9 +188,7 @@ module Terminitor
 
     def call_ui_action(menu, submenu, action)
       menu = iterm_menu.menu_bar_items[menu].menus[menu]
-      if submenu
-        menu = menu.menu_items[submenu].menus[submenu]
-      end
+      menu = menu.menu_items[submenu].menus[submenu] if submenu
       menu.menu_items[action].click
     end
 
