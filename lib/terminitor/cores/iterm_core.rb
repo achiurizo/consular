@@ -186,20 +186,18 @@ module Terminitor
       terminal_process.menu_bars.first
     end
 
-    def call_ui_action(menu, submenu = nil, action)
+    def call_ui_action(menu, submenu, action)
       menu = iterm_menu.menu_bar_items[menu].menus[menu]
-      if submenu
-        menu = menu.menu_items[submenu].menus[submenu]
-      end
+      menu = menu.menu_items[submenu].menus[submenu] if submenu
       menu.menu_items[action].click
     end
 
     def split_v
-      call_ui_action("Shell", nil, "Split vertically")
+      call_ui_action("Shell", nil, "Split Vertically With Same Profile")
     end
 
     def split_h
-      call_ui_action("Shell", nil, "Split horizontally")
+      call_ui_action("Shell", nil, "Split Horizontally With Same Profile")
     end
 
     # to select panes; iTerm's Appscript select method does not work
