@@ -2,8 +2,8 @@ require File.expand_path('../teststrap', __FILE__)
 
 context "Dsl" do
   setup { Terminitor::Dsl.new File.expand_path('../fixtures/bar.term', __FILE__) }
-  asserts_topic.assigns :setup
-  asserts_topic.assigns :windows
+  asserts_topic.assigns :_setup
+  asserts_topic.assigns :_windows
   asserts_topic.assigns :_context
  
   context "to_hash" do
@@ -21,16 +21,20 @@ context "Dsl" do
         context "with :tabs" do
           setup { topic[:tabs] }
 
+          asserts(:[],'default').equivalent_to({
+            :commands=>['whoami && who && ls']
+          })
+
+          asserts(:[], 'tab1').equivalent_to({
+            :commands=>["echo 'first tab'", "motion &", "echo 'than now'"]
+          })
+
           asserts(:[], 'tab2').equivalent_to({
             :commands=>["echo 'named tab'", "ls"],
             :options => {
               :name => "named tab",
               :settings=>"Grass"
             }
-          })
-
-          asserts(:[], 'tab1').equivalent_to({
-            :commands=>["echo 'first tab'", "motion &", "echo 'than now'"]
           })
 
           asserts(:[],'tab3').equivalent_to({
@@ -49,9 +53,6 @@ context "Dsl" do
             }
           })
 
-          asserts(:[],'default').equivalent_to({
-            :commands=>['whoami && who && ls']
-          })
         end
 
       end
@@ -64,8 +65,8 @@ context "Dsl" do
         context "with :tabs" do
           setup { topic[:tabs] }
 
-          asserts(:[], 'tab1').equals({ :commands => ["uptime"]})
           asserts(:[], 'default').equals({ :commands => []})
+          asserts(:[], 'tab1').equals({ :commands => ["uptime"]})
         end
       end
 
@@ -75,25 +76,26 @@ context "Dsl" do
         context "with :tags key" do
           setup { topic[:tabs] }
 
-          asserts(:[],'tab1').equals({
-            :commands=>["echo 'default'", "echo 'default tab'", "ok", "for real"]
-          })
-
           asserts(:[],'default').equals({
             :commands => []
           })
+
+          asserts(:[],'tab1').equals({
+            :commands=>["echo 'default'", "echo 'default tab'", "ok", "for real"]
+          })
         end
       end
+
     end
   end
 end
 
 context "with panes" do
   setup { Terminitor::Dsl.new File.expand_path('../fixtures/iterm_panes.term', __FILE__) }
-  asserts_topic.assigns :setup
-  asserts_topic.assigns :windows
+  asserts_topic.assigns :_setup
+  asserts_topic.assigns :_windows
   asserts_topic.assigns :_context
- 
+
   context "creates correct hash" do
     setup { topic.to_hash }
 
@@ -108,6 +110,7 @@ context "with panes" do
 
           context "tabs can hold panes" do
             asserts(:[], 'tab1').equivalent_to({
+              :options => {},
               :commands=>["ls"],
               :panes => {
                 'pane0' => {
@@ -134,6 +137,7 @@ context "with panes" do
               }
             })
             asserts(:[], 'tab2').equivalent_to({
+              :options => {},
               :commands => ["echo 'second tab'"]
             })
           end

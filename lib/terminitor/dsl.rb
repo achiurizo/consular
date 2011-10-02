@@ -1,102 +1,144 @@
+require 'active_support/ordered_hash'
 module Terminitor
-  # This class parses the Termfile to fit the new Ruby Dsl Syntax
+
+  # The Dsl class provides the DSL for the Terminitor scripting file.
+  # It provides the basic commands such as:
+  #   #setup  - commands to run when invoked by 'terminitor setup'
+  #   #window - commands to run in the context of a window
+  #   #tab    - commands to run in the context of tab
+  #   #before - commands to run in the context before every tab context
+  #
+  # The Dsl class can be extended to provide additional API's for core specific
+  # DSL.
   class Dsl
 
-    # @param [String] path to termfile
+    attr_reader :_setup, :_windows, :_context
+
+    # Initializes the Dsl library and stores the commands.
+    #
+    # @param [String] path
+    #   path to Terminitor script/ Termfile
+    #
+    # @example
+    #   Terminitor::Dsl.new 'foo/bar.term'
+    #
+    # @api public
     def initialize(path)
-      file = File.read(path)
-      @setup    = []
-      @windows  = { 'default' => {:tabs => {'default' =>{:commands=>[]}}}}
-      @_context = @windows['default']
-      instance_eval(file)
+      @_setup              = []
+      @_windows            = ActiveSupport::OrderedHash.new
+      @_windows['default'] = window_hash
+      @_context            = @_windows['default']
+      instance_eval File.read(path), __FILE__, __LINE__
     end
 
-    # Contains all commands that will be run prior to the usual 'workflow'
-    # e.g bundle install, setup forks, etc ...
-    # @param [Array<String>] array of commands
-    # @param [Proc]
+    # Run commands using prior to the workflow using the command `terminitor setup`.
+    # This allows you to perform any command that needs to be ran prior to setup
+    # a particular project/script.
+    #
+    # @param [Array<String>] commands
+    #   Commands to be executed.
+    # @param [Proc] block
+    #   Proc of commands to run.
+    #
     # @example
-    #   setup "bundle install", "brew update"
-    #   setup { run('bundle install') }
+    #   setup 'bundle install', 'brew update'
+    #   setup { run 'bundle install' }
+    #
+    # @api public
     def setup(*commands, &block)
-      if block_given?
-        in_context @setup, &block
-      else
-        @setup.concat(commands)
-      end
+      block_given? ? run_context(@_setup, &block) : @_setup.concat(commands)
     end
 
-    # sets command context to be run inside a specific window
-    # @param [Hash] options hash.
-    # @param [Proc]
+    # Run commands prior to each tab context.
+    #
+    # @param [Array<String>] commands
+    #   Commands to be executed.
+    # @param [Proc] block
+    #   Proc of commands to run
+    #
     # @example
-    #   window(:name => 'new window', :size => [80,30], :position => [9, 100]) { tab('ls','gitx') }
-    #   window { tab('ls', 'gitx') }
-    def window(options = {}, &block)
-      window_name     = "window#{@windows.keys.size}"
-      window_contents = @windows[window_name] = {:tabs => {'default' => {:commands =>[]}}}
-      window_contents[:options] = options unless options.empty?
-      in_context window_contents, &block
-    end
-
-    # stores command in context
-    # @param [Array<String>] Array of commands
-    # @example
-    #   run 'brew update'
-    def run(*commands)
-      # if we are in a window context, append commands to default tab.
-      if @_context.is_a?(Hash) && @_context[:tabs]
-        current = @_context[:tabs]['default'][:commands]
-      elsif @_context.is_a?(Hash)
-        current = @_context[:commands]
-      else
-        current = @_context
-      end
-      current << commands.map do |c|
-        c =~ /&$/ ? "(#{c})" : c
-      end.join(" && ")
-    end
-
-    # runs commands before each tab in window context
-    # @param [Array<String>] Array of commands
-    # @param [Proc]
-    # @example
+    #   # Executes `whoami` before tab with `ls` and `gitx`
     #   window do
     #     before { run 'whoami' }
+    #     tab 'ls'
+    #     tab 'gitx'
     #   end
+    #
+    # @api public
     def before(*commands, &block)
-      @_context[:before] ||= []
-      if block_given?
-        in_context @_context[:before], &block
-      else
-        @_context[:before].concat(commands)
-      end
+      context = (@_context[:before] ||= [])
+      block_given? ? run_context(context, &block) : context.concat(commands)
     end
 
-    # sets command context to be run inside specific tab
-    # @param [Array<String>] Array of commands
-    # @param [Proc]
+    # Run commands in the conext of a window.
+    #
+    # @param [Hash] options
+    #   Hash to pass options to each context of a window. Each core can
+    #   implement the desired behavior for the window based on the options set here.
+    # @param [Proc] block
+    #   block of commands to run in window context.
+    #
     # @example
-    #   tab(:name => 'new tab', :settings => 'Grass') { run 'mate .' }
-    #   tab 'ls', 'gitx'
-    def tab(*args, &block)
-      tabs     = @_context[:tabs]
-      tab_name = "tab#{tabs.keys.size}"
-      if block_given?
-        tab_contents = tabs[tab_name] = {:commands => []}
-
-        options = {}
-        options = args.pop          if args.last.is_a? Hash
-        options[:name] = args.first if args.first.is_a?(String) || args.first.is_a?(Symbol)
-
-        tab_contents[:options] = options unless options.empty?
-
-        in_context tab_contents, &block
-        clean_up_context
-      else
-        tabs[tab_name] = { :commands => args}
-      end
+    #   window :name => 'my project', :size => [80, 30] do
+    #     run 'ps aux'
+    #   end
+    #
+    # @api public
+    def window(options = {}, &block)
+      key     = "window#{@_windows.keys.size}"
+      context = (@_windows[key] = window_hash.merge(:options => options))
+      run_context context, &block
     end
+
+    # Run commands in the context of a tab.
+    #
+    # @param [Array] args
+    #   Accepts either:
+    #     - an array of string commands
+    #     - a hash containing options for the tab.
+    # @param [Proc] block
+    #
+    # @example
+    #   tab :name => 'first tab' do
+    #     run 'ps aux'
+    #   end
+    #
+    #   tab 'ls', 'gitx'
+    #
+    # @api public
+    def tab(*args, &block)
+      tabs = @_context[:tabs]
+      key  = "tab#{tabs.keys.size}"
+      return (tabs[key] = { :commands => args }) unless block_given?
+
+      context           = (tabs[key] = {:commands => []})
+      context[:options] = args.first.is_a?(Hash) ? args.pop : {}
+
+      run_context context, &block
+      @_context = @_windows[@_windows.keys.last] # Jump back out into the context of the last window.
+    end
+
+    # Store commands to run in context.
+    #
+    # @param [Array<String>] commands
+    #   Array of commands to be executed.
+    #
+    # @example
+    #   run 'brew update', 'gitx'
+    #
+    # @api public
+    def run(*commands)
+      context = case
+                when @_context.is_a?(Hash) && @_context[:tabs]
+                  @_context[:tabs]['default'][:commands]
+                when @_context.is_a?(Hash)
+                  @_context[:commands]
+                else
+                  @_context
+                end
+      context << commands.map { |c| c =~ /&$/ ? "(#{c})" : c }.join(" && ")
+    end
+
 
     # Generates a pane in the terminal. These can be nested to
     # create horizontal panes. Vertical panes are created with each top
@@ -113,15 +155,15 @@ module Terminitor
       if block_given?
         pane_contents = panes[pane_name] = {:commands => []}
         if @_context.has_key? :is_first_lvl_pane
-          # after in_context  we should be able to access
+          # after run_context  we should be able to access
           # @_context and @_old_context as before
           context = @_context
           old_context = @_old_context
-          in_context pane_contents[:commands], &block
+          run_context pane_contents[:commands], &block
           clean_up_context(context, old_context)
         else
           pane_contents[:is_first_lvl_pane] = true
-          in_context pane_contents, &block
+          run_context pane_contents, &block
         end
       else
         panes[pane_name] = { :commands => args }
@@ -129,18 +171,31 @@ module Terminitor
     end
 
     # Returns yaml file as Terminitor formmatted hash
+    #
     # @return [Hash] Return hash format of Termfile
+    #
+    # @api semipublic
     def to_hash
-      { :setup => @setup, :windows => @windows }
+      { :setup => @_setup, :windows => @_windows }
     end
 
     private
 
-    # in_context @setup, &block
-    # in_context @tabs["name"], &block
-    def in_context(context, &block)
+    # Execute the context
+    #
+    # @param [Hash] context
+    #   hash of current context.
+    # @param [Proc] block
+    #   the context's block to be executed
+    #
+    # @example
+    #   run_context @_setup, &block
+    #   run @tabs['name'], &block
+    #
+    # @api private
+    def run_context(context, &block)
       @_context, @_old_context = context, @_context
-      instance_eval(&block)
+      instance_eval &block
       @_context = @_old_context
     end
 
@@ -150,7 +205,14 @@ module Terminitor
     end
 
     def last_open_window
-      @windows[@windows.keys.last]
+      @_windows[@_windows.keys.last]
+    end
+
+    # Return the default hash format for windows
+    #
+    # @api private
+    def window_hash
+      {:tabs => {'default' =>{:commands=>[]}}}.dup
     end
   end
 end

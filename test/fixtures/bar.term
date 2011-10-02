@@ -6,27 +6,26 @@ setup 'echo "setup"'
 tab "echo 'default'", "echo 'default tab'", "ok", "for real"
 
 window :size => [70,30] do
-  
+
   before 'cd /path'
 
   run "whoami","who", "ls"
   tab "echo 'first tab'", "motion &", "echo 'than now'"
-  
+
   tab :name => "named tab", :settings => "Grass" do
     run "echo 'named tab'"
     run "ls"
   end
 
-  tab "a tab", :settings => "Pro" do
+  tab :name => "a tab", :settings => "Pro" do
     run "top"
     run "mate &", "gitx &", "cd /this"
   end
-  
-  tab("another named tab", :settings => 'Grass') { run "ls" }
+
+  tab(:name =>"another named tab", :settings => 'Grass') { run "ls" }
 end
 
 window :name => 'server' do
   before { run 'whoami' }
   tab "uptime"
 end
-
