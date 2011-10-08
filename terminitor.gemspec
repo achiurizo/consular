@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency "thor",          "~>0.14.0"
   s.add_dependency "github",        "~>0.6.2"
   s.add_dependency "activesupport", "~>3.1.0"
+  s.add_development_dependency "minitest"
   s.add_development_dependency "bundler", "~>1.0.0"
   s.add_development_dependency "riot",    "~>0.12.3"
   s.add_development_dependency "rr",      "~>1.0.0"

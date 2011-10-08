@@ -1,0 +1,32 @@
+setup 'setup'
+
+tab 'default', 'default-tab'
+
+window :size => [70,30] do
+
+  before 'before'
+
+	run 'whoami', 'who', 'ls'
+	
+	tab 'first-tab', 'motion &', 'foo'
+
+	tab 'second', :settings => 'Grass' do
+		run 'second-tab'
+		run 'second-tab:ls'
+	end
+
+	tab 'third', :settings => 'Pro' do
+		run 'third-tab'
+		run 'mvim &', 'gitx &', 'uptime'
+	end
+
+	tab 'fourth', :settings => 'Grass' do
+		run 'fourth-tab'
+	end
+end
+
+window 'name' do
+	before { run 'name:before' }
+
+	tab 'name:tab'
+end
