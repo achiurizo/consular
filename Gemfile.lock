@@ -26,7 +26,10 @@ GEM
     launchy (0.3.7)
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
+    metaclass (0.0.1)
     minitest (2.6.1)
+    mocha (0.10.0)
+      metaclass (~> 0.0.1)
     multi_json (1.0.3)
     rake (0.9.2)
     rb-appscript (0.6.1)
@@ -46,6 +49,7 @@ DEPENDENCIES
   bundler (~> 1.0.0)
   fakefs
   minitest
+  mocha
   riot (~> 0.12.3)
   rr (~> 1.0.0)
   terminitor!
