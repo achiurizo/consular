@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require File.expand_path('../../lib/consular',__FILE__)
+
+rc = File.join(ENV['HOME'], '.consularc')
+
+# Execute the configuration in our consularc
+# if it exists.
+#
+if File.exists?(rc)
+  instance_eval File.read(rc), __FILE__, __LINE__
+end
+
+Consular::CLI.start(ARGV)
