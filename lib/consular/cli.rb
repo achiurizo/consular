@@ -25,7 +25,7 @@ module Consular
     #   Consular::CLI.start ['start', '-r=/tmp'] # /tmp/Termfile
     #
     # @api public
-    desc 'start PROJECT', 'runs the consular script'
+    desc 'start [PROJECT]', 'runs the consular script. ex: `consular start` or `consular start foobar`'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def start(project = nil)
       valid_core.new(termfile_path(project)).process!
@@ -49,7 +49,7 @@ module Consular
     #   Consular::CLI.start ['setup', '-r=/tmp'] # /tmp/Termfile
     #
     # @api public
-    desc 'setup PROJECT', 'run the consular script setup'
+    desc 'setup [PROJECT]', 'run the consular script setup. ex: `consular setup` or `consular setup foobar`'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def setup(project = nil)
       valid_core.new(termfile_path(project)).setup!
@@ -100,7 +100,7 @@ module Consular
     #   Consular::CLI.start ['edit', '-r=/tmp']
     #
     # @api public
-    desc 'edit PROJECT', 'opens the Termfile to edit'
+    desc 'edit [PROJECT]', 'opens the Termfile to edit. ex: `consular edit` or `consular edit foobar`'
     method_option :root,    :type => :string,  :default => '.',    :aliases => '-r'
     method_option :editor,  :type => :string,  :default => nil,    :aliases => '-e'
     method_option :capture, :type => :boolean, :default => false,  :aliases => '-c'
@@ -126,7 +126,7 @@ module Consular
     #   Consular::CLI.start ['delete', '-r=/tmp']
     #
     # @api public
-    desc 'delete PROJECT', 'delete the Termfile script'
+    desc 'delete [PROJECT]', 'delete the Termfile script. ex: `consular delete` or `consular delete foobar`'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def delete(project = nil)
       path = termfile_path(project)

@@ -26,9 +26,9 @@ describe Consular::CLI do
   it "displays help" do
     output = capture_io { Consular::CLI.start ['-h'] }.join('')
 
-    assert_match /start PROJECT/, output
+    assert_match /start \[PROJECT\]/, output
     assert_match /init/,          output
-    assert_match /edit PROJECT/,  output
+    assert_match /edit \[PROJECT\]/,  output
   end
 
   it "lists out all global scripts" do
