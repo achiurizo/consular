@@ -204,9 +204,10 @@ module Consular
       # Returns yaml file as formmatted hash
       #
       # @return [Hash] Hash format of Termfile
-      # 
+      #
       # @api public
       def to_hash
+        @_file ||= {}
         combined = @_file.inject({}) do |base, item| 
           item = {item.keys.first => {:commands => item.values.first, :options => {}}}
           base.merge!(item)

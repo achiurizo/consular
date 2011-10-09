@@ -10,8 +10,10 @@ describe Consular::Core do
   end
 
   it "stubs out the methods that need to be defined" do
-    assert_raises(NotImplementedError) { @core.setup!   }
-    assert_raises(NotImplementedError) { @core.process! }
+    assert_raises(NotImplementedError) { @core.class.valid_system?   }
+    assert_raises(NotImplementedError) { @core.class.capture!        }
+    assert_raises(NotImplementedError) { @core.setup!                }
+    assert_raises(NotImplementedError) { @core.process!              }
   end
 
 end
