@@ -4,37 +4,101 @@ module Consular
   class CLI < Thor
     include Thor::Actions
 
-    TERM_PATH = File.join(ENV['HOME'], '.config', 'consular')
-
+    # Source root for Thor to find templates
     def self.source_root; File.expand_path('../../', __FILE__); end
 
+    # Run the Termfile or project script.
+    #
+    # @param [String] project
+    #   Name of the project script. Otherwise leave blank for Termfile.
+    #
+    # @example
+    #
+    #   # Executes global script foobar.term
+    #   Consular::CLI.start ['start', 'foobar']
+    #
+    #   # Executes global script foobar.yml
+    #   Consular::CLI.start ['start', 'foobar.yml']
+    #
+    #   # Executes the Termfile
+    #   Consular::CLI.start ['start'] # ./Termfile
+    #   Consular::CLI.start ['start', '-r=/tmp'] # /tmp/Termfile
+    #
+    # @api public
     desc 'start PROJECT', 'runs the consular script'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
-    def start(project = '')
+    def start(project = nil)
       valid_core.new(termfile_path(project)).process!
     end
 
+    # Run the Termfile or project script setup.
+    #
+    # @param [String] project
+    #   Name of the project script. Otherwise leave blank for Termfile.
+    #
+    # @example
+    #
+    #   # Executes global script setup  for foobar.term
+    #   Consular::CLI.start ['setup', 'foobar']
+    #
+    #   # Executes global script setup for foobar.yml
+    #   Consular::CLI.start ['setup', 'foobar.yml']
+    #
+    #   # Executes the Termfile setup
+    #   Consular::CLI.start ['setup'] # ./Termfile
+    #   Consular::CLI.start ['setup', '-r=/tmp'] # /tmp/Termfile
+    #
+    # @api public
     desc 'setup PROJECT', 'run the consular script setup'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
-    def setup(project = '')
+    def setup(project = nil)
       valid_core.new(termfile_path(project)).setup!
     end
 
+    # Lists all avaiable global scripts
+    #
+    # @example
+    #
+    #   Consular::CLI.start ['list']
+    #
+    # @api public
     desc 'list', 'lists all consular scripts'
     def list
       say "Global scripts available: \n"
-      Dir.glob("#{TERM_PATH}/*[^~]").each do |file|
+      Dir.glob("#{Consular.global_path}/*[^~]").each do |file|
         name  = File.basename(file, '.term')
         title = file_comment(file)
         say "  * #{name} - #{title}"
       end
     end
 
+    # Create the global script directory for Consular.
+    #
+    # @example
+    #
+    #   Consular::CLI.start ['init']
+    #
+    # @api public
     desc 'init', 'create consular directory'
     def init
-      empty_directory TERM_PATH
+      empty_directory Consular.global_path
     end
 
+    # Edit the specified global script or Termfile.
+    #
+    # @param [String] project
+    #   Name of project script.
+    #
+    # @example
+    #
+    #   # opens foobar for editing
+    #   Consular::CLI.start ['edit', 'foobar']
+    #   # opens foobar with specified editor
+    #   Consular::CLI.start ['edit', 'foobar', '-e=vim']
+    #   # opens /tmp/Termfile
+    #   Consular::CLI.start ['edit', '-r=/tmp']
+    #
+    # @api public
     desc 'edit PROJECT', 'opens the Termfile to edit'
     method_option :root,    :type => :string,  :default => '.',    :aliases => '-r'
     method_option :editor,  :type => :string,  :default => nil,    :aliases => '-e'
@@ -46,6 +110,21 @@ module Consular
       open_in_editor path, options[:editor]
     end
 
+    # Delete the global script or Termfile
+    #
+    # @param [String] project
+    #   Name of the project script.
+    #
+    # @example
+    #
+    #   # deletes global script foobar.term
+    #   Consular::CLI.start ['delete', 'foobar']
+    #   # deletes global script foobar.yml
+    #   Consular::CLI.start ['delete', 'foobaryml']
+    #   # deletes /tmp/Termfile
+    #   Consular::CLI.start ['delete', '-r=/tmp']
+    #
+    # @api public
     desc 'delete PROJECT', 'delete the Termfile script'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def delete(project = nil)
@@ -84,16 +163,16 @@ module Consular
       #
       # @example
       #   termfile_path           #=> ROOT/Termfile
-      #   termfile_path 'foo'     #=> TERM_PATH/foo.term
-      #   termfile_path 'bar.yml' #=> TERM_PATH/bar.yml
+      #   termfile_path 'foo'     #=> GLOBAL_PATH/foo.term
+      #   termfile_path 'bar.yml' #=> GLOBAL_PATH/bar.yml
       #
-      # @api semipublic
+      # @api private
       def termfile_path(project = nil)
         if !project || project.empty?
            File.join(options[:root], 'Termfile')
         else
           path = project =~ /\..*/ ? project : project + '.term'
-          File.join(TERM_PATH, path)
+          Consular.global_path path
         end
       end
 
@@ -107,10 +186,9 @@ module Consular
       # @example
       #   open_in_editor '/path/to/Termfile', 'vim'
       #
-      # @api public
+      # @api private
       def open_in_editor(path, editor = nil)
-        editor = editor || ENV['EDITOR']
-        say "please set $EDITOR in your or specify an editor." unless editor
+        editor = editor || Consular.default_editor || ENV['EDITOR']
         system "#{editor || 'open'} #{path}"
       end
     end
