@@ -12,17 +12,16 @@ end
 
 describe Consular::CLI do
 
-  def root_path(path = nil)
-    File.join ENV['HOME'], '.config', 'consular', path
-  end
-
   before do
     @template = File.read File.expand_path('../../lib/templates/example.yml.tt', __FILE__)
     FakeFS.activate!
-    FileUtils.mkdir_p root_path
+    FileUtils.mkdir_p Consular.global_path
   end
 
-  after { FakeFS.deactivate! }
+  after do
+    FakeFS.deactivate!
+    Consular.instance_variable_set(:@global_path, nil)
+  end
 
   it "displays help" do
     output = capture_io { Consular::CLI.start ['-h'] }.join('')
@@ -33,9 +32,9 @@ describe Consular::CLI do
   end
 
   it "lists out all global scripts" do
-    File.open(root_path('foo.yml'),   "w") { |f| f.puts @template }
-    File.open(root_path('bar.term'),  "w") { |f| f.puts @template }
-    File.open(root_path('bar.term~'), "w") { |f| f.puts @template }
+    File.open(Consular.global_path('foo.yml'),   "w") { |f| f.puts @template }
+    File.open(Consular.global_path('bar.term'),  "w") { |f| f.puts @template }
+    File.open(Consular.global_path('bar.term~'), "w") { |f| f.puts @template }
     output = capture_io { Consular::CLI.start ['list'] }.join('')
 
     assert_match /foo\.yml -  COMMENT OF SCRIPT HERE/,   output
@@ -48,8 +47,8 @@ describe Consular::CLI do
     before do
       FileUtils.mkdir_p '/tmp'
       FileUtils.touch '/tmp/Termfile'
-      FileUtils.touch root_path('foo.term')
-      FileUtils.touch root_path('foo.yml')
+      FileUtils.touch Consular.global_path('foo.term')
+      FileUtils.touch Consular.global_path('foo.yml')
       Consular.add_core FakeCore
     end
 
@@ -75,8 +74,8 @@ describe Consular::CLI do
     before do
       FileUtils.mkdir_p '/tmp'
       FileUtils.touch '/tmp/Termfile'
-      FileUtils.touch root_path('foo.term')
-      FileUtils.touch root_path('foo.yml')
+      FileUtils.touch Consular.global_path('foo.term')
+      FileUtils.touch Consular.global_path('foo.yml')
       Consular.add_core FakeCore
     end
 
@@ -96,11 +95,11 @@ describe Consular::CLI do
     end
   end
 
-  it "creates a new global script directory" do
-    FileUtils.rm_rf root_path
+  it "init creates a new global script directory and consularc" do
+    FileUtils.rm_rf Consular.global_path
     capture_io { Consular::CLI.start ['init'] }.join('')
 
-    assert File.exists?(root_path), "global script directory exists"
+    assert File.exists?(Consular.global_path), "global script directory exists"
   end
 
   describe "delete command" do
@@ -114,17 +113,17 @@ describe Consular::CLI do
     end
 
     it "removes .yml files" do
-      FileUtils.touch root_path('foo.yml')
+      FileUtils.touch Consular.global_path('foo.yml')
       capture_io { Consular::CLI.start ['delete','foo.yml'] }
 
-      refute File.exists?(root_path('foo.yml')), 'deletes .yml files'
+      refute File.exists?(Consular.global_path('foo.yml')), 'deletes .yml files'
     end
 
     it "removes .term file" do
-      FileUtils.touch root_path('delete_this.term')
+      FileUtils.touch Consular.global_path('delete_this.term')
       capture_io { Consular::CLI.start ['delete','delete_this'] }
 
-      refute File.exists?(root_path('delete_this.term')), 'deletes .term file'
+      refute File.exists?(Consular.global_path('delete_this.term')), 'deletes .term file'
     end
 
   end

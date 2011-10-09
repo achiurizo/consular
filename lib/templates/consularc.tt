@@ -1,0 +1,9 @@
+# You can require your additional core gems here.
+# require 'some_core_gem'
+
+# You can set specific Consular configurations
+# here.
+Consular.configure do |c|
+  # c.global_path    = '~/.config/consular'
+  # c.default_editor = 'vim'
+end

@@ -82,6 +82,7 @@ module Consular
     desc 'init', 'create consular directory'
     def init
       empty_directory Consular.global_path
+      template 'templates/consularc.tt', File.join(ENV['HOME'],'.consularc'), :skip => true
     end
 
     # Edit the specified global script or Termfile.
