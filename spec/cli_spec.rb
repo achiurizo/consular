@@ -49,7 +49,12 @@ describe Consular::CLI do
       FileUtils.touch '/tmp/Termfile'
       FileUtils.touch Consular.global_path('foo.term')
       FileUtils.touch Consular.global_path('foo.yml')
+      Consular.instance_variable_set(:@cores,[])
       Consular.add_core FakeCore
+    end
+
+    after do
+      Consular.instance_variable_set(:@cores,[])
     end
 
     it "should start a Termfile" do
@@ -78,6 +83,13 @@ describe Consular::CLI do
         capture_io { Consular::CLI.start ['start', 'foo']  }.join('')
       end
     end
+
+    it "should bring up a core selection if more than one matching core" do
+      Consular::CLI.any_instance.expects(:core_selection).with(anything).returns(FakeCore)
+      Consular.add_core FakeCore
+      Consular.add_core FakeCore
+      assert capture_io { Consular::CLI.start ['start', 'foo'] }.join('')
+    end
   end
 
   describe "setup command" do
@@ -86,7 +98,12 @@ describe Consular::CLI do
       FileUtils.touch '/tmp/Termfile'
       FileUtils.touch Consular.global_path('foo.term')
       FileUtils.touch Consular.global_path('foo.yml')
+      Consular.instance_variable_set(:@cores,[])
       Consular.add_core FakeCore
+    end
+
+    after do
+      Consular.instance_variable_set(:@cores,[])
     end
 
     it "should setup a Termfile" do
@@ -114,6 +131,13 @@ describe Consular::CLI do
       assert_raises SystemExit do
         capture_io { Consular::CLI.start ['setup', 'foo']  }.join('')
       end
+    end
+    
+    it "should bring up a core selection if more than one matching core" do
+      Consular::CLI.any_instance.expects(:core_selection).with(anything).returns(FakeCore)
+      Consular.add_core FakeCore
+      Consular.add_core FakeCore
+      assert capture_io { Consular::CLI.start ['setup', 'foo'] }.join('')
     end
   end
 

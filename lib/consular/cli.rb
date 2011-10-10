@@ -146,13 +146,33 @@ module Consular
       #
       # @api private
       def valid_core
-        core = Consular.cores.detect { |core| core.valid_system? }
-        unless core
+        cores = Consular.cores.select { |core| core.valid_system? }
+        if cores.nil? || cores.empty?
           say "No valid core was found!. Exiting...", :red
           raise SystemExit
+        elsif cores.size > 1
+          core_selection cores
+        else
+          cores.first
         end
-        core
       end
+
+      # Returns a dialoag to select the desired core.
+      #
+      # @param [Array<Core>] Array of cores
+      #
+      # @return [Core] core from selection
+      #
+      # @api private
+      def core_selection(cores)
+        say "Multiple cores match the current system:", :yellow
+        cores.each_with_index do |core, index|
+          say "  [#{index}] - #{core.to_s}"
+        end
+        num = ask "Please select the number choice of the core to use: "
+        cores[num.to_i]
+      end
+
       # Returns the first comment in file. This is used
       # as the title when listing out the scripts.
       #
