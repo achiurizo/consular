@@ -31,7 +31,8 @@ module Consular
     desc 'start [PROJECT]', 'runs the consular script. ex: `consular start` or `consular start foobar`'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def start(project = nil)
-      valid_core.new(termfile_path(project)).process!
+      path = termfile_path(project)
+      message_unless_file(path) { valid_core.new(path).process! }
     end
 
     # Run the Termfile or project script setup.
@@ -55,7 +56,8 @@ module Consular
     desc 'setup [PROJECT]', 'run the consular script setup. ex: `consular setup` or `consular setup foobar`'
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def setup(project = nil)
-      valid_core.new(termfile_path(project)).setup!
+      path = termfile_path(project)
+      message_unless_file(path) { valid_core.new(path).setup! }
     end
 
     # Lists all avaiable global scripts
@@ -133,7 +135,7 @@ module Consular
     method_option :root, :type => :string, :default => '.', :aliases => '-r'
     def delete(project = nil)
       path = termfile_path(project)
-      remove_file path
+      message_unless_file(path) { remove_file path }
     end
 
     no_tasks do
@@ -194,6 +196,23 @@ module Consular
       def open_in_editor(path, editor = nil)
         editor = editor || Consular.default_editor || ENV['EDITOR']
         system "#{editor || 'open'} #{path}"
+      end
+
+      # Returns an error message unless the file exists. If it does
+      # execute the block
+      #
+      # @param [String] file
+      #   Path of file
+      # @param [Proc] blk
+      #   Proc to execute if file exists.
+      #
+      # @api private
+      def message_unless_file(file, &blk)
+        if File.exists?(file)
+          blk.call
+        else
+          say "#{file} does not exist. Try running `consular edit` first.", :yellow
+        end
       end
     end
 

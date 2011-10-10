@@ -59,14 +59,17 @@ describe Consular::CLI do
 
     it "should start a global term script" do
       output = capture_io { Consular::CLI.start ['start', 'foo']  }.join('')
-
       assert_match /process/, output
     end
 
     it "should start a global yaml script" do
       output = capture_io { Consular::CLI.start ['start', 'foo.yml']  }.join('')
-
       assert_match /process/, output
+    end
+
+    it "should return an error message if it doesn't exist" do
+      output = capture_io { Consular::CLI.start ['start', 'barr']  }.join('')
+      assert_match /does not exist/, output
     end
   end
 
@@ -92,6 +95,11 @@ describe Consular::CLI do
     it "should setup a global yaml script" do
       output = capture_io { Consular::CLI.start ['setup', 'foo.yml']  }.join('')
       assert_match /setup/, output
+    end
+
+    it "should return an error message if it doesn't exist" do
+      output = capture_io { Consular::CLI.start ['setup', 'barr']  }.join('')
+      assert_match /does not exist/, output
     end
   end
 
@@ -124,6 +132,12 @@ describe Consular::CLI do
       capture_io { Consular::CLI.start ['delete','delete_this'] }
 
       refute File.exists?(Consular.global_path('delete_this.term')), 'deletes .term file'
+    end
+
+    it "removes .term file" do
+      output = capture_io { Consular::CLI.start ['delete','barr'] }.join('')
+
+      assert_match /does not exist/, output
     end
 
   end
