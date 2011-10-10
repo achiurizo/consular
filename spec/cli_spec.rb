@@ -71,6 +71,13 @@ describe Consular::CLI do
       output = capture_io { Consular::CLI.start ['start', 'barr']  }.join('')
       assert_match /does not exist/, output
     end
+
+    it "should SystemExit if no core can be found" do
+      Consular.instance_variable_set(:@cores,[])
+      assert_raises SystemExit do
+        capture_io { Consular::CLI.start ['start', 'foo']  }.join('')
+      end
+    end
   end
 
   describe "setup command" do
@@ -100,6 +107,13 @@ describe Consular::CLI do
     it "should return an error message if it doesn't exist" do
       output = capture_io { Consular::CLI.start ['setup', 'barr']  }.join('')
       assert_match /does not exist/, output
+    end
+
+    it "should SystemExit if no core can be found" do
+      Consular.instance_variable_set(:@cores,[])
+      assert_raises SystemExit do
+        capture_io { Consular::CLI.start ['setup', 'foo']  }.join('')
+      end
     end
   end
 

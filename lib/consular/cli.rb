@@ -146,7 +146,12 @@ module Consular
       #
       # @api private
       def valid_core
-        Consular.cores.detect { |core| core.valid_system? }
+        core = Consular.cores.detect { |core| core.valid_system? }
+        unless core
+          say "No valid core was found!. Exiting...", :red
+          raise SystemExit
+        end
+        core
       end
       # Returns the first comment in file. This is used
       # as the title when listing out the scripts.

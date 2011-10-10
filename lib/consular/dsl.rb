@@ -184,15 +184,6 @@ module Consular
       @_context = @_old_context
     end
 
-    def clean_up_context(context = last_open_window, old_context = nil)
-      @_context = context
-      @_old_context = old_context
-    end
-
-    def last_open_window
-      @_windows[@_windows.keys.last]
-    end
-
     # Return the default hash format for windows
     #
     # @api private
@@ -200,6 +191,8 @@ module Consular
       {:tabs => {'default' =>{:commands=>[]}}}.dup
     end
 
+    # Contains interpretation for the legacy YAML format.
+    #
     module Yaml
       # Returns yaml file as formmatted hash
       #
