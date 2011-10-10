@@ -70,23 +70,25 @@ Using consular is quite easy. To define or edit a project file, simply invoke th
 This will open your default editor (set through the $TERM_EDITOR or $EDITOR variable in BASH) and you can proceed to define the commands for that project with the following syntaxes:
 
 #### YAML Syntax ( Legacy ) ####
-    
-    # ~/.config/consular/foo.yml
-    # you can make as many tabs as you wish...
-    # tab names are actually arbitrary at this point too.
-    ---
-    - tab1:
-      - cd ~/foo/bar
-      - gitx
-    - tab2:
-      - mysql -u root)
-      - use test;
-      - show tables;
-    - tab3: echo "hello world"
-    - tab4: cd ~/baz/ && git pull
-    - tab5:
-      - cd ~/foo/project
-      - autotest
+
+```yaml
+# ~/.config/consular/foo.yml
+# you can make as many tabs as you wish...
+# tab names are actually arbitrary at this point too.
+---
+- tab1:
+  - cd ~/foo/bar
+  - gitx
+- tab2:
+  - mysql -u root)
+  - use test;
+  - show tables;
+- tab3: echo "hello world"
+- tab4: cd ~/baz/ && git pull
+- tab5:
+  - cd ~/foo/project
+  - autotest
+```
 
 Simply define each tab and declare the commands. Note that the session for each tab is maintained, so you just declare actions here as
 you would manually type in the terminal. Note that the title for each tab(namely tab1, tab2) are arbitrary, and can be named whatever you want.
