@@ -24,7 +24,17 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'fakefs'
 
-  # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  s.post_install_message = %q{********************************************************************************
+
+    Consular has been installed!  Please run:
+
+      consular init
+
+    This will create a directory at ~/.config/consular which will hold all your global scripts.
+    Also a .consularc file will be generated in your HOME directory which you can further configure
+    Consular.
+
+********************************************************************************
+  }
+
 end

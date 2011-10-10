@@ -1,6 +1,9 @@
 require 'thor'
 
 module Consular
+
+  # The CLI provides the command line interface for Consular. These are
+  # interfaced via the consular bin file.
   class CLI < Thor
     include Thor::Actions
 
