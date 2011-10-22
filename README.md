@@ -283,6 +283,7 @@ Each core inherits from ([Consular::Core](http://github.com/achiu/consular/blob/
 Some of the cores that are available are:
 
  * [OSX](http://www.github.com/achiu/consular-osx) - Mac OS X Terminal
+ * [Terminator](https://github.com/ilkka/consular-terminator) - Terminator
 
 Feel free to contribute more cores so that Consular can support your terminal of choice :)
 
