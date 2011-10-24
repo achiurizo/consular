@@ -284,6 +284,7 @@ Some of the cores that are available are:
 
  * [OSX](http://www.github.com/achiu/consular-osx) - Mac OS X Terminal
  * [Terminator](https://github.com/ilkka/consular-terminator) - Terminator
+ * [Gnome](https://github.com/jc00ke/consular-gnome-terminal) - Gnome Terminal
 
 Feel free to contribute more cores so that Consular can support your terminal of choice :)
 
