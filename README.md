@@ -23,7 +23,7 @@ Setup && Installation
 Install the consular gem and `init`:
 
 ```bash
-$ gem install consular --pre
+$ gem install consular
 $ consular init
 ```
 
