@@ -116,6 +116,24 @@ module Consular
       open_in_editor path, options[:editor]
     end
 
+    # Create a Termfile in the current or specified directory
+    #
+    # @example
+    #
+    #   # create Termfile in current directory
+    #   Consular::CLI.start ['create']
+    #   # create Termfile in /tmp 
+    #   Consular::CLI.start ['create', '-r=/tmp']
+    #
+    # @api public
+    desc "create", "create a Termfile in directory"
+    method_option :root,    :type => :string, :default => '.', :aliases => '-r'
+    method_option :editor,  :type => :string,  :default => nil,    :aliases => '-e'
+    method_option :capture, :type => :boolean, :default => false,  :aliases => '-c'
+    def create
+      invoke :edit, [], options
+    end
+
     # Delete the global script or Termfile
     #
     # @param [String] project

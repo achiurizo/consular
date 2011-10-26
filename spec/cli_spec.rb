@@ -227,6 +227,16 @@ describe Consular::CLI do
       assert_match /setup/,        File.read('/tmp/Termfile')
     end
 
+    it "alias create" do
+      FakeFS.deactivate!
+      Consular::CLI.any_instance.expects(:open_in_editor).with('/tmp/Termfile', nil).returns(true)
+      output = capture_io { Consular::CLI.start ['create', '-r=/tmp'] }.join('')
+
+      assert_match /create/,       output
+      assert_match /Termfile/,     output
+      assert_match /setup/,        File.read('/tmp/Termfile')
+    end
+
   end
 
 end
