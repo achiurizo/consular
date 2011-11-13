@@ -26,7 +26,7 @@ module Consular
     #
     # @api public
     def setup!
-      raise NotImplementedError, ".setup! needs to be defined for it to be ran by `terminitor setup`"
+      raise NotImplementedError, ".setup! needs to be defined for it to be ran by `consular setup`"
     end
 
     # Method called by the runner to execute the Termfile
