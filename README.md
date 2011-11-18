@@ -39,6 +39,32 @@ Consular.configure do |c|
   c.global_path = '/a/path/i/like/better'
 end
 ```
+After that, you'll need to install a 'core' so you can run Consular n
+your desired platform.
+
+Cores
+-----
+
+Cores allow Consular to operate on a variety of platforms. They abstract the general behavior that consular needs to run the commands. 
+Each core inherits from ([Consular::Core](http://github.com/achiu/consular/blob/master/lib/consular/core.rb)) and defines the needed methods.
+Some of the cores that are available are:
+
+ * [OSX](http://www.github.com/achiu/consular-osx) - Mac OS X Terminal
+ * [iTerm](https://github.com/achiu/consular-iterm) - Mac OS X iTerm
+ * [Terminator](https://github.com/ilkka/consular-terminator) - Terminator
+ * [Gnome](https://github.com/jc00ke/consular-gnome-terminal) - Gnome Terminal
+
+Feel free to contribute more cores so that Consular can support your terminal of choice :)
+
+To integrate core support for your Consular, you can simply require it
+in your `.consularc` like so:
+
+```ruby
+# .consularc
+require 'consular/osx'
+```
+
+Or check the README of each individual core.
 
 
 Development Setup
@@ -275,29 +301,6 @@ In addition, you are in the project folder and you wish to remove the Termfile, 
 
 This will clear the `Termfile` for the particular project.
 
-Cores
------
-
-Cores allow Consular to operate on a variety of platforms. They abstract the general behavior that consular needs to run the commands. 
-Each core inherits from ([Consular::Core](http://github.com/achiu/consular/blob/master/lib/consular/core.rb)) and defines the needed methods.
-Some of the cores that are available are:
-
- * [OSX](http://www.github.com/achiu/consular-osx) - Mac OS X Terminal
- * [iTerm](https://github.com/achiu/consular-iterm) - Mac OS X iTerm
- * [Terminator](https://github.com/ilkka/consular-terminator) - Terminator
- * [Gnome](https://github.com/jc00ke/consular-gnome-terminal) - Gnome Terminal
-
-Feel free to contribute more cores so that Consular can support your terminal of choice :)
-
-To integrate core support for your Consular, you can simply require it
-in your `.consularc` like so:
-
-```ruby
-# .consularc
-require 'consular/osx'
-```
-
-Or check the README of each individual core.
 
 Authors
 -------
