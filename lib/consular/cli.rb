@@ -251,7 +251,7 @@ module Consular
       #
       # @api private
       def message_unless_file(file, &blk)
-        if File.exists?(file)
+        if File.exists?(File.expand_path(file))
           blk.call
         else
           say "#{file} does not exist. Try running `consular edit` first.", :yellow
