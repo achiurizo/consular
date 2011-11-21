@@ -34,7 +34,7 @@ module Consular
     #
     # @api public
     def process!
-      raise NotImplementedError, ".process! needs to be defined for it to be ran by `terminitor start`"
+      raise NotImplementedError, ".process! needs to be defined for it to be ran by `consular start`"
     end
 
     class << self
