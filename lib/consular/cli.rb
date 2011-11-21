@@ -251,7 +251,6 @@ module Consular
       #
       # @api private
       def message_unless_file(file, &blk)
-        binding.pry
         if File.exists?(File.expand_path(file))
           blk.call
         else
