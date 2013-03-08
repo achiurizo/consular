@@ -30,7 +30,7 @@ end
 
 ## IMPORTANT ##
 
-After that, you'll need to install a 'core' so you can run Consular n
+After that, you'll need to install a 'core' so you can run Consular on
 your desired platform.
 
 Cores
