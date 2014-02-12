@@ -31,7 +31,7 @@ module Consular
       @_windows            = ActiveSupport::OrderedHash.new
       @_windows['default'] = window_hash
       @_context            = @_windows['default']
-      file = File.read(path)
+      file = File.read(File.expand_path(path))
       if path =~ /\.yml$/
         @_file = YAML.load file
         extend Yaml
